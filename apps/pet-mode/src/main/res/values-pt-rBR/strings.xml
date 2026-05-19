@@ -38,7 +38,7 @@
     <string name="settings_dark_mode">Modo Escuro</string>
     <string name="settings_dark_mode_desc">Tela discreta — menos visível de fora</string>
     <string name="settings_temp_unit_desc">Alternar entre Celsius e Fahrenheit</string>
-    <string name="settings_version">Pet Mode v2.1.1  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Pet Mode v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">Pata</string>
     <string name="avatar_dog">Cachorro</string>

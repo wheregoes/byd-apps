@@ -27,7 +27,7 @@
       At 1.5x density, design_px = sp gives exact proportional match
       with the 1920x720 CSS design (1.5x density × 1.5x taller cancel out).
     -->
-    <dimen name="text_display_xl">280sp</dimen>
+    <dimen name="text_display_xl">320sp</dimen>
     <dimen name="text_display_l">160sp</dimen>
     <dimen name="text_display_m">96sp</dimen>
     <dimen name="text_display_s">72sp</dimen>
@@ -47,11 +47,11 @@
     <dimen name="text_temp_unit">96sp</dimen>
 
     <!-- Temperature subtitle -->
-    <dimen name="text_temp_sub">26sp</dimen>
+    <dimen name="text_temp_sub">30sp</dimen>
 
     <!-- Reassurance message -->
-    <dimen name="text_reassure_msg">56sp</dimen>
-    <dimen name="text_reassure_sub">26sp</dimen>
+    <dimen name="text_reassure_msg">64sp</dimen>
+    <dimen name="text_reassure_sub">30sp</dimen>
 
     <!-- Status bar text -->
     <dimen name="text_status">22sp</dimen>

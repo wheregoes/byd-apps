@@ -71,7 +71,7 @@
     <color name="fg_dark_tertiary">#73FFFFFF</color>   <!-- rgba(255,255,255,0.45) -->
 
     <!-- Status bar item active background -->
-    <color name="status_item_active_light">#73FFFFFF</color>  <!-- rgba(255,255,255,0.45) -->
+    <color name="status_item_active_light">#B3FFFFFF</color>  <!-- rgba(255,255,255,0.70) -->
     <color name="status_item_active_dark">#1FFFFFFF</color>   <!-- rgba(255,255,255,0.12) -->
 
     <!-- Safety alert -->

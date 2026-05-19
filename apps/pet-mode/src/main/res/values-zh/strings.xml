@@ -38,7 +38,7 @@
     <string name="settings_dark_mode">深色模式</string>
     <string name="settings_dark_mode_desc">低调屏幕 — 从车外不太显眼</string>
     <string name="settings_temp_unit_desc">在摄氏度和华氏度之间切换</string>
-    <string name="settings_version">Pet Mode v2.1.1  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Pet Mode v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">爪印</string>
     <string name="avatar_dog">狗</string>

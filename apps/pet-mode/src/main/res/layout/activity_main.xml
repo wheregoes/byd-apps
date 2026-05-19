@@ -44,74 +44,79 @@
         android:layout_height="match_parent"
         android:clipChildren="false" />
 
-    <!-- Safety alert pill (top center, hidden by default) -->
+    <!-- Alert pills container (stacks vertically when both visible) -->
     <LinearLayout
-        android:id="@+id/safety_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/safety_alert_bg"
-        android:elevation="@dimen/elevation_2"
-        android:paddingStart="@dimen/alert_padding_h"
-        android:paddingEnd="@dimen/alert_padding_h"
-        android:paddingTop="@dimen/alert_padding_v"
-        android:paddingBottom="@dimen/alert_padding_v"
-        android:visibility="gone">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-        <ImageView
-            android:layout_width="@dimen/icon_alert"
-            android:layout_height="@dimen/icon_alert"
-            android:src="@drawable/ic_warning"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:id="@+id/safety_alert_text"
+        <LinearLayout
+            android:id="@+id/safety_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/alert_ac_off"
-            android:textSize="@dimen/text_safety_alert"
-            android:textColor="#FFFFFFFF"
-            android:fontFamily="sans-serif-bold"
-            android:letterSpacing="0.04"
-            android:textAllCaps="true" />
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/safety_alert_bg"
+            android:elevation="@dimen/elevation_2"
+            android:paddingStart="@dimen/alert_padding_h"
+            android:paddingEnd="@dimen/alert_padding_h"
+            android:paddingTop="@dimen/alert_padding_v"
+            android:paddingBottom="@dimen/alert_padding_v"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone">
 
-    <!-- Door open alert pill (top center, hidden by default) -->
-    <LinearLayout
-        android:id="@+id/door_alert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/door_alert_bg"
-        android:elevation="@dimen/elevation_2"
-        android:paddingStart="@dimen/alert_padding_h"
-        android:paddingEnd="@dimen/alert_padding_h"
-        android:paddingTop="@dimen/alert_padding_v"
-        android:paddingBottom="@dimen/alert_padding_v"
-        android:visibility="gone">
+            <ImageView
+                android:layout_width="@dimen/icon_alert"
+                android:layout_height="@dimen/icon_alert"
+                android:src="@drawable/ic_warning"
+                android:layout_marginEnd="12dp" />
 
-        <ImageView
-            android:layout_width="@dimen/icon_alert"
-            android:layout_height="@dimen/icon_alert"
-            android:src="@drawable/ic_warning"
-            android:layout_marginEnd="12dp" />
+            <TextView
+                android:id="@+id/safety_alert_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alert_ac_off"
+                android:textSize="@dimen/text_safety_alert"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-bold"
+                android:letterSpacing="0.04"
+                android:textAllCaps="true" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/door_alert_text"
+        <LinearLayout
+            android:id="@+id/door_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/alert_door_open"
-            android:textSize="@dimen/text_safety_alert"
-            android:textColor="#FF1A1A2E"
-            android:fontFamily="sans-serif-bold"
-            android:letterSpacing="0.04"
-            android:textAllCaps="true" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/door_alert_bg"
+            android:elevation="@dimen/elevation_2"
+            android:paddingStart="@dimen/alert_padding_h"
+            android:paddingEnd="@dimen/alert_padding_h"
+            android:paddingTop="@dimen/alert_padding_v"
+            android:paddingBottom="@dimen/alert_padding_v"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/icon_alert"
+                android:layout_height="@dimen/icon_alert"
+                android:src="@drawable/ic_warning"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:id="@+id/door_alert_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alert_door_open"
+                android:textSize="@dimen/text_safety_alert"
+                android:textColor="#FF1A1A2E"
+                android:fontFamily="sans-serif-bold"
+                android:letterSpacing="0.04"
+                android:textAllCaps="true" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Top chrome: outside temp pill (left) + settings btn (right) -->
@@ -209,7 +214,7 @@
                     android:text="--"
                     android:textSize="@dimen/text_display_xl"
                     android:textColor="@color/fg_primary"
-                    android:fontFamily="sans-serif-thin"
+                    android:fontFamily="sans-serif-light"
                     android:includeFontPadding="false" />
 
                 <TextView
@@ -245,31 +250,18 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <!-- Glass avatar disc -->
+            <!-- Avatar image (no disc) -->
             <FrameLayout
                 android:id="@+id/avatar_disc"
                 android:layout_width="@dimen/avatar_disc_size"
-                android:layout_height="@dimen/avatar_disc_size"
-                android:background="@drawable/glass_avatar_disc"
-                android:elevation="@dimen/elevation_2">
+                android:layout_height="@dimen/avatar_disc_size">
 
                 <ImageView
                     android:id="@+id/avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/avatar_paw"
-                    android:scaleType="centerInside"
-                    android:padding="6dp" />
-
-                <View
-                    android:id="@+id/avatar_specular"
-                    android:layout_width="110dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="top|start"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginStart="38dp"
-                    android:background="@drawable/avatar_specular"
-                    android:alpha="0.7" />
+                    android:scaleType="centerInside" />
             </FrameLayout>
 
             <!-- Reassurance message -->

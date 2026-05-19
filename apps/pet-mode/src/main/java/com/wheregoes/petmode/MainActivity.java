@@ -246,9 +246,6 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         statusIconBattery.setColorFilter(iconTint, PorterDuff.Mode.SRC_IN);
         statusIconTimer.setColorFilter(iconTint, PorterDuff.Mode.SRC_IN);
 
-        avatarDisc.setBackgroundResource(isDarkMode
-                ? R.drawable.glass_avatar_disc_dark : R.drawable.glass_avatar_disc);
-
         findViewById(R.id.aurora_orb1).setBackgroundResource(isDarkMode
                 ? R.drawable.aurora_orb_1_dark : R.drawable.aurora_orb_1);
         findViewById(R.id.aurora_orb2).setBackgroundResource(isDarkMode
