@@ -25,7 +25,8 @@
     <string name="exit_im_back">Volví ←</string>
 
     <string name="exit_confirm_title">Salir del Modo Mascota</string>
-    <string name="exit_confirm">¿Seguro que quieres salir del Modo Mascota?</string>
+    <string name="exit_confirm">Tu mascota sigue en el coche. ¿Seguro que quieres salir del Modo Mascota?</string>
+    <string name="sheet_stay">Quedarme</string>
 
     <string name="notification_title">Modo Mascota Activo</string>
     <string name="notification_text">Monitorizando la temperatura de la cabina</string>
@@ -37,7 +38,7 @@
     <string name="settings_dark_mode">Modo Oscuro</string>
     <string name="settings_dark_mode_desc">Pantalla discreta — menos visible desde fuera</string>
     <string name="settings_temp_unit_desc">Cambiar entre Celsius y Fahrenheit</string>
-    <string name="settings_version">Pet Mode v2.0.0  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Pet Mode v2.1.0  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">Pata</string>
     <string name="avatar_dog">Perro</string>

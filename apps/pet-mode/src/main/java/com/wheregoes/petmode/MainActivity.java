@@ -1,13 +1,14 @@
 package com.wheregoes.petmode;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.PorterDuff;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -63,6 +64,8 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
     private View settingsBtn;
     private ImageView settingsIcon;
     private View exitBtn;
+    private View exitScrim;
+    private View exitSheet;
     private int originalBrightnessMode = -1;
     private boolean isDarkMode = false;
 
@@ -78,6 +81,7 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         applyTheme();
         startPawAnimation();
         startAvatarAnimation();
+        startAuroraAnimation();
         startTimerUpdate();
         startService();
     }
@@ -112,17 +116,25 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
     }
 
     private void showExitDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.exit_confirm_title)
-                .setMessage(R.string.exit_confirm)
-                .setPositiveButton(android.R.string.yes, (d, w) -> {
-                    stopService(new Intent(this, PetModeService.class));
-                    getSharedPreferences(PetModeService.PREF_NAME, MODE_PRIVATE)
-                            .edit().putBoolean(PetModeService.KEY_ENABLED, false).apply();
-                    finish();
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .show();
+        exitScrim.setVisibility(View.VISIBLE);
+        exitSheet.setBackgroundResource(isDarkMode
+                ? R.drawable.glass_sheet_dark : R.drawable.glass_sheet);
+        TextView sheetTitle = findViewById(R.id.sheet_title);
+        TextView sheetBody = findViewById(R.id.sheet_body);
+        int fgP = isDarkMode ? Color.WHITE : 0xFF1A1A2E;
+        int fgS = isDarkMode ? 0xB8FFFFFF : 0xFF636E7B;
+        sheetTitle.setTextColor(fgP);
+        sheetBody.setTextColor(fgS);
+        TextView stayBtn = findViewById(R.id.sheet_btn_stay);
+        stayBtn.setTextColor(fgP);
+        if (isDarkMode) stayBtn.setBackgroundResource(R.drawable.btn_ghost);
+    }
+
+    private void doExit() {
+        stopService(new Intent(this, PetModeService.class));
+        getSharedPreferences(PetModeService.PREF_NAME, MODE_PRIVATE)
+                .edit().putBoolean(PetModeService.KEY_ENABLED, false).apply();
+        finish();
     }
 
     private void bindViews() {
@@ -152,11 +164,18 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         settingsBtn = findViewById(R.id.settings_btn);
         settingsIcon = findViewById(R.id.settings_icon);
         exitBtn = findViewById(R.id.exit_btn);
+        exitScrim = findViewById(R.id.exit_scrim);
+        exitSheet = findViewById(R.id.exit_sheet);
 
         settingsBtn.setOnClickListener(v ->
                 startActivity(new Intent(this, SettingsActivity.class)));
 
         exitBtn.setOnClickListener(v -> showExitDialog());
+
+        findViewById(R.id.sheet_btn_stay).setOnClickListener(v ->
+                exitScrim.setVisibility(View.GONE));
+        findViewById(R.id.sheet_btn_exit).setOnClickListener(v -> doExit());
+        exitScrim.setOnClickListener(v -> exitScrim.setVisibility(View.GONE));
 
         avatarView.setImageResource(getAvatarDrawable());
     }
@@ -196,6 +215,16 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         }
 
         tempText.setTextColor(fgPrimary);
+        tempText.post(() -> {
+            int h = tempText.getHeight();
+            if (h > 0) {
+                int gradTop = isDarkMode ? 0xFFFFFFFF : 0xFF1A1A2E;
+                int gradBot = isDarkMode ? 0xFFB7E8DC : 0xFF232830;
+                Shader grad = new LinearGradient(0, 0, 0, h, gradTop, gradBot, Shader.TileMode.CLAMP);
+                tempText.getPaint().setShader(grad);
+                tempText.invalidate();
+            }
+        });
         tempUnit.setTextColor(fgSecondary);
         acInfoText.setTextColor(fgSecondary);
         messageText.setTextColor(fgPrimary);
@@ -213,6 +242,16 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         statusIconDoors.setColorFilter(iconTint, PorterDuff.Mode.SRC_IN);
         statusIconBattery.setColorFilter(iconTint, PorterDuff.Mode.SRC_IN);
         statusIconTimer.setColorFilter(iconTint, PorterDuff.Mode.SRC_IN);
+
+        avatarDisc.setBackgroundResource(isDarkMode
+                ? R.drawable.glass_avatar_disc_dark : R.drawable.glass_avatar_disc);
+
+        findViewById(R.id.aurora_orb1).setBackgroundResource(isDarkMode
+                ? R.drawable.aurora_orb_1_dark : R.drawable.aurora_orb_1);
+        findViewById(R.id.aurora_orb2).setBackgroundResource(isDarkMode
+                ? R.drawable.aurora_orb_2_dark : R.drawable.aurora_orb_2);
+        findViewById(R.id.aurora_orb3).setBackgroundResource(isDarkMode
+                ? R.drawable.aurora_orb_3_dark : R.drawable.aurora_orb_3);
 
         avatarView.setImageResource(getAvatarDrawable());
     }
@@ -394,6 +433,24 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         bob.setRepeatCount(Animation.INFINITE);
         bob.setInterpolator(new AccelerateInterpolator(0.5f));
         avatarView.startAnimation(bob);
+    }
+
+    private void startAuroraAnimation() {
+        View orb1 = findViewById(R.id.aurora_orb1);
+        View orb2 = findViewById(R.id.aurora_orb2);
+        View orb3 = findViewById(R.id.aurora_orb3);
+        animateOrb(orb1, 40f, 27f, 6000);
+        animateOrb(orb2, -40f, 30f, 8000);
+        animateOrb(orb3, 30f, -25f, 10000);
+    }
+
+    private void animateOrb(View orb, float dx, float dy, int dur) {
+        TranslateAnimation drift = new TranslateAnimation(0, dx, 0, dy);
+        drift.setDuration(dur);
+        drift.setRepeatMode(Animation.REVERSE);
+        drift.setRepeatCount(Animation.INFINITE);
+        drift.setInterpolator(new AccelerateInterpolator(0.3f));
+        orb.startAnimation(drift);
     }
 
     private void startPawAnimation() {

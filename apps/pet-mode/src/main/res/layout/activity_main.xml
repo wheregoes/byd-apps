@@ -4,12 +4,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Aurora backdrop -->
+    <!-- Aurora backdrop (base gradient) -->
     <View
         android:id="@+id/aurora_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/aurora_light" />
+
+    <!-- Animated aurora orbs -->
+    <View
+        android:id="@+id/aurora_orb1"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:layout_marginStart="-100dp"
+        android:layout_marginTop="-200dp"
+        android:background="@drawable/aurora_orb_1" />
+
+    <View
+        android:id="@+id/aurora_orb2"
+        android:layout_width="700dp"
+        android:layout_height="700dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="-150dp"
+        android:layout_marginTop="-100dp"
+        android:background="@drawable/aurora_orb_2" />
+
+    <View
+        android:id="@+id/aurora_orb3"
+        android:layout_width="800dp"
+        android:layout_height="800dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="-400dp"
+        android:background="@drawable/aurora_orb_3" />
 
     <!-- Floating paw prints -->
     <FrameLayout
@@ -199,6 +225,16 @@
                     android:src="@drawable/avatar_paw"
                     android:scaleType="centerInside"
                     android:padding="16dp" />
+
+                <View
+                    android:id="@+id/avatar_specular"
+                    android:layout_width="110dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="top|start"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginStart="38dp"
+                    android:background="@drawable/avatar_specular"
+                    android:alpha="0.7" />
             </FrameLayout>
 
             <!-- Reassurance message -->
@@ -365,7 +401,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/content_padding_h"
-        android:layout_marginBottom="22dp"
+        android:layout_marginBottom="28dp"
         android:text="@string/exit_im_back"
         android:textSize="@dimen/text_body"
         android:textColor="@color/fg_primary"
@@ -376,5 +412,83 @@
         android:paddingEnd="@dimen/exit_btn_padding_h"
         android:paddingTop="@dimen/exit_btn_padding_v"
         android:paddingBottom="@dimen/exit_btn_padding_v" />
+
+    <!-- Exit confirm sheet overlay -->
+    <FrameLayout
+        android:id="@+id/exit_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/scrim"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/exit_sheet"
+            android:layout_width="560dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/glass_sheet"
+            android:elevation="@dimen/elevation_3"
+            android:padding="40dp">
+
+            <TextView
+                android:id="@+id/sheet_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exit_confirm_title"
+                android:textSize="@dimen/text_h3"
+                android:textColor="@color/fg_primary"
+                android:fontFamily="sans-serif-bold" />
+
+            <TextView
+                android:id="@+id/sheet_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exit_confirm"
+                android:textSize="@dimen/text_body"
+                android:textColor="@color/fg_secondary"
+                android:gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="28dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/sheet_btn_stay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sheet_stay"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="@color/fg_primary"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/btn_ghost"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/sheet_btn_exit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exit_im_back"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="@color/fg_on_brand"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/btn_primary"
+                    android:elevation="@dimen/elevation_1"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
 
 </FrameLayout>

@@ -26,7 +26,8 @@
 
     <string name="exit_im_back">I\'m back ←</string>
     <string name="exit_confirm_title">Exit Pet Mode</string>
-    <string name="exit_confirm">Are you sure you want to exit Pet Mode?</string>
+    <string name="exit_confirm">Your pet is still in the car. Are you sure you want to leave Pet Mode?</string>
+    <string name="sheet_stay">Stay</string>
 
     <string name="notification_title">Pet Mode Active</string>
     <string name="notification_text">Monitoring cabin temperature</string>
@@ -38,7 +39,7 @@
     <string name="settings_dark_mode">Dark Mode</string>
     <string name="settings_dark_mode_desc">Quieter screen — less visible from outside</string>
     <string name="settings_temp_unit_desc">Switch between Celsius and Fahrenheit</string>
-    <string name="settings_version">Pet Mode v2.0.0  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Pet Mode v2.1.0  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">Paw</string>
     <string name="avatar_dog">Dog</string>
