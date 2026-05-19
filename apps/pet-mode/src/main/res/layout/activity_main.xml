@@ -79,6 +79,41 @@
             android:textAllCaps="true" />
     </LinearLayout>
 
+    <!-- Door open alert pill (top center, hidden by default) -->
+    <LinearLayout
+        android:id="@+id/door_alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/door_alert_bg"
+        android:elevation="@dimen/elevation_2"
+        android:paddingStart="@dimen/alert_padding_h"
+        android:paddingEnd="@dimen/alert_padding_h"
+        android:paddingTop="@dimen/alert_padding_v"
+        android:paddingBottom="@dimen/alert_padding_v"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/icon_alert"
+            android:layout_height="@dimen/icon_alert"
+            android:src="@drawable/ic_warning"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:id="@+id/door_alert_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alert_door_open"
+            android:textSize="@dimen/text_safety_alert"
+            android:textColor="#FF1A1A2E"
+            android:fontFamily="sans-serif-bold"
+            android:letterSpacing="0.04"
+            android:textAllCaps="true" />
+    </LinearLayout>
+
     <!-- Top chrome: outside temp pill (left) + settings btn (right) -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -224,7 +259,7 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/avatar_paw"
                     android:scaleType="centerInside"
-                    android:padding="16dp" />
+                    android:padding="6dp" />
 
                 <View
                     android:id="@+id/avatar_specular"
@@ -247,7 +282,8 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:layout_marginTop="18dp"
-                android:maxWidth="400dp" />
+                android:maxWidth="400dp"
+                android:maxLines="2" />
 
             <TextView
                 android:id="@+id/sub_message"

@@ -72,6 +72,7 @@
 
                 <!-- Pet Name row -->
                 <LinearLayout
+                    android:id="@+id/row_pet_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -81,6 +82,7 @@
                     android:layout_marginBottom="@dimen/space_3">
 
                     <TextView
+                        android:id="@+id/label_pet_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_pet_name"
@@ -108,6 +110,7 @@
 
                 <!-- Avatar row -->
                 <LinearLayout
+                    android:id="@+id/row_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -116,6 +119,7 @@
                     android:padding="@dimen/setting_row_padding_h">
 
                     <TextView
+                        android:id="@+id/label_avatar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_avatar"
@@ -157,6 +161,7 @@
                                     android:padding="8dp" />
                             </FrameLayout>
                             <TextView
+                                android:id="@+id/label_paw"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/avatar_paw"
@@ -192,6 +197,7 @@
                                     android:padding="8dp" />
                             </FrameLayout>
                             <TextView
+                                android:id="@+id/label_dog"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/avatar_dog"
@@ -226,6 +232,7 @@
                                     android:padding="8dp" />
                             </FrameLayout>
                             <TextView
+                                android:id="@+id/label_cat"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/avatar_cat"
@@ -247,6 +254,7 @@
 
                 <!-- Temperature unit row -->
                 <LinearLayout
+                    android:id="@+id/row_temp_unit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -266,6 +274,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/label_temp_unit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/settings_temp_unit"
@@ -274,6 +283,7 @@
                             android:fontFamily="sans-serif-medium" />
 
                         <TextView
+                            android:id="@+id/label_temp_unit_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/settings_temp_unit_desc"
@@ -321,6 +331,7 @@
 
                 <!-- Dark mode row -->
                 <LinearLayout
+                    android:id="@+id/row_dark_mode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -340,6 +351,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/label_dark_mode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/settings_dark_mode"
@@ -348,6 +360,7 @@
                             android:fontFamily="sans-serif-medium" />
 
                         <TextView
+                            android:id="@+id/label_dark_mode_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/settings_dark_mode_desc"
@@ -365,6 +378,7 @@
 
                 <!-- Version info -->
                 <TextView
+                    android:id="@+id/label_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_version"

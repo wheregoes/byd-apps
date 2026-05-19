@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -61,6 +62,7 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
     private ImageView statusIconBattery;
     private ImageView statusIconTimer;
     private View safetyAlert;
+    private View doorAlert;
     private View settingsBtn;
     private ImageView settingsIcon;
     private View exitBtn;
@@ -161,6 +163,7 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         statusIconBattery = findViewById(R.id.status_icon_battery);
         statusIconTimer = findViewById(R.id.status_icon_timer);
         safetyAlert = findViewById(R.id.safety_alert);
+        doorAlert = findViewById(R.id.door_alert);
         settingsBtn = findViewById(R.id.settings_btn);
         settingsIcon = findViewById(R.id.settings_icon);
         exitBtn = findViewById(R.id.exit_btn);
@@ -287,10 +290,19 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
             outsideTempText.setText(getString(R.string.outside_temp_pill_unknown));
         }
 
+        float baseMessageSize = getResources().getDimension(R.dimen.text_reassure_msg);
+        messageText.setTextSize(TypedValue.COMPLEX_UNIT_PX, baseMessageSize);
         if (hasPetName) {
             messageText.setText(getString(R.string.msg_safe, petName));
         } else {
             messageText.setText(R.string.msg_driver_back);
+        }
+        float maxW = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400,
+                getResources().getDisplayMetrics());
+        float textW = messageText.getPaint().measureText(messageText.getText().toString());
+        if (textW > maxW) {
+            messageText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    baseMessageSize * maxW / textW * 0.95f);
         }
 
         if (service.isClimateAvailable() && service.isAcOn()) {
@@ -317,15 +329,15 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         boolean acAlert = service.isClimateAvailable() && !acOn;
         safetyAlert.setVisibility(acAlert ? View.VISIBLE : View.GONE);
 
-        if (service.isAnyDoorOpen()) {
+        boolean anyDoorOpen = service.isAnyDoorOpen();
+        doorAlert.setVisibility(anyDoorOpen ? View.VISIBLE : View.GONE);
+
+        if (anyDoorOpen) {
             statusDoors.setText(R.string.status_doors_open);
             statusIconDoors.setImageResource(R.drawable.ic_unlock);
-        } else if (service.isLocked()) {
-            statusDoors.setText(R.string.status_doors_locked);
-            statusIconDoors.setImageResource(R.drawable.ic_lock);
         } else {
-            statusDoors.setText(R.string.status_doors_unlocked);
-            statusIconDoors.setImageResource(R.drawable.ic_unlock);
+            statusDoors.setText(R.string.status_doors_closed);
+            statusIconDoors.setImageResource(R.drawable.ic_lock);
         }
 
         int iconTint = isDarkMode ? Color.WHITE : 0xFF232830;
@@ -342,7 +354,7 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
         long mins = (millis / 60000) % 60;
         long hours = millis / 3600000;
         statusTimer.setText(getString(R.string.status_active,
-                String.format(Locale.US, "%d:%02d", hours, mins)));
+                String.format(Locale.US, "%02dh %02dmin", hours, mins)));
     }
 
     private String getDefaultUnit() {
@@ -504,7 +516,7 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
                 long mins = (millis / 60000) % 60;
                 long hours = millis / 3600000;
                 statusTimer.setText(getString(R.string.status_active,
-                        String.format(Locale.US, "%d:%02d", hours, mins)));
+                        String.format(Locale.US, "%02dh %02dmin", hours, mins)));
             }
             scheduleTimerTick();
         }, 30000);

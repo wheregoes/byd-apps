@@ -4,7 +4,7 @@
 
     <string name="default_pet_name">Votre animal</string>
     <string name="msg_safe">Ne vous inquiétez pas ! %s est en sécurité</string>
-    <string name="msg_driver_back">Mon conducteur revient bientôt</string>
+    <string name="msg_driver_back">Mon maître revient bientôt</string>
     <string name="msg_ac_on">La climatisation est allumée et confortable</string>
     <string name="msg_ac_off">La climatisation est éteinte</string>
     <string name="msg_monitoring">Surveillance de votre animal</string>
@@ -18,10 +18,10 @@
     <string name="status_car_off">Voiture Éteinte</string>
     <string name="status_battery">Batterie : %d%%</string>
     <string name="alert_ac_off">ALERTE : CLIM ÉTEINTE</string>
-    <string name="status_doors_locked">Portes Verrouillées</string>
-    <string name="status_doors_unlocked">Portes Déverrouillées</string>
+    <string name="status_doors_closed">Portes Fermées</string>
     <string name="status_doors_open">Porte Ouverte !</string>
-    <string name="status_active">Actif %s</string>
+    <string name="status_active">Actif depuis %s</string>
+    <string name="alert_door_open">ALERTE : PORTE OUVERTE</string>
     <string name="exit_im_back">Je suis de retour ←</string>
 
     <string name="exit_confirm_title">Quitter le Mode Animal</string>
@@ -38,7 +38,7 @@
     <string name="settings_dark_mode">Mode Sombre</string>
     <string name="settings_dark_mode_desc">Écran discret — moins visible de l\'extérieur</string>
     <string name="settings_temp_unit_desc">Basculer entre Celsius et Fahrenheit</string>
-    <string name="settings_version">Pet Mode v2.1.0  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Pet Mode v2.1.1  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">Patte</string>
     <string name="avatar_dog">Chien</string>
