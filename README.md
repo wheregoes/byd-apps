@@ -1,5 +1,12 @@
 # BYD Apps
 
+> **Disclaimer:** This is an unofficial, community-driven project with no affiliation,
+> endorsement, or sponsorship from BYD or any of its subsidiaries. It involves reverse
+> engineering of BYD's internal Android services for educational and interoperability
+> purposes only. Use at your own risk — modifying vehicle software may void your warranty
+> or violate BYD's terms of service. The authors assume no liability for any damage to
+> your vehicle, software, or data.
+
 Open-source Android apps for BYD electric vehicles.
 
 Built on reverse-engineered BYD APIs — these apps interact directly with the vehicle's CAN bus through BYD's internal Android services. Not available on Google Play.
