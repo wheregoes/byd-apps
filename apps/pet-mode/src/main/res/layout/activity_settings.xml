@@ -86,18 +86,21 @@
                 android:layout_marginEnd="24dp"
                 android:background="?android:selectableItemBackground"
                 android:padding="8dp">
-                <View
-                    android:id="@+id/avatar_paw_border"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="#FFE0E0E0" />
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="-80dp"
-                    android:text="🐾"
-                    android:textSize="44sp"
-                    android:gravity="center" />
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp">
+                    <View
+                        android:id="@+id/avatar_paw_border"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#FFE0E0E0" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/avatar_paw"
+                        android:scaleType="centerCrop"
+                        android:padding="4dp" />
+                </FrameLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -117,18 +120,21 @@
                 android:layout_marginEnd="24dp"
                 android:background="?android:selectableItemBackground"
                 android:padding="8dp">
-                <View
-                    android:id="@+id/avatar_dog_border"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="#FFE0E0E0" />
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="-80dp"
-                    android:text="🐕"
-                    android:textSize="44sp"
-                    android:gravity="center" />
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp">
+                    <View
+                        android:id="@+id/avatar_dog_border"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#FFE0E0E0" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/avatar_dog"
+                        android:scaleType="centerCrop"
+                        android:padding="4dp" />
+                </FrameLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -147,18 +153,21 @@
                 android:gravity="center"
                 android:background="?android:selectableItemBackground"
                 android:padding="8dp">
-                <View
-                    android:id="@+id/avatar_cat_border"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="#FFE0E0E0" />
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="-80dp"
-                    android:text="🐈"
-                    android:textSize="44sp"
-                    android:gravity="center" />
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp">
+                    <View
+                        android:id="@+id/avatar_cat_border"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#FFE0E0E0" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/avatar_cat"
+                        android:scaleType="centerCrop"
+                        android:padding="4dp" />
+                </FrameLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -240,7 +249,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pet Mode v1.2.0"
+            android:text="Pet Mode v1.4.0"
             android:textSize="13sp"
             android:textColor="#FF9E9E9E"
             android:layout_marginTop="16dp" />
