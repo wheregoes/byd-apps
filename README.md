@@ -17,6 +17,7 @@ Built on reverse-engineered BYD APIs — these apps interact directly with the v
 |-----|-------------|--------|
 | [Door Sound](apps/door-sound/) | Custom sounds on door open/close/lock/unlock events | Ready |
 | [Pet Mode](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen | Ready |
+| [BYD Probe](apps/byd-probe/) | Diagnostic tool — enumerates all BYD Auto API methods via reflection | Dev tool |
 
 ## Compatibility
 
@@ -60,6 +61,8 @@ Each app has its own build instructions in its README. General requirements:
 - `android.jar` for API 29
 
 ## Research
+
+Detailed API reference in [`research/byd-auto-api-reference.md`](research/byd-auto-api-reference.md) — covers AC, door lock, panorama, bodywork, and cloud communication APIs with live-verified values.
 
 These apps are based on findings from the [byd-dolphin-hacking](https://github.com/wheregoes/byd-dolphin-hacking) research repo — CAN bus protocol documentation, BYD API reverse engineering, and audio architecture analysis.
 

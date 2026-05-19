@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.util.Log;
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 public class ProbeActivity extends Activity {
@@ -54,6 +55,36 @@ public class ProbeActivity extends Activity {
         btnRow.addView(btnClear);
 
         root.addView(btnRow);
+
+        LinearLayout btnRow2 = new LinearLayout(this);
+        btnRow2.setOrientation(LinearLayout.HORIZONTAL);
+        btnRow2.setGravity(Gravity.CENTER);
+
+        Button btnAcOn = makeButton("AC ON");
+        btnAcOn.setOnClickListener(v -> new Thread(() -> testAcStart()).start());
+        btnRow2.addView(btnAcOn);
+
+        Button btnAcOff = makeButton("AC OFF");
+        btnAcOff.setOnClickListener(v -> new Thread(() -> testAcStop()).start());
+        btnRow2.addView(btnAcOff);
+
+        Button btnTemp22 = makeButton("Temp 22°C");
+        btnTemp22.setOnClickListener(v -> new Thread(() -> testAcSetTemp(22)).start());
+        btnRow2.addView(btnTemp22);
+
+        Button btnTemp25 = makeButton("Temp 25°C");
+        btnTemp25.setOnClickListener(v -> new Thread(() -> testAcSetTemp(25)).start());
+        btnRow2.addView(btnTemp25);
+
+        Button btnFan3 = makeButton("Fan 3");
+        btnFan3.setOnClickListener(v -> new Thread(() -> testAcSetFan(3)).start());
+        btnRow2.addView(btnFan3);
+
+        Button btnBodywork = makeButton("Probe Body");
+        btnBodywork.setOnClickListener(v -> new Thread(() -> probeBodywork()).start());
+        btnRow2.addView(btnBodywork);
+
+        root.addView(btnRow2);
 
         ScrollView scroll = new ScrollView(this);
         logView = new TextView(this);
@@ -245,31 +276,32 @@ public class ProbeActivity extends Activity {
             Method getInstance = dlClass.getMethod("getInstance", android.content.Context.class);
             Object dlDevice = getInstance.invoke(null, new BydPermissionContext(this));
             log("DoorLock Device instance: " + dlDevice);
+            log("DoorLock class: " + dlDevice.getClass().getName());
 
-            // Dump constants
-            log("\n[DoorLock Constants]");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_LEFT_FRONT");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_RIGHT_FRONT");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_LEFT_REAR");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_RIGHT_REAR");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_BACK");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_CHILDLOCK_LEFT");
-            tryStaticField(dlClass, "DOOR_LOCK_AREA_CHILDLOCK_RIGHT");
-            tryStaticField(dlClass, "DOOR_LOCK_STATE_LOCK");
-            tryStaticField(dlClass, "DOOR_LOCK_STATE_UNLOCK");
-            tryStaticField(dlClass, "DOOR_LOCK_STATE_INVALID");
-            tryStaticField(dlClass, "DOOR_LOCK_GET_PERM");
-            tryStaticField(dlClass, "DOOR_LOCK_SET_PERM");
-            tryStaticField(dlClass, "DOOR_LOCK_COMMON_PERM");
+            // Dump ALL static fields (including inherited) to find feature IDs
+            log("\n[DoorLock ALL Static Fields]");
+            for (Class<?> c = dlClass; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+                Field[] fields = c.getDeclaredFields();
+                for (Field f : fields) {
+                    f.setAccessible(true);
+                    if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
+                        try {
+                            Object val = f.get(null);
+                            String valStr = (val instanceof int[]) ? Arrays.toString((int[])val) : String.valueOf(val);
+                            log("  " + c.getSimpleName() + "." + f.getName() + " = " + valStr + " (" + f.getType().getSimpleName() + ")");
+                        } catch (Exception e) {
+                            log("  " + c.getSimpleName() + "." + f.getName() + " = ERR:" + e.getMessage());
+                        }
+                    }
+                }
+            }
 
-            // Dump methods
-            log("\n[DoorLock Methods]");
-            Method[] methods = dlClass.getMethods();
-            for (Method m : methods) {
-                String name = m.getName();
-                if (!name.equals("getClass") && !name.equals("hashCode") && !name.equals("toString") &&
-                    !name.equals("notify") && !name.equals("notifyAll") && !name.equals("wait") && !name.equals("equals")) {
-                    StringBuilder sig = new StringBuilder(name + "(");
+            // Dump ALL methods (including declared private and inherited)
+            log("\n[DoorLock ALL Methods]");
+            for (Class<?> c = dlClass; c != null && !c.equals(Object.class); c = c.getSuperclass()) {
+                Method[] methods = c.getDeclaredMethods();
+                for (Method m : methods) {
+                    StringBuilder sig = new StringBuilder(c.getSimpleName() + "." + m.getName() + "(");
                     for (Class<?> p : m.getParameterTypes()) {
                         sig.append(p.getSimpleName()).append(",");
                     }
@@ -281,57 +313,80 @@ public class ProbeActivity extends Activity {
             // Read door lock status per area
             log("\n[DoorLock Status]");
             Method getDoorLockStatus = dlClass.getMethod("getDoorLockStatus", int.class);
-            String[] areaNames = {"LEFT_FRONT", "RIGHT_FRONT", "LEFT_REAR", "RIGHT_REAR", "BACK", "CHILDLOCK_LEFT", "CHILDLOCK_RIGHT"};
-            String[] areaFields = {"DOOR_LOCK_AREA_LEFT_FRONT", "DOOR_LOCK_AREA_RIGHT_FRONT", "DOOR_LOCK_AREA_LEFT_REAR",
-                "DOOR_LOCK_AREA_RIGHT_REAR", "DOOR_LOCK_AREA_BACK", "DOOR_LOCK_AREA_CHILDLOCK_LEFT", "DOOR_LOCK_AREA_CHILDLOCK_RIGHT"};
-
-            for (int i = 0; i < areaNames.length; i++) {
-                try {
-                    Field areaField = dlClass.getField(areaFields[i]);
-                    int areaValue = areaField.getInt(null);
-                    Object status = getDoorLockStatus.invoke(dlDevice, areaValue);
-                    log("  " + areaNames[i] + " (area=" + areaValue + "): status=" + status);
-                } catch (Exception e) {
-                    log("  " + areaNames[i] + ": error=" + e.getMessage());
-                }
-            }
-
-            // Also try raw area values 0-10
-            log("\n[DoorLock Raw Areas 0-10]");
             for (int area = 0; area <= 10; area++) {
                 try {
                     Object status = getDoorLockStatus.invoke(dlDevice, area);
                     log("  getDoorLockStatus(" + area + ") = " + status);
+                } catch (java.lang.reflect.InvocationTargetException e) {
+                    Throwable cause = e.getCause() != null ? e.getCause() : e;
+                    log("  getDoorLockStatus(" + area + ") ITE: " + cause.getMessage());
                 } catch (Exception e) {
-                    log("  getDoorLockStatus(" + area + ") error: " + e.getMessage());
+                    log("  getDoorLockStatus(" + area + ") ERR: " + e.getMessage());
                 }
             }
 
-            // Check if there's a SET method we missed (try base class)
-            log("\n[DoorLock Base Class Methods]");
-            Class<?> baseClass = dlClass.getSuperclass();
-            if (baseClass != null) {
-                log("  Superclass: " + baseClass.getName());
-                for (Method m : baseClass.getMethods()) {
-                    String name = m.getName();
-                    if (name.startsWith("set") || name.equals("postEvent")) {
-                        StringBuilder sig = new StringBuilder(name + "(");
-                        for (Class<?> p : m.getParameterTypes()) {
-                            sig.append(p.getSimpleName()).append(",");
-                        }
-                        sig.append(") -> ").append(m.getReturnType().getSimpleName());
-                        log("  " + sig);
+            // Device info
+            log("\n[DoorLock Device Info]");
+            try {
+                Method getDevType = dlClass.getMethod("getDevicetype");
+                log("  getDevicetype() = " + getDevType.invoke(dlDevice));
+            } catch (Exception e) {}
+
+            // Feature list
+            log("\n[DoorLock Feature List]");
+            try {
+                Method getFeatureList = dlClass.getMethod("getFeatureList");
+                int[] features = (int[]) getFeatureList.invoke(dlDevice);
+                log("  featureList = " + (features != null ? Arrays.toString(features) : "null"));
+                log("  count = " + (features != null ? features.length : 0));
+                if (features != null) {
+                    for (int fid : features) {
+                        log("  0x" + Integer.toHexString(fid) + " (" + fid + ")");
                     }
                 }
+            } catch (java.lang.reflect.InvocationTargetException e) {
+                Throwable cause = e.getCause() != null ? e.getCause() : e;
+                log("  getFeatureList ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+            } catch (Exception e) {
+                log("  getFeatureList ERR: " + e.getMessage());
+            }
+
+            // Manager scan with device type 1041
+            log("\n[DoorLock Manager Scan (devType=1041)]");
+            try {
+                Field mgrField = dlClass.getSuperclass().getDeclaredField("mDeviceManager");
+                mgrField.setAccessible(true);
+                Object manager = mgrField.get(dlDevice);
+                if (manager != null) {
+                    Method getInt = manager.getClass().getMethod("getInt", int.class, int.class);
+                    int devType = 1041;
+                    // Fine scan of 0x41A0xxxx range
+                    for (int fid = 0x41A00000; fid <= 0x41A000FF; fid += 1) {
+                        try {
+                            int val = (int) getInt.invoke(manager, devType, fid);
+                            if (val != -10011) {
+                                log("  getInt(1041, 0x" + Integer.toHexString(fid) + ") = " + val);
+                            }
+                        } catch (Exception e) {}
+                    }
+                    // Also scan 0x41200000 range
+                    for (int fid = 0x41200000; fid <= 0x412000FF; fid += 1) {
+                        try {
+                            int val = (int) getInt.invoke(manager, devType, fid);
+                            if (val != -10011) {
+                                log("  getInt(1041, 0x" + Integer.toHexString(fid) + ") = " + val);
+                            }
+                        } catch (Exception e) {}
+                    }
+                }
+            } catch (Exception e) {
+                log("  Manager scan error: " + e.getMessage());
             }
 
         } catch (Exception e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             log("  CAUSE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-            for (StackTraceElement st : cause.getStackTrace()) {
-                log("    at " + st);
-            }
         }
     }
 
@@ -410,6 +465,200 @@ public class ProbeActivity extends Activity {
             log("  " + methodName + "() ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
         } catch (Exception e) {
             log("  " + methodName + "() ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    // ===== AC SET TESTS =====
+    private void testAcStart() {
+        log("\n--- AC START TEST ---");
+        try {
+            Class<?> acClass = Class.forName("android.hardware.bydauto.ac.BYDAutoAcDevice");
+            Method getInstance = acClass.getMethod("getInstance", android.content.Context.class);
+            Object acDevice = getInstance.invoke(null, new BydPermissionContext(this));
+
+            Method getState = acClass.getMethod("getAcStartState");
+            log("  Before: getAcStartState() = " + getState.invoke(acDevice));
+
+            Method start = acClass.getMethod("start", int.class);
+            Object result = start.invoke(acDevice, 0);
+            log("  start(0) returned: " + result);
+
+            Thread.sleep(500);
+            log("  After: getAcStartState() = " + getState.invoke(acDevice));
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+        } catch (Exception e) {
+            log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    private void testAcStop() {
+        log("\n--- AC STOP TEST ---");
+        try {
+            Class<?> acClass = Class.forName("android.hardware.bydauto.ac.BYDAutoAcDevice");
+            Method getInstance = acClass.getMethod("getInstance", android.content.Context.class);
+            Object acDevice = getInstance.invoke(null, new BydPermissionContext(this));
+
+            Method getState = acClass.getMethod("getAcStartState");
+            log("  Before: getAcStartState() = " + getState.invoke(acDevice));
+
+            Method stop = acClass.getMethod("stop", int.class);
+            Object result = stop.invoke(acDevice, 0);
+            log("  stop(0) returned: " + result);
+
+            Thread.sleep(500);
+            log("  After: getAcStartState() = " + getState.invoke(acDevice));
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+        } catch (Exception e) {
+            log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    private void testAcSetTemp(int tempCelsius) {
+        log("\n--- AC SET TEMP " + tempCelsius + "°C ---");
+        try {
+            Class<?> acClass = Class.forName("android.hardware.bydauto.ac.BYDAutoAcDevice");
+            Method getInstance = acClass.getMethod("getInstance", android.content.Context.class);
+            Object acDevice = getInstance.invoke(null, new BydPermissionContext(this));
+
+            Method getTemp = acClass.getMethod("getTemprature", int.class);
+            log("  Before: getTemprature(1) = " + getTemp.invoke(acDevice, 1));
+
+            int halfDegree = tempCelsius * 2;
+            log("  Setting zone=1, temp=" + halfDegree + " (=" + tempCelsius + "°C), source=0");
+            Method setTemp = acClass.getMethod("setAcTemperature", int.class, int.class, int.class, int.class);
+            Object result = setTemp.invoke(acDevice, 1, halfDegree, 0, 0);
+            log("  setAcTemperature(1, " + halfDegree + ", 0, 0) returned: " + result);
+
+            Thread.sleep(500);
+            log("  After: getTemprature(1) = " + getTemp.invoke(acDevice, 1));
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+        } catch (Exception e) {
+            log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    private void testAcSetFan(int level) {
+        log("\n--- AC SET FAN " + level + " ---");
+        try {
+            Class<?> acClass = Class.forName("android.hardware.bydauto.ac.BYDAutoAcDevice");
+            Method getInstance = acClass.getMethod("getInstance", android.content.Context.class);
+            Object acDevice = getInstance.invoke(null, new BydPermissionContext(this));
+
+            Method getWind = acClass.getMethod("getAcWindLevel");
+            log("  Before: getAcWindLevel() = " + getWind.invoke(acDevice));
+
+            Method setWind = acClass.getMethod("setAcWindLevel", int.class, int.class);
+            Object result = setWind.invoke(acDevice, level, 0);
+            log("  setAcWindLevel(" + level + ", 0) returned: " + result);
+
+            Thread.sleep(500);
+            log("  After: getAcWindLevel() = " + getWind.invoke(acDevice));
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+        } catch (Exception e) {
+            log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    // ===== BODYWORK PROBE =====
+    private void probeBodywork() {
+        log("\n--- BODYWORK DEVICE PROBE ---");
+        try {
+            Class<?> bwClass = Class.forName("android.hardware.bydauto.bodywork.BYDAutoBodyworkDevice");
+            Method getInstance = bwClass.getMethod("getInstance", android.content.Context.class);
+            Object bwDevice = getInstance.invoke(null, new BydPermissionContext(this));
+            log("Bodywork Device instance: " + bwDevice);
+
+            log("\n[Bodywork Methods]");
+            Method[] methods = bwClass.getMethods();
+            for (Method m : methods) {
+                String name = m.getName();
+                if (name.startsWith("get") || name.startsWith("set") || name.startsWith("has")) {
+                    StringBuilder sig = new StringBuilder(name + "(");
+                    for (Class<?> p : m.getParameterTypes()) {
+                        sig.append(p.getSimpleName()).append(",");
+                    }
+                    sig.append(") -> ").append(m.getReturnType().getSimpleName());
+                    log("  " + sig);
+                }
+            }
+
+            log("\n[Bodywork Status]");
+            callAndLog(bwDevice, bwClass, "getBatteryCapacity");
+            callAndLog(bwDevice, bwClass, "getAutoVIN");
+            callAndLog(bwDevice, bwClass, "getAutoSystemState");
+            callAndLog(bwDevice, bwClass, "getSunroofState");
+
+            String[] doorAreas = {"DOOR_AREA_LEFT_FRONT", "DOOR_AREA_RIGHT_FRONT", "DOOR_AREA_LEFT_REAR", "DOOR_AREA_RIGHT_REAR", "DOOR_AREA_BACK"};
+            log("\n[Door States]");
+            Method getDoorState = null;
+            try { getDoorState = bwClass.getMethod("getDoorState", int.class); } catch (Exception e) {}
+            if (getDoorState != null) {
+                for (String areaName : doorAreas) {
+                    try {
+                        Field f = bwClass.getField(areaName);
+                        int area = f.getInt(null);
+                        Object result = getDoorState.invoke(bwDevice, area);
+                        log("  getDoorState(" + areaName + "=" + area + ") = " + result);
+                    } catch (Exception e) {
+                        log("  " + areaName + " = NOT_FOUND");
+                    }
+                }
+                for (int i = 0; i <= 10; i++) {
+                    try {
+                        Object result = getDoorState.invoke(bwDevice, i);
+                        log("  getDoorState(" + i + ") = " + result);
+                    } catch (Exception e) {}
+                }
+            }
+
+            String[] windowAreas = {"WINDOW_AREA_LEFT_FRONT", "WINDOW_AREA_RIGHT_FRONT", "WINDOW_AREA_LEFT_REAR", "WINDOW_AREA_RIGHT_REAR"};
+            log("\n[Window States]");
+            Method getWindowState = null;
+            try { getWindowState = bwClass.getMethod("getWindowState", int.class); } catch (Exception e) {}
+            if (getWindowState != null) {
+                for (String areaName : windowAreas) {
+                    try {
+                        Field f = bwClass.getField(areaName);
+                        int area = f.getInt(null);
+                        Object result = getWindowState.invoke(bwDevice, area);
+                        log("  getWindowState(" + areaName + "=" + area + ") = " + result);
+                    } catch (Exception e) {
+                        log("  " + areaName + " = NOT_FOUND");
+                    }
+                }
+            }
+
+            // Check base class for set methods / door lock related
+            log("\n[Bodywork Base Class]");
+            Class<?> baseClass = bwClass.getSuperclass();
+            if (baseClass != null) {
+                log("  Superclass: " + baseClass.getName());
+                for (Method m : baseClass.getMethods()) {
+                    String name = m.getName();
+                    if (name.startsWith("set") || name.equals("postEvent") || name.equals("get") || name.equals("set")) {
+                        StringBuilder sig = new StringBuilder(name + "(");
+                        for (Class<?> p : m.getParameterTypes()) {
+                            sig.append(p.getSimpleName()).append(",");
+                        }
+                        sig.append(") -> ").append(m.getReturnType().getSimpleName());
+                        log("  " + sig);
+                    }
+                }
+            }
+
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            log("ERROR: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+        } catch (Exception e) {
+            log("ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 

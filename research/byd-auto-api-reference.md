@@ -286,15 +286,63 @@ The AC API uses two encoding schemes:
 - `hasFeature("ACRemoteControl") = 1` — remote control supported
 
 ### Door Lock Control: PARTIALLY FEASIBLE
-- `getDoorLockStatus()` returns INVALID for main doors
-- No dedicated `setDoorLockStatus()` method
-- Could potentially use `postEvent()` or generic `set()` with unknown feature IDs
-- Child lock status IS readable (CHILDLOCK_LEFT = 1)
+- Device type: **1041**
+- `getDoorLockStatus()` returns INVALID (0) for main doors (areas 1-5)
+- Child lock status IS readable: `getDoorLockStatus(6)` = 1 (UNLOCK)
+- Feature list (`getFeatureList()`) returns `null` — no registered features
+- No dedicated `setDoorLockStatus()` method, but base class has `set(int,int,int)` and `postEvent(int,int,int,Object)`
+- **CAN bus feature IDs found via manager scan:**
 
-### 360 Camera Access: BLOCKED
-- Panorama device permissions enforced server-side
-- `BydPermissionContext` bypass ineffective
-- Would need system-level access or reverse-engineer the camera's AIDL service directly
+| Feature ID | Value | Notes |
+|---|---|---|
+| `0x41A00000` | 1 | Online/connected |
+| `0x41A00008` | 255 (0xFF) | Possible lock status bitmask |
+| `0x41A00010` | 255 (0xFF) | Possible lock status bitmask |
+| `0x41A00018` | 65535 | N/A on Dolphin |
+| `0x41A00020` | 0 | Unknown |
+| `0x41A0002C` | 5 | Possibly door count |
+| `0x41A00030` | 65535 | N/A on Dolphin |
+
+- To attempt lock/unlock: `set(1041, 0x41A00008, value)` via base class, but correct values unknown. Risk of sending wrong CAN bus commands.
+
+### 360 Camera Access: BLOCKED (for third-party apps)
+- `BYDAutoPanoramaDevice` permissions enforced server-side — `BydPermissionContext` bypass fails
+- Cameras use SEPARATE API: `AVMCamera`/`NormalCamera` from `/system/framework/bmmcamera.jar`
+- `bmmcamera.jar` NOT on boot classpath — third-party apps can't load the classes
+- Native JNI chain: `libbmmcamera_jni.so` → `libbmmcamera_client.so` → `libbmmcameraservice.so`
+- BydCamera app runs as uid=1000 (system), gets PANORAMA_GET/SET granted via signature
+- `BYD_CAMERA` permission declared but doesn't exist in system — dead reference
+
+**Camera IDs** (from `BmmCameraInfo`):
+| Constant | Value | Description |
+|---|---|---|
+| `CAMERA_CAR_FRONT` | "front" | Front camera |
+| `CAMERA_CAR_REAR` | "rear" | Rear/backup camera |
+| `CAMERA_CAR_PANO_H` | "pano_h" | Panorama high-res |
+| `CAMERA_CAR_PANO_L` | "pano_l" | Panorama low-res |
+| `CAMERA_CAR_RF` | "rf" | Right-front camera |
+| `CAMERA_CAR_DMS` | "dms" | Driver monitoring system |
+| `CAMERA_CAR_FACE` | "face" | Face detection camera |
+| `CAMERA_CAR_CARGO` | "cargo" | Cargo area camera |
+| `CAMERA_CAR_PANO_APA` | "apa" | Automatic parking assist |
+| `CAMERA_CAR_RVS` | "rvs" | Reverse camera |
+
+**AVMCamera API** (from `bmmcamera.jar`):
+- `open(int cameraId)` → `AVMCamera` — open camera by ID
+- `addPreviewSurface(Surface, int)` — add preview surface
+- `startPreview()` / `stopPreview()` — control preview
+- `setPreviewCallback(IPreviewCallback)` — frame callback
+- `setMediaCodec(MediaCodec, int)` — hardware encoding
+- `setPreviewSize(int, int)` — configure resolution (default 1280×960)
+- `close()` — release camera
+
+**IBYDAutoPanoService AIDL** (the underlying IPC service):
+- `getValue(int id)` → int
+- `setValue(int id, int val)` → int
+- `getBuffer(int id)` → byte[]
+- `setBuffer(int id, byte[])` → int
+- `registerUser(listener)` → int
+- `unregisterUser(listener)` → int
 
 ### Remote Control (from outside car): COMPLEX
 - Requires MQTT communication through BYD's cloud infrastructure
