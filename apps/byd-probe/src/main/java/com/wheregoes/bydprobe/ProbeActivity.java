@@ -128,6 +128,16 @@ public class ProbeActivity extends Activity {
         Log.d("BYD_PROBE", msg);
         logBuffer.append(msg).append("\n");
         runOnUiThread(() -> logView.setText(logBuffer.toString()));
+        writeToFile(msg);
+    }
+
+    private void writeToFile(String msg) {
+        try {
+            java.io.FileWriter fw = new java.io.FileWriter(
+                getExternalFilesDir(null) + "/probe-log.txt", true);
+            fw.write(msg + "\n");
+            fw.close();
+        } catch (Exception e) {}
     }
 
     // ===== AC PROBE =====
@@ -525,16 +535,18 @@ public class ProbeActivity extends Activity {
             Object acDevice = getInstance.invoke(null, new BydPermissionContext(this));
 
             Method getTemp = acClass.getMethod("getTemprature", int.class);
+            Method getMode = acClass.getMethod("getAcControlMode");
+            Method getState = acClass.getMethod("getAcStartState");
+            log("  AC state: " + getState.invoke(acDevice) + ", mode: " + getMode.invoke(acDevice));
             log("  Before: getTemprature(1) = " + getTemp.invoke(acDevice, 1));
 
-            int halfDegree = tempCelsius * 2;
-            log("  Setting zone=1, temp=" + halfDegree + " (=" + tempCelsius + "°C), source=0");
+            // Correct call: setAcTemperature(zone, tempCelsius, source=1, param4=1)
             Method setTemp = acClass.getMethod("setAcTemperature", int.class, int.class, int.class, int.class);
-            Object result = setTemp.invoke(acDevice, 1, halfDegree, 0, 0);
-            log("  setAcTemperature(1, " + halfDegree + ", 0, 0) returned: " + result);
-
-            Thread.sleep(500);
+            Object result = setTemp.invoke(acDevice, 1, tempCelsius, 1, 1);
+            log("  setAcTemperature(1, " + tempCelsius + ", 1, 1) = " + result);
+            Thread.sleep(1000);
             log("  After: getTemprature(1) = " + getTemp.invoke(acDevice, 1));
+
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
@@ -551,14 +563,18 @@ public class ProbeActivity extends Activity {
             Object acDevice = getInstance.invoke(null, new BydPermissionContext(this));
 
             Method getWind = acClass.getMethod("getAcWindLevel");
-            log("  Before: getAcWindLevel() = " + getWind.invoke(acDevice));
+            Method getMode = acClass.getMethod("getAcControlMode");
+            log("  mode: " + getMode.invoke(acDevice) + ", wind: " + getWind.invoke(acDevice));
 
-            Method setWind = acClass.getMethod("setAcWindLevel", int.class, int.class);
-            Object result = setWind.invoke(acDevice, level, 0);
-            log("  setAcWindLevel(" + level + ", 0) returned: " + result);
-
+            // Use base class set(deviceType=1000, featureId=0x1DE00030, value)
+            // Named setAcWindLevel() is broken — returns INVALID_VALUE for all source values
+            Method baseSet = acClass.getSuperclass().getDeclaredMethod("set", int.class, int.class, int.class);
+            baseSet.setAccessible(true);
+            int r = (int) baseSet.invoke(acDevice, 1000, 0x1DE00030, level);
+            log("  set(1000, 0x1DE00030, " + level + ") = " + r);
             Thread.sleep(500);
-            log("  After: getAcWindLevel() = " + getWind.invoke(acDevice));
+            log("  After: wind=" + getWind.invoke(acDevice) + ", mode=" + getMode.invoke(acDevice));
+
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());

@@ -278,11 +278,13 @@ The AC API uses two encoding schemes:
 
 ## Feasibility Assessment
 
-### AC Control from Head Unit App: FEASIBLE
-- All SET methods accessible via `BydPermissionContext`
-- `start(0)` / `stop(0)` for on/off
-- `setAcTemperature(1, temp, 0, 0)` for temperature
-- `setAcWindLevel(level, 0)` for fan speed
+### AC Control from Head Unit App: CONFIRMED WORKING
+- `start(0)` / `stop(0)` — **TESTED, WORKS** on car
+- `setAcTemperature(1, tempCelsius, 1, 1)` — **TESTED, WORKS** (direct Celsius, source=1, param4=1)
+- Fan: `set(1000, 0x1DE00030, level)` via base class — **TESTED, WORKS** (named `setAcWindLevel` is broken)
+- `setAcWindMode(mode, 1)` — **TESTED, WORKS** (source=1)
+- `setAcCycleMode(mode, 0|1)` — **TESTED, WORKS**
+- `setAcControlMode(mode, 1)` — **TESTED, WORKS** (0=auto, 1=manual)
 - `hasFeature("ACRemoteControl") = 1` — remote control supported
 
 ### Door Lock Control: PARTIALLY FEASIBLE
