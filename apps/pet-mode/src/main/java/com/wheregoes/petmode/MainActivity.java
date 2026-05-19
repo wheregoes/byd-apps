@@ -162,7 +162,7 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
 
         SharedPreferences prefs = getSharedPreferences(PetModeService.PREF_NAME, MODE_PRIVATE);
         String petName = prefs.getString(PetModeService.KEY_PET_NAME, "");
-        if (petName.isEmpty()) petName = getString(R.string.default_pet_name);
+        boolean hasPetName = !petName.isEmpty();
         boolean useFahrenheit = PetModeService.UNIT_FAHRENHEIT.equals(
                 prefs.getString(PetModeService.KEY_TEMP_UNIT, getDefaultUnit()));
 
@@ -179,7 +179,11 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
             tempUnit.setText(useFahrenheit ? "°F" : "°C");
         }
 
-        messageText.setText(getString(R.string.msg_safe, petName));
+        if (hasPetName) {
+            messageText.setText(getString(R.string.msg_safe, petName));
+        } else {
+            messageText.setText(R.string.msg_driver_back);
+        }
 
         if (service.isClimateAvailable() && service.isAcOn()) {
             subMessageText.setText(R.string.msg_ac_on);
@@ -193,12 +197,15 @@ public class MainActivity extends Activity implements PetModeService.StateCallba
                 getString(R.string.status_ac_off));
         statusAc.setTextColor(service.isAcOn() ? 0xFF27AE60 : 0xFF636E7B);
 
-        if (service.isDoorsLocked()) {
+        if (service.isAnyDoorOpen()) {
+            statusDoors.setText(R.string.status_doors_open);
+            statusDoors.setTextColor(0xFFE74C3C);
+        } else if (service.isLocked()) {
             statusDoors.setText(R.string.status_doors_locked);
             statusDoors.setTextColor(0xFF27AE60);
         } else {
-            statusDoors.setText(R.string.status_doors_open);
-            statusDoors.setTextColor(0xFFE74C3C);
+            statusDoors.setText(R.string.status_doors_unlocked);
+            statusDoors.setTextColor(0xFFF39C12);
         }
 
         long millis = service.getActiveMillis();

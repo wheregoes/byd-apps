@@ -4,6 +4,7 @@
 
     <string name="default_pet_name">Tu mascota</string>
     <string name="msg_safe">¡No te preocupes! %s está a salvo</string>
+    <string name="msg_driver_back">Mi conductor volverá pronto</string>
     <string name="msg_ac_on">El aire acondicionado está encendido y confortable</string>
     <string name="msg_ac_off">El aire acondicionado está apagado</string>
     <string name="msg_monitoring">Cuidando a tu mascota</string>
@@ -11,6 +12,7 @@
     <string name="status_ac_on">AC Encendido</string>
     <string name="status_ac_off">AC Apagado</string>
     <string name="status_doors_locked">Puertas Cerradas</string>
+    <string name="status_doors_unlocked">Puertas Abiertas</string>
     <string name="status_doors_open">¡Puerta Abierta!</string>
     <string name="status_active">Activo: %s</string>
 

@@ -10,6 +10,7 @@ public class VehicleStateMonitor {
 
     interface Listener {
         void onDoorStateChanged(int area, boolean open);
+        void onLockStateChanged(boolean locked);
         void onPowerLevelChanged(int level);
         void onBatteryChanged(int level);
     }
@@ -19,6 +20,7 @@ public class VehicleStateMonitor {
     private Listener callback;
 
     final boolean[] doorOpen = new boolean[7];
+    boolean locked = false;
     int powerLevel = -1;
     int batteryLevel = -1;
 
@@ -47,6 +49,8 @@ public class VehicleStateMonitor {
     }
 
     boolean allDoorsClosed() { return !isAnyDoorOpen(); }
+
+    boolean isLocked() { return locked; }
 
     int getPowerLevel() { return powerLevel; }
 

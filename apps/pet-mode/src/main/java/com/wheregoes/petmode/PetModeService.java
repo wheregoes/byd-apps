@@ -41,7 +41,8 @@ public class PetModeService extends Service implements
     private int currentTemp = Integer.MIN_VALUE;
     private boolean acOn = false;
     private boolean climateAvailable = false;
-    private boolean doorsLocked = true;
+    private boolean locked = false;
+    private boolean anyDoorOpen = false;
     private int powerLevel = -1;
     private int batteryLevel = -1;
 
@@ -100,7 +101,8 @@ public class PetModeService extends Service implements
     int getCurrentTemp() { return currentTemp; }
     boolean isAcOn() { return acOn; }
     boolean isClimateAvailable() { return climateAvailable; }
-    boolean isDoorsLocked() { return doorsLocked; }
+    boolean isLocked() { return locked; }
+    boolean isAnyDoorOpen() { return anyDoorOpen; }
     int getPowerLevel() { return powerLevel; }
     int getBatteryLevel() { return batteryLevel; }
     long getActiveMillis() { return System.currentTimeMillis() - startTime; }
@@ -127,7 +129,13 @@ public class PetModeService extends Service implements
 
     @Override
     public void onDoorStateChanged(int area, boolean open) {
-        doorsLocked = vehicleMonitor.allDoorsClosed();
+        anyDoorOpen = vehicleMonitor.isAnyDoorOpen();
+        notifyStateChanged();
+    }
+
+    @Override
+    public void onLockStateChanged(boolean isLocked) {
+        locked = isLocked;
         notifyStateChanged();
     }
 

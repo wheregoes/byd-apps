@@ -4,6 +4,7 @@
 
     <string name="default_pet_name">Your pet</string>
     <string name="msg_safe">Don\'t worry! %s is safe</string>
+    <string name="msg_driver_back">My driver will be back soon</string>
     <string name="msg_ac_on">The AC is on and comfortable</string>
     <string name="msg_ac_off">AC is currently off</string>
     <string name="msg_monitoring">Monitoring your pet</string>
@@ -11,6 +12,7 @@
     <string name="status_ac_on">AC On</string>
     <string name="status_ac_off">AC Off</string>
     <string name="status_doors_locked">Doors Locked</string>
+    <string name="status_doors_unlocked">Doors Unlocked</string>
     <string name="status_doors_open">Door Open!</string>
     <string name="status_active">Active: %s</string>
 

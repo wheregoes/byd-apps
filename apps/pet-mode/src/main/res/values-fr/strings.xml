@@ -4,6 +4,7 @@
 
     <string name="default_pet_name">Votre animal</string>
     <string name="msg_safe">Ne vous inquiétez pas ! %s est en sécurité</string>
+    <string name="msg_driver_back">Mon conducteur revient bientôt</string>
     <string name="msg_ac_on">La climatisation est allumée et confortable</string>
     <string name="msg_ac_off">La climatisation est éteinte</string>
     <string name="msg_monitoring">Surveillance de votre animal</string>
@@ -11,6 +12,7 @@
     <string name="status_ac_on">Clim Activée</string>
     <string name="status_ac_off">Clim Éteinte</string>
     <string name="status_doors_locked">Portes Verrouillées</string>
+    <string name="status_doors_unlocked">Portes Déverrouillées</string>
     <string name="status_doors_open">Porte Ouverte !</string>
     <string name="status_active">Actif : %s</string>
 

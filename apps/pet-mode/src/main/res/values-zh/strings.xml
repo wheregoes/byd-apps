@@ -4,6 +4,7 @@
 
     <string name="default_pet_name">您的宠物</string>
     <string name="msg_safe">别担心！%s 很安全</string>
+    <string name="msg_driver_back">我的主人马上回来</string>
     <string name="msg_ac_on">空调已开启，温度舒适</string>
     <string name="msg_ac_off">空调已关闭</string>
     <string name="msg_monitoring">正在看护您的宠物</string>
@@ -11,6 +12,7 @@
     <string name="status_ac_on">空调开启</string>
     <string name="status_ac_off">空调关闭</string>
     <string name="status_doors_locked">车门已锁</string>
+    <string name="status_doors_unlocked">车门未锁</string>
     <string name="status_doors_open">车门未关！</string>
     <string name="status_active">已运行：%s</string>
 

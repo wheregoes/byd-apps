@@ -22,6 +22,15 @@ public class BodyworkHandler extends AbsBYDAutoBodyworkListener {
     }
 
     @Override
+    public void onAutoSystemStateChanged(int state) {
+        boolean locked = (state == 1);
+        monitor.locked = locked;
+        Log.i(TAG, "Car " + (locked ? "LOCKED" : "UNLOCKED"));
+        VehicleStateMonitor.Listener cb = monitor.getCallback();
+        if (cb != null) cb.onLockStateChanged(locked);
+    }
+
+    @Override
     public void onPowerLevelChanged(int level) {
         monitor.powerLevel = level;
         Log.i(TAG, "Power level: " + level);
