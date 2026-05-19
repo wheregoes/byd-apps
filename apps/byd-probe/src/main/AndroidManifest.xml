@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.wheregoes.bydprobe"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-permission android:name="android.permission.BYDAUTO_AC_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_AC_SET" />
+    <uses-permission android:name="android.permission.BYDAUTO_AC_COMMON" />
+    <uses-permission android:name="android.permission.BYDAUTO_BODYWORK_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_BODYWORK_COMMON" />
+    <uses-permission android:name="android.permission.BYDAUTO_DOOR_LOCK_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_DOOR_LOCK_SET" />
+    <uses-permission android:name="android.permission.BYDAUTO_DOOR_LOCK_COMMON" />
+    <uses-permission android:name="android.permission.BYDAUTO_PANORAMA_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_PANORAMA_SET" />
+    <uses-permission android:name="android.permission.BYDAUTO_PANORAMA_COMMON" />
+    <uses-permission android:name="android.permission.BYDAUTO_SECURITY_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_SECURITY_COMMON" />
+    <uses-permission android:name="android.permission.BYDAUTO_POWER_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_ENERGY_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_MQTT_GET" />
+    <uses-permission android:name="android.permission.BYDAUTO_MQTT_SET" />
+    <uses-permission android:name="android.permission.BYDAUTO_MQTT_COMMON" />
+
+    <application
+        android:label="BYD Probe"
+        android:theme="@android:style/Theme.DeviceDefault">
+        <activity
+            android:name=".ProbeActivity"
+            android:exported="true"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
