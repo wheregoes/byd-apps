@@ -281,7 +281,7 @@ The AC API uses two encoding schemes:
 ### AC Control from Head Unit App: CONFIRMED WORKING
 - `start(0)` / `stop(0)` — **TESTED, WORKS** on car
 - `setAcTemperature(1, tempCelsius, 1, 1)` — **TESTED, WORKS** (direct Celsius, source=1, param4=1)
-- Fan: `set(1000, 0x1DE00030, level)` via base class — **TESTED, WORKS** (named `setAcWindLevel` is broken)
+- Fan: `set(1000, 0x1DE0000C, level)` via base class — **TESTED, WORKS** (named `setAcWindLevel` is broken)
 - `setAcWindMode(mode, 1)` — **TESTED, WORKS** (source=1)
 - `setAcCycleMode(mode, 0|1)` — **TESTED, WORKS**
 - `setAcControlMode(mode, 1)` — **TESTED, WORKS** (0=auto, 1=manual)

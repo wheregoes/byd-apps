@@ -566,12 +566,11 @@ public class ProbeActivity extends Activity {
             Method getMode = acClass.getMethod("getAcControlMode");
             log("  mode: " + getMode.invoke(acDevice) + ", wind: " + getWind.invoke(acDevice));
 
-            // Use base class set(deviceType=1000, featureId=0x1DE00030, value)
-            // Named setAcWindLevel() is broken — returns INVALID_VALUE for all source values
+            // Fan level: set(deviceType=1000, featureId=0x1DE0000C, value)
             Method baseSet = acClass.getSuperclass().getDeclaredMethod("set", int.class, int.class, int.class);
             baseSet.setAccessible(true);
-            int r = (int) baseSet.invoke(acDevice, 1000, 0x1DE00030, level);
-            log("  set(1000, 0x1DE00030, " + level + ") = " + r);
+            int r = (int) baseSet.invoke(acDevice, 1000, 0x1DE0000C, level);
+            log("  set(1000, 0x1DE0000C, " + level + ") = " + r);
             Thread.sleep(500);
             log("  After: wind=" + getWind.invoke(acDevice) + ", mode=" + getMode.invoke(acDevice));
 
