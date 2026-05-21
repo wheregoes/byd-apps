@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">宠物模式</string>
+    <string name="app_name">Cabin</string>
 
     <string name="default_pet_name">您的宠物</string>
     <string name="msg_safe">别担心！%s 很安全</string>
@@ -24,11 +24,11 @@
     <string name="alert_door_open">警告：车门未关</string>
     <string name="exit_im_back">我回来了 ←</string>
 
-    <string name="exit_confirm_title">退出宠物模式</string>
-    <string name="exit_confirm">您的宠物还在车内。确定要退出宠物模式吗？</string>
+    <string name="exit_confirm_title">退出 Cabin</string>
+    <string name="exit_confirm">您的宠物还在车内。确定要退出 Cabin 吗？</string>
     <string name="sheet_stay">留下</string>
 
-    <string name="notification_title">宠物模式运行中</string>
+    <string name="notification_title">Cabin 运行中</string>
     <string name="notification_text">正在监控车内温度</string>
 
     <string name="settings_title">设置</string>
@@ -38,7 +38,7 @@
     <string name="settings_dark_mode">深色模式</string>
     <string name="settings_dark_mode_desc">低调屏幕 — 从车外不太显眼</string>
     <string name="settings_temp_unit_desc">在摄氏度和华氏度之间切换</string>
-    <string name="settings_version">Pet Mode v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Cabin v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">爪印</string>
     <string name="avatar_dog">狗</string>
