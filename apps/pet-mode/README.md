@@ -1,4 +1,4 @@
-# Pet Mode for BYD
+# Cabin for BYD
 
 Keep your pets safe in the car. Inspired by Tesla's Pet Mode — designed for BYD vehicles.
 
@@ -40,13 +40,13 @@ After installing, you **must** whitelist the app to prevent the infotainment sys
 
 1. Go to **Settings** on the head unit
 2. Open **Apps** > **Auto-start Management**
-3. Find **Pet Mode** (or **Modo Pet**) and **enable** auto-start
+3. Find **Cabin** and **enable** auto-start
 
 Without this step, the infotainment system will close the app after a few minutes.
 
 ## Usage
 
-1. Open Pet Mode from the app drawer
+1. Open Cabin from the app drawer
 2. The app immediately enters full-screen mode with maximum brightness
 3. Tap the gear icon (top-left) to configure:
    - Pet name

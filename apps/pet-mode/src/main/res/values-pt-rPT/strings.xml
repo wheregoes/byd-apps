@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Modo Pet</string>
+    <string name="app_name">Cabin</string>
 
     <string name="default_pet_name">O seu animal</string>
     <string name="msg_safe">Não se preocupe! %s está em segurança</string>
@@ -24,11 +24,11 @@
     <string name="alert_door_open">ALERTA: PORTA ABERTA</string>
     <string name="exit_im_back">Voltei ←</string>
 
-    <string name="exit_confirm_title">Sair do Modo Pet</string>
-    <string name="exit_confirm">O seu animal ainda está no carro. Tem a certeza que deseja sair do Modo Pet?</string>
+    <string name="exit_confirm_title">Sair do Cabin</string>
+    <string name="exit_confirm">O seu animal ainda está no carro. Tem a certeza que deseja sair do Cabin?</string>
     <string name="sheet_stay">Ficar</string>
 
-    <string name="notification_title">Modo Pet Ativo</string>
+    <string name="notification_title">Cabin Ativo</string>
     <string name="notification_text">A monitorizar a temperatura da cabine</string>
 
     <string name="settings_title">Definições</string>
@@ -38,7 +38,7 @@
     <string name="settings_dark_mode">Modo Escuro</string>
     <string name="settings_dark_mode_desc">Ecrã discreto — menos visível do exterior</string>
     <string name="settings_temp_unit_desc">Alternar entre Celsius e Fahrenheit</string>
-    <string name="settings_version">Pet Mode v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Cabin v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">Pata</string>
     <string name="avatar_dog">Cão</string>

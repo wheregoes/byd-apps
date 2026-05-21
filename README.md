@@ -16,7 +16,7 @@ Built on reverse-engineered BYD APIs — these apps interact directly with the v
 | App | Description | Status |
 |-----|-------------|--------|
 | [Door Sound](apps/door-sound/) | Custom sounds on door open/close/lock/unlock events | Ready |
-| [Pet Mode](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen | Ready |
+| [Cabin](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen | Ready |
 | [BYD Probe](apps/byd-probe/) | Diagnostic tool — enumerates all BYD Auto API methods via reflection | Dev tool |
 
 ## Compatibility
