@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing (8pt grid) -->
+    <dimen name="space_1">4dp</dimen>
+    <dimen name="space_2">8dp</dimen>
+    <dimen name="space_3">12dp</dimen>
+    <dimen name="space_4">16dp</dimen>
+    <dimen name="space_5">24dp</dimen>
+    <dimen name="space_6">32dp</dimen>
+    <dimen name="space_7">48dp</dimen>
+    <dimen name="space_8">64dp</dimen>
+    <dimen name="space_9">96dp</dimen>
+
+    <!-- Radii -->
+    <dimen name="radius_xs">8dp</dimen>
+    <dimen name="radius_sm">12dp</dimen>
+    <dimen name="radius_md">20dp</dimen>
+    <dimen name="radius_lg">28dp</dimen>
+    <dimen name="radius_xl">40dp</dimen>
+    <dimen name="radius_pill">999dp</dimen>
+
+    <!-- Type scale (1920x720 @ 240dpi) -->
+    <dimen name="text_display_xl">220sp</dimen>
+    <dimen name="text_display_l">120sp</dimen>
+    <dimen name="text_display_m">72sp</dimen>
+    <dimen name="text_display_s">56sp</dimen>
+
+    <dimen name="text_h1">48sp</dimen>
+    <dimen name="text_h2">40sp</dimen>
+    <dimen name="text_h3">32sp</dimen>
+    <dimen name="text_h4">24sp</dimen>
+
+    <dimen name="text_body_l">24sp</dimen>
+    <dimen name="text_body">18sp</dimen>
+    <dimen name="text_body_s">16sp</dimen>
+    <dimen name="text_caption">14sp</dimen>
+    <dimen name="text_micro">12sp</dimen>
+
+    <!-- Discharge number -->
+    <dimen name="text_discharge">180sp</dimen>
+    <dimen name="text_discharge_unit">48sp</dimen>
+    <dimen name="text_discharge_label">24sp</dimen>
+
+    <!-- Battery percentage -->
+    <dimen name="text_battery_pct">72sp</dimen>
+    <dimen name="text_remaining">28sp</dimen>
+
+    <!-- Clock -->
+    <dimen name="text_clock">48sp</dimen>
+
+    <!-- Status bar text -->
+    <dimen name="text_status">20sp</dimen>
+
+    <!-- Safety alert text -->
+    <dimen name="text_safety_alert">28sp</dimen>
+
+    <!-- Icon sizes -->
+    <dimen name="icon_chrome">26dp</dimen>
+    <dimen name="icon_status">20dp</dimen>
+    <dimen name="icon_alert">26dp</dimen>
+    <dimen name="icon_control">22dp</dimen>
+
+    <!-- Chrome button -->
+    <dimen name="chrome_btn_size">56dp</dimen>
+
+    <!-- Control button -->
+    <dimen name="control_btn_height">52dp</dimen>
+    <dimen name="control_btn_padding_h">20dp</dimen>
+
+    <!-- Status bar -->
+    <dimen name="status_bar_padding">6dp</dimen>
+    <dimen name="status_bar_item_padding_h">18dp</dimen>
+    <dimen name="status_bar_item_padding_v">12dp</dimen>
+    <dimen name="status_bar_item_gap">10dp</dimen>
+
+    <!-- Glass panel stroke width -->
+    <dimen name="glass_stroke_width">1dp</dimen>
+
+    <!-- Content padding -->
+    <dimen name="content_padding_h">40dp</dimen>
+    <dimen name="content_padding_v">24dp</dimen>
+
+    <!-- Settings row padding -->
+    <dimen name="setting_row_padding_h">28dp</dimen>
+    <dimen name="setting_row_padding_v">22dp</dimen>
+
+    <!-- Pill padding -->
+    <dimen name="pill_padding_h">20dp</dimen>
+    <dimen name="pill_padding_v">12dp</dimen>
+
+    <!-- Exit button -->
+    <dimen name="exit_btn_padding_h">22dp</dimen>
+    <dimen name="exit_btn_padding_v">14dp</dimen>
+
+    <!-- Battery bar -->
+    <dimen name="battery_bar_height">16dp</dimen>
+
+    <!-- Segmented control -->
+    <dimen name="segmented_padding">4dp</dimen>
+    <dimen name="segmented_btn_padding_h">22dp</dimen>
+    <dimen name="segmented_btn_padding_v">12dp</dimen>
+
+    <!-- Switch -->
+    <dimen name="switch_width">64dp</dimen>
+    <dimen name="switch_height">36dp</dimen>
+    <dimen name="switch_thumb_size">32dp</dimen>
+    <dimen name="switch_thumb_margin">2dp</dimen>
+
+    <!-- Input field -->
+    <dimen name="input_padding_h">20dp</dimen>
+    <dimen name="input_padding_v">16dp</dimen>
+
+    <!-- Alert padding -->
+    <dimen name="alert_padding_h">32dp</dimen>
+    <dimen name="alert_padding_v">18dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_1">4dp</dimen>
+    <dimen name="elevation_2">8dp</dimen>
+    <dimen name="elevation_3">16dp</dimen>
+</resources>
