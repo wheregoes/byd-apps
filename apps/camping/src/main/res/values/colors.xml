@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Mint Palette -->
+    <color name="mint_50">#E6FBF4</color>
+    <color name="mint_100">#C0F3DF</color>
+    <color name="mint_200">#8AE9C5</color>
+    <color name="mint_300">#4ADCA6</color>
+    <color name="mint_400">#14CC8A</color>
+    <color name="mint_500">#00B894</color>
+    <color name="mint_600">#009B7D</color>
+    <color name="mint_700">#007860</color>
+    <color name="mint_800">#005A48</color>
+    <color name="mint_900">#003B2F</color>
+
+    <color name="brand_teal">#006F6B</color>
+    <color name="brand_midnight">#051E26</color>
+
+    <!-- Slate Neutrals -->
+    <color name="slate_50">#F5F7FA</color>
+    <color name="slate_100">#E6EAF0</color>
+    <color name="slate_200">#C9D1DC</color>
+    <color name="slate_300">#9BA6B5</color>
+    <color name="slate_400">#636E7B</color>
+    <color name="slate_500">#404953</color>
+    <color name="slate_700">#232830</color>
+    <color name="slate_900">#1A1A2E</color>
+
+    <!-- Semantic -->
+    <color name="success">#14CC8A</color>
+    <color name="warning">#FFB020</color>
+    <color name="danger">#E74C3C</color>
+    <color name="info">#4AB8FF</color>
+
+    <!-- Glass fills (light theme) -->
+    <color name="glass_fill_1">#8CFFFFFF</color>
+    <color name="glass_fill_2">#52FFFFFF</color>
+    <color name="glass_fill_3">#2EFFFFFF</color>
+    <color name="glass_stroke">#A6FFFFFF</color>
+    <color name="glass_stroke_2">#59FFFFFF</color>
+
+    <!-- Glass fills (dark theme) -->
+    <color name="glass_dark_fill_1">#1AFFFFFF</color>
+    <color name="glass_dark_fill_2">#0FFFFFFF</color>
+    <color name="glass_dark_fill_3">#0AFFFFFF</color>
+    <color name="glass_dark_stroke">#2EFFFFFF</color>
+    <color name="glass_dark_stroke_2">#1AFFFFFF</color>
+
+    <!-- Aurora light gradient colors -->
+    <color name="aurora_light_base_start">#FBFEFD</color>
+    <color name="aurora_light_base_end">#EFFAF5</color>
+    <color name="aurora_light_orb_1">#E8FBF3</color>
+    <color name="aurora_light_orb_2">#D6F5EA</color>
+    <color name="aurora_light_orb_3">#B5EBD9</color>
+
+    <!-- Aurora dark gradient colors -->
+    <color name="aurora_dark_base_start">#021A1F</color>
+    <color name="aurora_dark_base_end">#04323A</color>
+    <color name="aurora_dark_orb_1">#00614E</color>
+    <color name="aurora_dark_orb_2">#014E5B</color>
+    <color name="aurora_dark_orb_3">#019A78</color>
+
+    <!-- Foreground (light theme) -->
+    <color name="fg_primary">#1A1A2E</color>
+    <color name="fg_secondary">#636E7B</color>
+    <color name="fg_tertiary">#731A1A2E</color>
+    <color name="fg_on_brand">#FFFFFFFF</color>
+
+    <!-- Foreground (dark theme) -->
+    <color name="fg_dark_primary">#FFFFFFFF</color>
+    <color name="fg_dark_secondary">#B8FFFFFF</color>
+    <color name="fg_dark_tertiary">#73FFFFFF</color>
+
+    <!-- Status bar item active background -->
+    <color name="status_item_active_light">#B3FFFFFF</color>
+    <color name="status_item_active_dark">#1FFFFFFF</color>
+
+    <!-- Safety alert -->
+    <color name="safety_alert_bg">#EBE74C3C</color>
+
+    <!-- Discharge accent (amber/electric) -->
+    <color name="discharge_accent">#FFB020</color>
+    <color name="discharge_glow">#33FFB020</color>
+
+    <!-- Scrim overlay -->
+    <color name="scrim">#5902141A</color>
+</resources>

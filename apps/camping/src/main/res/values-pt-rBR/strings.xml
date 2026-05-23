@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Camping</string>
+
+    <string name="discharge_label">Descarga V2L</string>
+    <string name="discharge_unit">W</string>
+    <string name="discharge_waiting">Medindo…</string>
+    <string name="battery_remaining">Restante: ~%1$dh %2$dmin</string>
+    <string name="battery_remaining_calculating">Calculando…</string>
+    <string name="battery_alarm_at">Alarme em %d%%</string>
+    <string name="outside_temp_pill">%1$d%2$s fora</string>
+    <string name="outside_temp_pill_unknown">-- fora</string>
+
+    <string name="status_ac_on">AC Ligado</string>
+    <string name="status_ac_off">AC Desligado</string>
+    <string name="status_car_off">Carro Desligado</string>
+    <string name="status_battery">%d%%</string>
+    <string name="status_doors_closed">Trancado</string>
+    <string name="status_doors_open">Porta Aberta!</string>
+    <string name="status_active">%s</string>
+    <string name="status_energy">%1$.1f kWh</string>
+    <string name="status_energy_cost">%1$.1f kWh · %2$s</string>
+
+    <string name="ctrl_ac_on">AC</string>
+    <string name="ctrl_ac_off">AC</string>
+    <string name="ctrl_temp_down">−</string>
+    <string name="ctrl_temp_up">+</string>
+    <string name="ctrl_windows">Janelas</string>
+    <string name="ctrl_alarm_arm">Alarme</string>
+    <string name="ctrl_alarm_armed">Alarme ON</string>
+    <string name="ctrl_wake">Despertar</string>
+    <string name="ctrl_wake_set">Despertar %02d:%02d</string>
+
+    <string name="alert_door_open">PORTA ABERTA</string>
+    <string name="alert_low_battery">BATERIA BAIXA: %d%%</string>
+    <string name="alert_wake_alarm">HORA DE ACORDAR</string>
+    <string name="alert_dismiss">Dispensar</string>
+    <string name="alert_snooze">Soneca</string>
+
+    <string name="exit_stop">Parar</string>
+    <string name="exit_confirm_title">Parar Camping</string>
+    <string name="exit_confirm">Encerrar sessão? Estatísticas serão salvas.</string>
+    <string name="sheet_stay">Ficar</string>
+    <string name="sheet_stop">Parar Camping</string>
+
+    <string name="summary_title">Resumo da Sessão</string>
+    <string name="summary_duration">Duração: %s</string>
+    <string name="summary_battery">Bateria: %.0f%% → %.0f%%</string>
+    <string name="summary_energy">Energia usada: %.1f kWh</string>
+    <string name="summary_discharge">Descarga média: %.0f W</string>
+    <string name="summary_temp">Temp: %.0f°C – %.0f°C</string>
+    <string name="summary_ok">OK</string>
+
+    <string name="notification_title">Camping Ativo</string>
+    <string name="notification_text">Monitorando descarga V2L e estado do veículo</string>
+
+    <string name="settings_title">Configurações</string>
+    <string name="settings_battery_threshold">Alarme de Bateria Baixa</string>
+    <string name="settings_battery_threshold_desc">Alertar quando bateria cair abaixo deste nível</string>
+    <string name="settings_temp_unit">Unidade de Temperatura</string>
+    <string name="settings_temp_unit_desc">Alternar entre Celsius e Fahrenheit</string>
+    <string name="settings_dark_mode">Modo Escuro</string>
+    <string name="settings_dark_mode_desc">Tela mais escura para dormir</string>
+    <string name="settings_energy_cost">Custo de Energia</string>
+    <string name="settings_energy_cost_desc">Preço por kWh para cálculo de custo</string>
+    <string name="settings_energy_cost_unit">R$/kWh</string>
+    <string name="settings_brightness">Brilho da Tela</string>
+    <string name="settings_brightness_desc">Ajustar para conforto ao dormir</string>
+    <string name="settings_version">Camping v1.0.0 · BYD Dolphin · DiLink 3.0</string>
+
+    <string name="window_title">Janelas</string>
+    <string name="window_open_all">Abrir Todas</string>
+    <string name="window_close_all">Fechar Todas</string>
+    <string name="window_cancel">Cancelar</string>
+
+    <string name="wake_title">Alarme</string>
+    <string name="wake_set">Definir</string>
+    <string name="wake_clear">Limpar</string>
+    <string name="wake_cancel">Cancelar</string>
+</resources>
