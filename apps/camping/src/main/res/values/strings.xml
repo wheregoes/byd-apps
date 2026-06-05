@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Camping</string>
+
+    <!-- Dashboard -->
+    <string name="discharge_label">V2L Discharge</string>
+    <string name="discharge_unit">W</string>
+    <string name="discharge_waiting">Measuring…</string>
+    <string name="battery_remaining">Remaining: ~%1$dh %2$dmin</string>
+    <string name="battery_remaining_calculating">Calculating…</string>
+    <string name="battery_alarm_at">Alarm at %d%%</string>
+    <string name="outside_temp_pill">%1$d%2$s outside</string>
+    <string name="outside_temp_pill_unknown">-- outside</string>
+
+    <!-- Status bar -->
+    <string name="status_ac_on">AC On</string>
+    <string name="status_ac_off">AC Off</string>
+    <string name="status_car_off">Car Off</string>
+    <string name="status_battery">%d%%</string>
+    <string name="status_doors_closed">Locked</string>
+    <string name="status_doors_open">Door Open!</string>
+    <string name="status_active">%s</string>
+    <string name="status_energy">%1$.1f kWh</string>
+    <string name="status_energy_cost">%1$.1f kWh · %2$s</string>
+
+    <!-- Controls -->
+    <string name="ctrl_ac_on">AC</string>
+    <string name="ctrl_ac_off">AC</string>
+    <string name="ctrl_temp_down">−</string>
+    <string name="ctrl_temp_up">+</string>
+    <string name="ctrl_windows">Windows</string>
+    <string name="ctrl_alarm_arm">Alarm</string>
+    <string name="ctrl_alarm_armed">Alarm ON</string>
+    <string name="ctrl_wake">Wake</string>
+    <string name="ctrl_wake_set">Wake %02d:%02d</string>
+
+    <!-- Alerts -->
+    <string name="alert_door_open">DOOR OPENED</string>
+    <string name="alert_low_battery">LOW BATTERY: %d%%</string>
+    <string name="alert_wake_alarm">WAKE UP</string>
+    <string name="alert_dismiss">Dismiss</string>
+    <string name="alert_snooze">Snooze</string>
+
+    <!-- Exit -->
+    <string name="exit_stop">Stop</string>
+    <string name="exit_confirm_title">Stop Camping</string>
+    <string name="exit_confirm">End camping session? Session stats will be saved.</string>
+    <string name="sheet_stay">Stay</string>
+    <string name="sheet_stop">Stop Camping</string>
+
+    <!-- Session summary -->
+    <string name="summary_title">Session Summary</string>
+    <string name="summary_duration">Duration: %s</string>
+    <string name="summary_battery">Battery: %.0f%% → %.0f%%</string>
+    <string name="summary_energy">Energy used: %.1f kWh</string>
+    <string name="summary_discharge">Avg discharge: %.0f W</string>
+    <string name="summary_temp">Temp range: %.0f°C – %.0f°C</string>
+    <string name="summary_ok">OK</string>
+
+    <!-- Notification -->
+    <string name="notification_title">Camping Active</string>
+    <string name="notification_text">Monitoring V2L discharge and vehicle state</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_battery_threshold">Low Battery Alarm</string>
+    <string name="settings_battery_threshold_desc">Alert when battery drops below this level</string>
+    <string name="settings_temp_unit">Temperature Unit</string>
+    <string name="settings_temp_unit_desc">Switch between Celsius and Fahrenheit</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_dark_mode_desc">Dimmer screen for nighttime</string>
+    <string name="settings_energy_cost">Energy Cost</string>
+    <string name="settings_energy_cost_desc">Price per kWh for cost tracking</string>
+    <string name="settings_energy_cost_unit">R$/kWh</string>
+    <string name="settings_brightness">Screen Brightness</string>
+    <string name="settings_brightness_desc">Adjust for comfort while sleeping</string>
+    <string name="settings_version">Camping v1.0.0 · BYD Dolphin · DiLink 3.0</string>
+
+    <!-- Window control -->
+    <string name="window_title">Windows</string>
+    <string name="window_open_all">Open All</string>
+    <string name="window_close_all">Close All</string>
+    <string name="window_cancel">Cancel</string>
+
+    <!-- Wake alarm -->
+    <string name="wake_title">Wake Alarm</string>
+    <string name="wake_set">Set</string>
+    <string name="wake_clear">Clear</string>
+    <string name="wake_cancel">Cancel</string>
+</resources>

@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Aurora backdrop -->
+    <View
+        android:id="@+id/aurora_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/aurora_dark" />
+
+    <!-- Animated aurora orbs -->
+    <View
+        android:id="@+id/aurora_orb1"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:layout_marginStart="-100dp"
+        android:layout_marginTop="-200dp"
+        android:background="@drawable/aurora_orb_1_dark" />
+
+    <View
+        android:id="@+id/aurora_orb2"
+        android:layout_width="700dp"
+        android:layout_height="700dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="-150dp"
+        android:layout_marginTop="-100dp"
+        android:background="@drawable/aurora_orb_2_dark" />
+
+    <View
+        android:id="@+id/aurora_orb3"
+        android:layout_width="800dp"
+        android:layout_height="800dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="-400dp"
+        android:background="@drawable/aurora_orb_3_dark" />
+
+    <!-- Top chrome: outside temp (left) + clock (center) + settings (right) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/content_padding_v"
+        android:paddingStart="@dimen/content_padding_h"
+        android:paddingEnd="@dimen/content_padding_h">
+
+        <!-- Outside temperature pill -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/glass_pill"
+            android:elevation="@dimen/elevation_1"
+            android:paddingStart="@dimen/pill_padding_h"
+            android:paddingEnd="@dimen/pill_padding_h"
+            android:paddingTop="@dimen/pill_padding_v"
+            android:paddingBottom="@dimen/pill_padding_v">
+
+            <ImageView
+                android:id="@+id/outside_temp_icon"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:src="@drawable/ic_tent"
+                android:layout_marginEnd="10dp" />
+
+            <TextView
+                android:id="@+id/outside_temp_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_body_l"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Clock display -->
+        <TextView
+            android:id="@+id/clock_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textSize="@dimen/text_clock"
+            android:textColor="#B8FFFFFF"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginEnd="@dimen/space_5" />
+
+        <!-- Settings button -->
+        <FrameLayout
+            android:id="@+id/settings_btn"
+            android:layout_width="@dimen/chrome_btn_size"
+            android:layout_height="@dimen/chrome_btn_size"
+            android:background="@drawable/glass_chrome_btn"
+            android:elevation="@dimen/elevation_1">
+
+            <ImageView
+                android:id="@+id/settings_icon"
+                android:layout_width="@dimen/icon_chrome"
+                android:layout_height="@dimen/icon_chrome"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_settings"
+                android:tint="#FFFFFFFF" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Main content: discharge (left) + battery/controls (right) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="@dimen/content_padding_h"
+        android:paddingEnd="@dimen/content_padding_h"
+        android:paddingTop="@dimen/space_9"
+        android:paddingBottom="@dimen/space_8">
+
+        <!-- Left panel: V2L Discharge -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/glass_panel_1"
+            android:elevation="@dimen/elevation_1"
+            android:padding="@dimen/space_5"
+            android:layout_marginEnd="@dimen/space_4">
+
+            <ImageView
+                android:id="@+id/discharge_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_bolt"
+                android:tint="@color/discharge_accent"
+                android:layout_marginBottom="@dimen/space_2" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom">
+
+                <TextView
+                    android:id="@+id/discharge_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="@dimen/text_discharge"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-light"
+                    android:includeFontPadding="false" />
+
+                <TextView
+                    android:id="@+id/discharge_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/discharge_unit"
+                    android:textSize="@dimen/text_discharge_unit"
+                    android:textColor="#B8FFFFFF"
+                    android:fontFamily="sans-serif-thin"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="20dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/discharge_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/discharge_label"
+                android:textSize="@dimen/text_discharge_label"
+                android:textColor="#B8FFFFFF"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="@dimen/space_1" />
+
+            <!-- Inside temp -->
+            <TextView
+                android:id="@+id/inside_temp_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_body_l"
+                android:textColor="#B8FFFFFF"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginTop="@dimen/space_4" />
+        </LinearLayout>
+
+        <!-- Right panel: Battery + Controls -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:orientation="vertical"
+            android:background="@drawable/glass_panel_1"
+            android:elevation="@dimen/elevation_1"
+            android:padding="@dimen/space_5">
+
+            <!-- Battery header: percentage + bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/space_2">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_battery"
+                    android:tint="@color/success"
+                    android:layout_marginEnd="@dimen/space_3" />
+
+                <TextView
+                    android:id="@+id/battery_percent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--%"
+                    android:textSize="@dimen/text_battery_pct"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/remaining_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/battery_remaining_calculating"
+                    android:textSize="@dimen/text_remaining"
+                    android:textColor="#B8FFFFFF"
+                    android:fontFamily="sans-serif" />
+            </LinearLayout>
+
+            <!-- Battery bar -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/battery_bar_height"
+                android:layout_marginBottom="@dimen/space_1">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/battery_bar_bg" />
+
+                <View
+                    android:id="@+id/battery_bar_fill"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/battery_bar_fill" />
+            </FrameLayout>
+
+            <!-- Alarm threshold info -->
+            <TextView
+                android:id="@+id/alarm_threshold_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_body_s"
+                android:textColor="#73FFFFFF"
+                android:fontFamily="sans-serif"
+                android:layout_marginBottom="@dimen/space_4" />
+
+            <!-- Controls row 1: AC toggle, temp, windows -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/space_3">
+
+                <!-- AC toggle -->
+                <LinearLayout
+                    android:id="@+id/btn_ac_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/glass_control_btn"
+                    android:paddingStart="@dimen/control_btn_padding_h"
+                    android:paddingEnd="@dimen/control_btn_padding_h"
+                    android:layout_marginEnd="@dimen/space_2">
+
+                    <ImageView
+                        android:id="@+id/btn_ac_icon"
+                        android:layout_width="@dimen/icon_control"
+                        android:layout_height="@dimen/icon_control"
+                        android:src="@drawable/ic_power"
+                        android:tint="#FFFFFFFF"
+                        android:layout_marginEnd="@dimen/space_2" />
+
+                    <TextView
+                        android:id="@+id/btn_ac_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ctrl_ac_off"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="#FFFFFFFF"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+
+                <!-- Temp down -->
+                <TextView
+                    android:id="@+id/btn_temp_down"
+                    android:layout_width="@dimen/control_btn_height"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:gravity="center"
+                    android:text="@string/ctrl_temp_down"
+                    android:textSize="@dimen/text_h3"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/glass_control_btn"
+                    android:layout_marginEnd="@dimen/space_1" />
+
+                <!-- Current temp display -->
+                <TextView
+                    android:id="@+id/ctrl_temp_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:gravity="center"
+                    android:text="--°C"
+                    android:textSize="@dimen/text_body_l"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingStart="@dimen/space_3"
+                    android:paddingEnd="@dimen/space_3"
+                    android:layout_marginEnd="@dimen/space_1" />
+
+                <!-- Temp up -->
+                <TextView
+                    android:id="@+id/btn_temp_up"
+                    android:layout_width="@dimen/control_btn_height"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:gravity="center"
+                    android:text="@string/ctrl_temp_up"
+                    android:textSize="@dimen/text_h3"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/glass_control_btn"
+                    android:layout_marginEnd="@dimen/space_3" />
+
+                <!-- Windows -->
+                <LinearLayout
+                    android:id="@+id/btn_windows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/glass_control_btn"
+                    android:paddingStart="@dimen/control_btn_padding_h"
+                    android:paddingEnd="@dimen/control_btn_padding_h">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_control"
+                        android:layout_height="@dimen/icon_control"
+                        android:src="@drawable/ic_window"
+                        android:tint="#FFFFFFFF"
+                        android:layout_marginEnd="@dimen/space_2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ctrl_windows"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="#FFFFFFFF"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Controls row 2: Door alarm, Wake alarm -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Door alarm toggle -->
+                <LinearLayout
+                    android:id="@+id/btn_door_alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/glass_control_btn"
+                    android:paddingStart="@dimen/control_btn_padding_h"
+                    android:paddingEnd="@dimen/control_btn_padding_h"
+                    android:layout_marginEnd="@dimen/space_2">
+
+                    <ImageView
+                        android:id="@+id/btn_alarm_icon"
+                        android:layout_width="@dimen/icon_control"
+                        android:layout_height="@dimen/icon_control"
+                        android:src="@drawable/ic_shield"
+                        android:tint="#FFFFFFFF"
+                        android:layout_marginEnd="@dimen/space_2" />
+
+                    <TextView
+                        android:id="@+id/btn_alarm_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ctrl_alarm_arm"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="#FFFFFFFF"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+
+                <!-- Wake alarm -->
+                <LinearLayout
+                    android:id="@+id/btn_wake_alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/control_btn_height"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/glass_control_btn"
+                    android:paddingStart="@dimen/control_btn_padding_h"
+                    android:paddingEnd="@dimen/control_btn_padding_h">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_control"
+                        android:layout_height="@dimen/icon_control"
+                        android:src="@drawable/ic_alarm"
+                        android:tint="#FFFFFFFF"
+                        android:layout_marginEnd="@dimen/space_2" />
+
+                    <TextView
+                        android:id="@+id/btn_wake_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ctrl_wake"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="#FFFFFFFF"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Status bar capsule (bottom center) -->
+    <LinearLayout
+        android:id="@+id/status_capsule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:background="@drawable/glass_status_capsule"
+        android:elevation="@dimen/elevation_2"
+        android:padding="@dimen/status_bar_padding">
+
+        <!-- AC status -->
+        <LinearLayout
+            android:id="@+id/status_item_ac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/glass_status_item_active"
+            android:paddingStart="@dimen/status_bar_item_padding_h"
+            android:paddingEnd="@dimen/status_bar_item_padding_h"
+            android:paddingTop="@dimen/status_bar_item_padding_v"
+            android:paddingBottom="@dimen/status_bar_item_padding_v"
+            android:layout_marginEnd="@dimen/space_1">
+
+            <ImageView
+                android:id="@+id/status_icon_ac"
+                android:layout_width="@dimen/icon_status"
+                android:layout_height="@dimen/icon_status"
+                android:src="@drawable/ic_snowflake"
+                android:tint="#FFFFFFFF"
+                android:layout_marginEnd="@dimen/status_bar_item_gap"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/status_ac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_status"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- Doors status -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/status_bar_item_padding_h"
+            android:paddingEnd="@dimen/status_bar_item_padding_h"
+            android:paddingTop="@dimen/status_bar_item_padding_v"
+            android:paddingBottom="@dimen/status_bar_item_padding_v"
+            android:layout_marginEnd="@dimen/space_1">
+
+            <ImageView
+                android:id="@+id/status_icon_doors"
+                android:layout_width="@dimen/icon_status"
+                android:layout_height="@dimen/icon_status"
+                android:src="@drawable/ic_lock"
+                android:tint="#FFFFFFFF"
+                android:layout_marginEnd="@dimen/status_bar_item_gap"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/status_doors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_status"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- Battery status -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/status_bar_item_padding_h"
+            android:paddingEnd="@dimen/status_bar_item_padding_h"
+            android:paddingTop="@dimen/status_bar_item_padding_v"
+            android:paddingBottom="@dimen/status_bar_item_padding_v"
+            android:layout_marginEnd="@dimen/space_1">
+
+            <ImageView
+                android:layout_width="@dimen/icon_status"
+                android:layout_height="@dimen/icon_status"
+                android:src="@drawable/ic_battery"
+                android:tint="#FFFFFFFF"
+                android:layout_marginEnd="@dimen/status_bar_item_gap"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/status_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_status"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- Timer status -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/status_bar_item_padding_h"
+            android:paddingEnd="@dimen/status_bar_item_padding_h"
+            android:paddingTop="@dimen/status_bar_item_padding_v"
+            android:paddingBottom="@dimen/status_bar_item_padding_v"
+            android:layout_marginEnd="@dimen/space_1">
+
+            <ImageView
+                android:layout_width="@dimen/icon_status"
+                android:layout_height="@dimen/icon_status"
+                android:src="@drawable/ic_clock"
+                android:tint="#FFFFFFFF"
+                android:layout_marginEnd="@dimen/status_bar_item_gap"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/status_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_status"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- Energy status -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/status_bar_item_padding_h"
+            android:paddingEnd="@dimen/status_bar_item_padding_h"
+            android:paddingTop="@dimen/status_bar_item_padding_v"
+            android:paddingBottom="@dimen/status_bar_item_padding_v">
+
+            <ImageView
+                android:layout_width="@dimen/icon_status"
+                android:layout_height="@dimen/icon_status"
+                android:src="@drawable/ic_bolt"
+                android:tint="@color/discharge_accent"
+                android:layout_marginEnd="@dimen/status_bar_item_gap"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/status_energy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_status"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Stop button (bottom right) -->
+    <TextView
+        android:id="@+id/exit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/content_padding_h"
+        android:layout_marginBottom="28dp"
+        android:text="@string/exit_stop"
+        android:textSize="@dimen/text_body"
+        android:textColor="#FFFFFFFF"
+        android:fontFamily="sans-serif-medium"
+        android:background="@drawable/glass_exit_btn"
+        android:elevation="@dimen/elevation_1"
+        android:paddingStart="@dimen/exit_btn_padding_h"
+        android:paddingEnd="@dimen/exit_btn_padding_h"
+        android:paddingTop="@dimen/exit_btn_padding_v"
+        android:paddingBottom="@dimen/exit_btn_padding_v" />
+
+    <!-- Alarm overlay (door/battery/wake) -->
+    <FrameLayout
+        android:id="@+id/alarm_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/alarm_overlay_bg"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/alarm_overlay_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_warning"
+                android:tint="#FFFFFFFF"
+                android:layout_marginBottom="@dimen/space_5" />
+
+            <TextView
+                android:id="@+id/alarm_overlay_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_h1"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="@dimen/space_6" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/alarm_btn_snooze"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/alert_snooze"
+                    android:textSize="@dimen/text_body_l"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/glass_control_btn"
+                    android:paddingStart="@dimen/space_6"
+                    android:paddingEnd="@dimen/space_6"
+                    android:paddingTop="@dimen/space_4"
+                    android:paddingBottom="@dimen/space_4"
+                    android:layout_marginEnd="@dimen/space_4" />
+
+                <TextView
+                    android:id="@+id/alarm_btn_dismiss"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/alert_dismiss"
+                    android:textSize="@dimen/text_body_l"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/glass_control_btn"
+                    android:paddingStart="@dimen/space_6"
+                    android:paddingEnd="@dimen/space_6"
+                    android:paddingTop="@dimen/space_4"
+                    android:paddingBottom="@dimen/space_4" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Exit confirm sheet overlay -->
+    <FrameLayout
+        android:id="@+id/exit_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/scrim"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/exit_sheet"
+            android:layout_width="560dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/glass_sheet_dark"
+            android:elevation="@dimen/elevation_3"
+            android:padding="40dp">
+
+            <TextView
+                android:id="@+id/sheet_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exit_confirm_title"
+                android:textSize="@dimen/text_h3"
+                android:textColor="#FFFFFFFF"
+                android:fontFamily="sans-serif-bold" />
+
+            <TextView
+                android:id="@+id/sheet_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exit_confirm"
+                android:textSize="@dimen/text_body"
+                android:textColor="#B8FFFFFF"
+                android:gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="28dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/sheet_btn_stay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sheet_stay"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/btn_ghost"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/sheet_btn_exit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sheet_stop"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="#FFFFFFFF"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/btn_primary"
+                    android:elevation="@dimen/elevation_1"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

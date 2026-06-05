@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Background circle -->
+    <path
+        android:fillColor="#021A1F"
+        android:pathData="M54,54m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    <!-- Tent shape -->
+    <path
+        android:fillColor="#14CC8A"
+        android:pathData="M54,22L28,78h52L54,22zM54,34L68,72h-8L54,58l-6,14h-8L54,34z" />
+    <!-- Lightning bolt (V2L) -->
+    <path
+        android:fillColor="#FFB020"
+        android:pathData="M76,40L68,54h6l-4,14 12,-16h-6z" />
+</vector>
