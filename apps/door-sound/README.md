@@ -6,9 +6,26 @@ Plays custom audio files through cabin speakers and preset tone patterns through
 
 - 4 events: door open, door close, lock, unlock
 - **Inside speaker**: custom audio files (OGG/MP3/WAV) with per-event volume control (0-15)
-- **Outside speaker (AVAS)**: 5 preset tone patterns (ding-dong, triple beep, rapid alt, long chime, etc.)
+- **Outside speaker (AVAS)**: 8 preset tone patterns:
+  - Ding-Dong — pitch A then B (classic doorbell)
+  - Dong-Ding — pitch B then A
+  - Triple Beep — three separate beeps
+  - Rapid Alternation — A/B/A/B/A/B
+  - Long Chime — B then A, longer
+  - Shop Chime — A-A-B-B with rests (entrance chime)
+  - Alarm — wee-woo × 4 (siren)
+  - Fanfare — A-A-A-B-B (cavalry charge)
 - Auto-start on boot
 - Foreground service for reliable background operation
+
+## AVAS Pattern Mechanism
+
+The AVAS external speaker supports only **2 pitches** (confirmed by live testing):
+- `TEST_AUDIO_AVAS_SET` (0xAA000104): 1 = pitch A (lower), 2 = pitch B (higher), 0 = silence
+- `AVAH` (0x6E970010): 1 = tone on, 0 = tone off
+- Pitch changes mid-tone by setting TEST_AVAS while AVAH stays on
+- Rests between notes via TEST_AVAS = 0
+- Separate beeps require full disable/re-enable of all 6 enabler commands
 
 ## Build Prerequisites
 
@@ -46,8 +63,8 @@ Update the path to `android.jar` in the script if needed (default: `/tmp/android
 ## Limitations
 
 - Cannot replace the BCM-generated lock/unlock chirp (hardware limitation — BCM generates the sound directly)
-- AVAS external speaker only supports preset tone patterns, not custom audio (MCU firmware blocks custom routing)
-- AVAS volume is fixed by MCU firmware
+- AVAS external speaker supports only 2 pitches (TEST_AVAS=1 and 2), no custom audio upload
+- AVAS volume is fixed by MCU firmware (PROMPT_VOLUME_LEVEL doesn't affect it — verified)
 - Requires rooted head unit for sideloading
 
 ## Architecture

@@ -10,9 +10,17 @@ public class AvasPlayer {
     public static final int PATTERN_TRIPLE_BEEP = 2;
     public static final int PATTERN_RAPID_ALT = 3;
     public static final int PATTERN_LONG_CHIME = 4;
+    public static final int PATTERN_SHOP_CHIME = 5;
+    public static final int PATTERN_ALARM = 6;
+    public static final int PATTERN_FANFARE = 7;
+    public static final int PATTERN_COUNT = 8;
 
     static final int D = 1002;
     static final int AVAH = 0x6E970010;
+    static final int TEST_AVAS = 0xAA000104;
+    static final int PITCH_A = 1;
+    static final int PITCH_B = 2;
+    static final int SILENCE = 0;
 
     private Object mgr;
     private Method setIntMethod;

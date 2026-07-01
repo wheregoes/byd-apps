@@ -27,5 +27,8 @@
         <item>Triple Beep</item>
         <item>Rapid Alternation</item>
         <item>Long Chime</item>
+        <item>Shop Chime</item>
+        <item>Alarm</item>
+        <item>Fanfare</item>
     </string-array>
 </resources>
