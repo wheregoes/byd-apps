@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sonido de Motor</string>
+    <string name="app_title">SONIDO DE MOTOR</string>
+    <string name="dash">—</string>
+    <string name="preset_label">PRESET</string>
+    <string name="preset_fallback">Preset %1$d</string>
+    <string name="choose_preset">TODOS LOS PRESETS</string>
+    <string name="rename_hint">Mantén pulsado un preset para nombrarlo</string>
+    <string name="rename_title">Nombrar preset %1$d</string>
+    <string name="rename_save">Guardar</string>
+    <string name="rename_reset">Restablecer</string>
+    <string name="cancel">Cancelar</string>
+    <string name="sim_label">Sonido de motor</string>
+    <string name="btn_prev">‹ Ant.</string>
+    <string name="btn_next">Sig. ›</string>
+    <string name="cycle_all">Recorrer todos los presets</string>
+    <string name="cycle_stop">Detener recorrido</string>
+    <string name="status_connecting">Conectando…</string>
+    <string name="sim_on">Preset %1$d · sonido ACTIVADO</string>
+    <string name="sim_off">Preset %1$d · sonido DESACTIVADO</string>
+    <string name="sim_turning_off">Sonido DESACTIVADO</string>
+    <string name="sim_verify_failed">El vehículo no confirmó el sonido activado</string>
+    <string name="sim_write_failed">El vehículo rechazó %1$s</string>
+    <string name="cycling_now">Preset %1$d · recorriendo</string>
+    <string name="cycle_needs_sim">Activa primero el sonido de motor</string>
+    <string name="cycle_stopped">Recorrido detenido en el preset %1$d</string>
+    <string name="preset_rejected">El vehículo rechazó el preset %1$d — sigue en %2$d</string>
+    <string name="write_failed">El vehículo rechazó el preset %1$d</string>
+    <string name="read_failed">No se puede leer el preset del vehículo</string>
+    <string name="err_service_null">Servicio del vehículo no disponible</string>
+    <string name="err_service">Error del servicio del vehículo: %1$s</string>
+    <string name="sim_unsupported">Simulador de motor no compatible con este vehículo (%1$d)</string>
+    <string name="sim_unreadable">No se puede leer la capacidad del simulador</string>
+    <string name="preset_note">El coche acepta cualquier número de preset, pero solo algunos suenan distinto. Escucha y mantén pulsado para nombrar los que oigas.</string>
+</resources>

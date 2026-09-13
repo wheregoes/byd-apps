@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One preset chip. Inflated once per preset discovered on the vehicle. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/space_2"
+    android:minWidth="72dp"
+    android:minHeight="64dp"
+    android:gravity="center"
+    android:background="@drawable/glass_pill"
+    android:paddingLeft="@dimen/segmented_btn_padding_h"
+    android:paddingRight="@dimen/segmented_btn_padding_h"
+    android:textSize="@dimen/text_body_l"
+    android:textColor="@color/fg_primary"
+    android:fontFamily="sans-serif-medium" />

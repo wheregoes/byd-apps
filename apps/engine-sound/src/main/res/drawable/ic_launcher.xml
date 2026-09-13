@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Background -->
+    <path
+        android:fillColor="#FF0D1520"
+        android:pathData="M0,0h48v48H0z" />
+    <!-- Subtle mint wash, bottom half -->
+    <path
+        android:fillColor="#1500B894"
+        android:pathData="M0,24h48v24H0z" />
+    <!-- Speaker cone -->
+    <path
+        android:fillColor="#FF00B894"
+        android:pathData="M8,19 L15,19 L23,11 L23,37 L15,29 L8,29 Z" />
+    <!-- Emission wave, near -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF4AB8FF"
+        android:strokeWidth="2.4"
+        android:pathData="M28,18 C30.4,20 31.8,22.9 31.8,24 C31.8,25.1 30.4,28 28,30" />
+    <!-- Emission wave, far -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF4AB8FF"
+        android:strokeWidth="2.4"
+        android:strokeAlpha="0.55"
+        android:pathData="M33,13 C37,16.6 39,20.4 39,24 C39,27.6 37,31.4 33,35" />
+</vector>

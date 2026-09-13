@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/aurora_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/content_padding_h"
+        android:paddingRight="@dimen/content_padding_h"
+        android:paddingTop="@dimen/content_padding_v"
+        android:paddingBottom="@dimen/content_padding_v">
+
+        <!-- Header: title + simulator switch -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_title"
+                android:textSize="@dimen/text_h3"
+                android:textColor="@color/fg_primary"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.04" />
+
+            <TextView
+                android:id="@+id/sim_caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_3"
+                android:text="@string/sim_label"
+                android:textSize="@dimen/text_body_l"
+                android:textColor="@color/fg_secondary" />
+
+            <Switch
+                android:id="@+id/sim_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:track="@drawable/glass_switch_track_off"
+                android:thumb="@drawable/glass_switch_thumb"
+                android:switchMinWidth="@dimen/switch_width"
+                android:textOff=""
+                android:textOn="" />
+        </LinearLayout>
+
+        <!-- Body -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/space_5"
+            android:orientation="horizontal">
+
+            <!-- Left: the current preset -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.05"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/glass_panel_1"
+                android:elevation="@dimen/elevation_2"
+                android:outlineProvider="background"
+                android:paddingLeft="@dimen/space_5"
+                android:paddingRight="@dimen/space_5"
+                android:paddingTop="@dimen/space_4"
+                android:paddingBottom="@dimen/space_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preset_label"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="@color/fg_secondary"
+                    android:letterSpacing="0.14"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:id="@+id/type_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dash"
+                    android:textSize="@dimen/text_display_l"
+                    android:textColor="@color/fg_primary"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="72sp"
+                    android:autoSizeMaxTextSize="@dimen/text_display_l"
+                    android:autoSizeStepGranularity="4sp" />
+
+                <TextView
+                    android:id="@+id/preset_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_1"
+                    android:textSize="@dimen/text_h4"
+                    android:textColor="@color/fg_primary"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/rename_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rename_hint"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="@color/fg_tertiary"
+                    android:gravity="center" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/prev_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="184dp"
+                        android:minHeight="88dp"
+                        android:text="@string/btn_prev"
+                        android:textSize="@dimen/text_h4"
+                        android:textColor="@color/fg_primary"
+                        android:textAllCaps="false"
+                        android:fontFamily="sans-serif-medium"
+                        android:background="@drawable/glass_btn_ghost"
+                        android:stateListAnimator="@null" />
+
+                    <Button
+                        android:id="@+id/next_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_4"
+                        android:minWidth="184dp"
+                        android:minHeight="88dp"
+                        android:text="@string/btn_next"
+                        android:textSize="@dimen/text_h4"
+                        android:textColor="@color/fg_on_brand"
+                        android:textAllCaps="false"
+                        android:fontFamily="sans-serif-medium"
+                        android:background="@drawable/glass_btn_primary"
+                        android:stateListAnimator="@null" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Right: status, preset chips, actions -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/space_5"
+                android:orientation="vertical"
+                android:background="@drawable/glass_panel_2"
+                android:elevation="@dimen/elevation_2"
+                android:outlineProvider="background"
+                android:padding="@dimen/space_5">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/glass_status_capsule"
+                    android:paddingLeft="@dimen/pill_padding_h"
+                    android:paddingRight="@dimen/pill_padding_h"
+                    android:paddingTop="@dimen/pill_padding_v"
+                    android:paddingBottom="@dimen/pill_padding_v">
+
+                    <View
+                        android:id="@+id/status_dot"
+                        android:layout_width="@dimen/icon_status"
+                        android:layout_height="@dimen/icon_status"
+                        android:layout_marginEnd="@dimen/space_2"
+                        android:background="@drawable/status_dot" />
+
+                    <TextView
+                        android:id="@+id/status_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/status_connecting"
+                        android:textSize="@dimen/text_status"
+                        android:textColor="@color/fg_primary"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_5"
+                    android:text="@string/choose_preset"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="@color/fg_secondary"
+                    android:letterSpacing="0.1"
+                    android:fontFamily="sans-serif-medium" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_2"
+                    android:scrollbars="none"
+                    android:clipToPadding="false"
+                    android:paddingBottom="@dimen/space_1">
+
+                    <LinearLayout
+                        android:id="@+id/chips_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/cycle_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="80dp"
+                    android:text="@string/cycle_all"
+                    android:textSize="@dimen/text_body_l"
+                    android:textColor="@color/fg_primary"
+                    android:textAllCaps="false"
+                    android:fontFamily="sans-serif-medium"
+                    android:background="@drawable/glass_btn_ghost"
+                    android:stateListAnimator="@null" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_3"
+                    android:text="@string/preset_note"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="@color/fg_tertiary" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

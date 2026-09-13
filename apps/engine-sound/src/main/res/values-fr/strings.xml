@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Son Moteur</string>
+    <string name="app_title">SON MOTEUR</string>
+    <string name="dash">—</string>
+    <string name="preset_label">PRÉRÉGLAGE</string>
+    <string name="preset_fallback">Préréglage %1$d</string>
+    <string name="choose_preset">TOUS LES PRÉRÉGLAGES</string>
+    <string name="rename_hint">Appui long sur un préréglage pour le nommer</string>
+    <string name="rename_title">Nommer le préréglage %1$d</string>
+    <string name="rename_save">Enregistrer</string>
+    <string name="rename_reset">Réinitialiser</string>
+    <string name="cancel">Annuler</string>
+    <string name="sim_label">Son moteur</string>
+    <string name="btn_prev">‹ Préc.</string>
+    <string name="btn_next">Suiv. ›</string>
+    <string name="cycle_all">Parcourir les préréglages</string>
+    <string name="cycle_stop">Arrêter le parcours</string>
+    <string name="status_connecting">Connexion…</string>
+    <string name="sim_on">Préréglage %1$d · son ACTIVÉ</string>
+    <string name="sim_off">Préréglage %1$d · son DÉSACTIVÉ</string>
+    <string name="sim_turning_off">Son DÉSACTIVÉ</string>
+    <string name="sim_verify_failed">Le véhicule n\'a pas confirmé l\'activation</string>
+    <string name="sim_write_failed">Le véhicule a refusé %1$s</string>
+    <string name="cycling_now">Préréglage %1$d · en cours</string>
+    <string name="cycle_needs_sim">Activez d\'abord le son moteur</string>
+    <string name="cycle_stopped">Parcours arrêté au préréglage %1$d</string>
+    <string name="preset_rejected">Le véhicule a refusé le préréglage %1$d — toujours sur %2$d</string>
+    <string name="write_failed">Le véhicule a refusé le préréglage %1$d</string>
+    <string name="read_failed">Impossible de relire le préréglage du véhicule</string>
+    <string name="err_service_null">Service du véhicule indisponible</string>
+    <string name="err_service">Erreur du service véhicule : %1$s</string>
+    <string name="sim_unsupported">Simulateur moteur non pris en charge sur ce véhicule (%1$d)</string>
+    <string name="sim_unreadable">Impossible de lire la capacité du simulateur</string>
+    <string name="preset_note">La voiture accepte n\'importe quel numéro de préréglage, mais seuls certains changent le son. Écoutez, puis appuyez longuement pour nommer ceux que vous entendez.</string>
+</resources>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing (8pt grid) -->
+    <dimen name="space_1">4dp</dimen>
+    <dimen name="space_2">8dp</dimen>
+    <dimen name="space_3">12dp</dimen>
+    <dimen name="space_4">16dp</dimen>
+    <dimen name="space_5">24dp</dimen>
+    <dimen name="space_6">32dp</dimen>
+    <dimen name="space_7">48dp</dimen>
+    <dimen name="space_8">64dp</dimen>
+    <dimen name="space_9">96dp</dimen>
+    <dimen name="space_10">128dp</dimen>
+
+    <!-- Radii -->
+    <dimen name="radius_xs">8dp</dimen>
+    <dimen name="radius_sm">12dp</dimen>
+    <dimen name="radius_md">20dp</dimen>
+    <dimen name="radius_lg">28dp</dimen>
+    <dimen name="radius_xl">40dp</dimen>
+    <dimen name="radius_2xl">56dp</dimen>
+    <dimen name="radius_pill">999dp</dimen>
+
+    <!--
+      Type scale: design px mapped 1:1 to sp.
+      Screen is 1920x1080 at 240dpi (1280x720dp).
+      At 1.5x density, design_px = sp gives exact proportional match
+      with the 1920x720 CSS design (1.5x density × 1.5x taller cancel out).
+    -->
+    <dimen name="text_display_xl">320sp</dimen>
+    <dimen name="text_display_l">160sp</dimen>
+    <dimen name="text_display_m">96sp</dimen>
+    <dimen name="text_display_s">72sp</dimen>
+
+    <dimen name="text_h1">56sp</dimen>
+    <dimen name="text_h2">44sp</dimen>
+    <dimen name="text_h3">32sp</dimen>
+    <dimen name="text_h4">24sp</dimen>
+
+    <dimen name="text_body_l">24sp</dimen>
+    <dimen name="text_body">18sp</dimen>
+    <dimen name="text_body_s">16sp</dimen>
+    <dimen name="text_caption">14sp</dimen>
+    <dimen name="text_micro">12sp</dimen>
+
+    <!-- Temperature unit size (beside big number) -->
+    <dimen name="text_temp_unit">96sp</dimen>
+
+    <!-- Temperature subtitle -->
+    <dimen name="text_temp_sub">30sp</dimen>
+
+    <!-- Reassurance message -->
+    <dimen name="text_reassure_msg">64sp</dimen>
+    <dimen name="text_reassure_sub">30sp</dimen>
+
+    <!-- Status bar text -->
+    <dimen name="text_status">22sp</dimen>
+
+    <!-- Safety alert text -->
+    <dimen name="text_safety_alert">28sp</dimen>
+
+    <!-- Icon sizes -->
+    <dimen name="icon_chrome">26dp</dimen>
+    <dimen name="icon_status">22dp</dimen>
+    <dimen name="icon_alert">26dp</dimen>
+
+    <!-- Chrome button (settings/back) -->
+    <dimen name="chrome_btn_size">64dp</dimen>
+
+    <!-- Avatar disc -->
+    <dimen name="avatar_disc_size">280dp</dimen>
+
+    <!-- Status bar -->
+    <dimen name="status_bar_padding">8dp</dimen>
+    <dimen name="status_bar_item_padding_h">22dp</dimen>
+    <dimen name="status_bar_item_padding_v">14dp</dimen>
+    <dimen name="status_bar_item_gap">12dp</dimen>
+
+    <!-- Glass panel stroke width -->
+    <dimen name="glass_stroke_width">1dp</dimen>
+
+    <!-- Content padding -->
+    <dimen name="content_padding_h">48dp</dimen>
+    <dimen name="content_padding_v">32dp</dimen>
+
+    <!-- Settings row padding -->
+    <dimen name="setting_row_padding_h">28dp</dimen>
+    <dimen name="setting_row_padding_v">22dp</dimen>
+
+    <!-- Pill padding -->
+    <dimen name="pill_padding_h">24dp</dimen>
+    <dimen name="pill_padding_v">14dp</dimen>
+
+    <!-- Exit button -->
+    <dimen name="exit_btn_padding_h">22dp</dimen>
+    <dimen name="exit_btn_padding_v">14dp</dimen>
+
+    <!-- Avatar tile -->
+    <dimen name="avatar_tile_size">160dp</dimen>
+    <dimen name="avatar_tile_img_size">110dp</dimen>
+
+    <!-- Segmented control -->
+    <dimen name="segmented_padding">4dp</dimen>
+    <dimen name="segmented_btn_padding_h">22dp</dimen>
+    <dimen name="segmented_btn_padding_v">12dp</dimen>
+
+    <!-- Switch -->
+    <dimen name="switch_width">64dp</dimen>
+    <dimen name="switch_height">36dp</dimen>
+    <dimen name="switch_thumb_size">32dp</dimen>
+    <dimen name="switch_thumb_margin">2dp</dimen>
+
+    <!-- Input field -->
+    <dimen name="input_padding_h">20dp</dimen>
+    <dimen name="input_padding_v">16dp</dimen>
+
+    <!-- Safety alert padding -->
+    <dimen name="alert_padding_h">32dp</dimen>
+    <dimen name="alert_padding_v">18dp</dimen>
+
+    <!-- Main split gap -->
+    <dimen name="main_split_gap">80dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_1">4dp</dimen>
+    <dimen name="elevation_2">8dp</dimen>
+    <dimen name="elevation_3">16dp</dimen>
+</resources>

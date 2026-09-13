@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Mint Palette -->
+    <color name="mint_50">#E6FBF4</color>
+    <color name="mint_100">#C0F3DF</color>
+    <color name="mint_200">#8AE9C5</color>
+    <color name="mint_300">#4ADCA6</color>
+    <color name="mint_400">#14CC8A</color>
+    <color name="mint_500">#00B894</color>
+    <color name="mint_600">#009B7D</color>
+    <color name="mint_700">#007860</color>
+    <color name="mint_800">#005A48</color>
+    <color name="mint_900">#003B2F</color>
+
+    <color name="brand_teal">#006F6B</color>
+    <color name="brand_midnight">#051E26</color>
+
+    <!-- Slate Neutrals -->
+    <color name="slate_50">#F5F7FA</color>
+    <color name="slate_100">#E6EAF0</color>
+    <color name="slate_200">#C9D1DC</color>
+    <color name="slate_300">#9BA6B5</color>
+    <color name="slate_400">#636E7B</color>
+    <color name="slate_500">#404953</color>
+    <color name="slate_700">#232830</color>
+    <color name="slate_900">#1A1A2E</color>
+
+    <!-- Semantic -->
+    <color name="success">#14CC8A</color>
+    <color name="warning">#FFB020</color>
+    <color name="danger">#E74C3C</color>
+    <color name="info">#4AB8FF</color>
+
+    <!-- Glass fills (light theme) -->
+    <color name="glass_fill_1">#8CFFFFFF</color>  <!-- rgba(255,255,255,0.55) -->
+    <color name="glass_fill_2">#52FFFFFF</color>  <!-- rgba(255,255,255,0.32) -->
+    <color name="glass_fill_3">#2EFFFFFF</color>  <!-- rgba(255,255,255,0.18) -->
+    <color name="glass_stroke">#A6FFFFFF</color>  <!-- rgba(255,255,255,0.65) -->
+    <color name="glass_stroke_2">#59FFFFFF</color> <!-- rgba(255,255,255,0.35) -->
+
+    <!-- Glass fills (dark theme) -->
+    <color name="glass_dark_fill_1">#1AFFFFFF</color>  <!-- rgba(255,255,255,0.10) -->
+    <color name="glass_dark_fill_2">#0FFFFFFF</color>  <!-- rgba(255,255,255,0.06) -->
+    <color name="glass_dark_fill_3">#0AFFFFFF</color>  <!-- rgba(255,255,255,0.04) -->
+    <color name="glass_dark_stroke">#2EFFFFFF</color>  <!-- rgba(255,255,255,0.18) -->
+    <color name="glass_dark_stroke_2">#1AFFFFFF</color> <!-- rgba(255,255,255,0.10) -->
+
+    <!-- Aurora light gradient colors -->
+    <color name="aurora_light_base_start">#FBFEFD</color>
+    <color name="aurora_light_base_end">#EFFAF5</color>
+    <color name="aurora_light_orb_1">#E8FBF3</color>
+    <color name="aurora_light_orb_2">#D6F5EA</color>
+    <color name="aurora_light_orb_3">#B5EBD9</color>
+
+    <!-- Aurora dark gradient colors -->
+    <color name="aurora_dark_base_start">#021A1F</color>
+    <color name="aurora_dark_base_end">#04323A</color>
+    <color name="aurora_dark_orb_1">#00614E</color>
+    <color name="aurora_dark_orb_2">#014E5B</color>
+    <color name="aurora_dark_orb_3">#019A78</color>
+
+    <!-- Foreground (light theme) -->
+    <color name="fg_primary">#1A1A2E</color>
+    <color name="fg_secondary">#636E7B</color>
+    <color name="fg_tertiary">#731A1A2E</color>  <!-- rgba(26,26,46,0.45) -->
+    <color name="fg_on_brand">#FFFFFFFF</color>
+
+    <!-- Foreground (dark theme) -->
+    <color name="fg_dark_primary">#FFFFFFFF</color>
+    <color name="fg_dark_secondary">#B8FFFFFF</color>  <!-- rgba(255,255,255,0.72) -->
+    <color name="fg_dark_tertiary">#73FFFFFF</color>   <!-- rgba(255,255,255,0.45) -->
+
+    <!-- Status bar item active background -->
+    <color name="status_item_active_light">#B3FFFFFF</color>  <!-- rgba(255,255,255,0.70) -->
+    <color name="status_item_active_dark">#1FFFFFFF</color>   <!-- rgba(255,255,255,0.12) -->
+
+    <!-- Safety alert -->
+    <color name="safety_alert_bg">#EBE74C3C</color>  <!-- rgba(231,76,60,0.92) -->
+
+    <!-- Paw print tint -->
+    <color name="paw_tint_light">#1A008264</color>  <!-- rgba(0,130,100,0.10) -->
+    <color name="paw_tint_dark">#0FFFFFFF</color>   <!-- rgba(255,255,255,0.06) -->
+
+    <!-- Avatar disc -->
+    <color name="avatar_disc_light">#E6FFFFFF</color>  <!-- rgba(255,255,255,0.9) -->
+    <color name="avatar_disc_dark">#2EFFFFFF</color>   <!-- rgba(255,255,255,0.18) -->
+
+    <!-- Input field -->
+    <color name="input_bg_light">#B3FFFFFF</color>  <!-- rgba(255,255,255,0.7) -->
+    <color name="input_bg_dark">#40000000</color>   <!-- rgba(0,0,0,0.25) -->
+
+    <!-- Segmented control -->
+    <color name="segmented_bg_light">#66FFFFFF</color>  <!-- rgba(255,255,255,0.4) -->
+    <color name="segmented_bg_dark">#14FFFFFF</color>   <!-- rgba(255,255,255,0.08) -->
+    <color name="segmented_active_light">#FFFFFFFF</color>
+    <color name="segmented_active_dark">#2EFFFFFF</color>
+
+    <!-- Switch track off -->
+    <color name="switch_track_off">#33787880</color>  <!-- rgba(120,120,128,0.2) -->
+
+    <!-- Exit button -->
+    <color name="exit_btn_bg">#52FFFFFF</color>  <!-- rgba(255,255,255,0.32) -->
+    <color name="exit_btn_border">#80FFFFFF</color> <!-- rgba(255,255,255,0.5) -->
+
+    <!-- Ghost button -->
+    <color name="ghost_btn_bg">#66FFFFFF</color>  <!-- rgba(255,255,255,0.4) -->
+    <color name="ghost_btn_dark">#14FFFFFF</color>
+
+    <!-- Scrim overlay -->
+    <color name="scrim">#5902141A</color>  <!-- rgba(2,20,26,0.35) -->
+</resources>

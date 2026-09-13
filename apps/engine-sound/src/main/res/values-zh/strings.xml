@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">发动机声音</string>
+    <string name="app_title">发动机声音</string>
+    <string name="dash">—</string>
+    <string name="preset_label">预设</string>
+    <string name="preset_fallback">预设 %1$d</string>
+    <string name="choose_preset">全部预设</string>
+    <string name="rename_hint">长按预设可命名</string>
+    <string name="rename_title">命名预设 %1$d</string>
+    <string name="rename_save">保存</string>
+    <string name="rename_reset">重置</string>
+    <string name="cancel">取消</string>
+    <string name="sim_label">发动机声音</string>
+    <string name="btn_prev">‹ 上一个</string>
+    <string name="btn_next">下一个 ›</string>
+    <string name="cycle_all">循环播放全部预设</string>
+    <string name="cycle_stop">停止循环</string>
+    <string name="status_connecting">正在连接…</string>
+    <string name="sim_on">预设 %1$d · 声音已开启</string>
+    <string name="sim_off">预设 %1$d · 声音已关闭</string>
+    <string name="sim_turning_off">声音已关闭</string>
+    <string name="sim_verify_failed">车辆未确认声音已开启</string>
+    <string name="sim_write_failed">车辆拒绝了 %1$s</string>
+    <string name="cycling_now">预设 %1$d · 循环中</string>
+    <string name="cycle_needs_sim">请先开启发动机声音</string>
+    <string name="cycle_stopped">循环已在预设 %1$d 停止</string>
+    <string name="preset_rejected">车辆拒绝预设 %1$d — 仍为 %2$d</string>
+    <string name="write_failed">车辆拒绝预设 %1$d</string>
+    <string name="read_failed">无法从车辆读回预设</string>
+    <string name="err_service_null">车辆服务不可用</string>
+    <string name="err_service">车辆服务错误：%1$s</string>
+    <string name="sim_unsupported">此车辆不支持发动机模拟器 (%1$d)</string>
+    <string name="sim_unreadable">无法读取模拟器能力</string>
+    <string name="preset_note">车辆会接受任何预设编号，但只有部分会发出不同声音。请聆听后长按为可辨认的预设命名。</string>
+</resources>

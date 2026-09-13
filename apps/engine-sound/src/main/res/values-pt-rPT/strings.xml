@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Som do Motor</string>
+    <string name="app_title">SOM DO MOTOR</string>
+    <string name="dash">—</string>
+    <string name="preset_label">PREDEFINIÇÃO</string>
+    <string name="preset_fallback">Predefinição %1$d</string>
+    <string name="choose_preset">TODAS AS PREDEFINIÇÕES</string>
+    <string name="rename_hint">Toque sem soltar numa predefinição para a nomear</string>
+    <string name="rename_title">Nomear predefinição %1$d</string>
+    <string name="rename_save">Guardar</string>
+    <string name="rename_reset">Reiniciar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="sim_label">Som do motor</string>
+    <string name="btn_prev">‹ Ant.</string>
+    <string name="btn_next">Seg. ›</string>
+    <string name="cycle_all">Percorrer as predefinições</string>
+    <string name="cycle_stop">Parar percurso</string>
+    <string name="status_connecting">A ligar…</string>
+    <string name="sim_on">Predefinição %1$d · som LIGADO</string>
+    <string name="sim_off">Predefinição %1$d · som DESLIGADO</string>
+    <string name="sim_turning_off">Som DESLIGADO</string>
+    <string name="sim_verify_failed">O veículo não confirmou o som ligado</string>
+    <string name="sim_write_failed">O veículo recusou %1$s</string>
+    <string name="cycling_now">Predefinição %1$d · a percorrer</string>
+    <string name="cycle_needs_sim">Ligue primeiro o som do motor</string>
+    <string name="cycle_stopped">Percurso parado na predefinição %1$d</string>
+    <string name="preset_rejected">O veículo recusou a predefinição %1$d — continua na %2$d</string>
+    <string name="write_failed">O veículo recusou a predefinição %1$d</string>
+    <string name="read_failed">Não é possível ler a predefinição do veículo</string>
+    <string name="err_service_null">Serviço do veículo indisponível</string>
+    <string name="err_service">Erro no serviço do veículo: %1$s</string>
+    <string name="sim_unsupported">Simulador de motor não suportado neste veículo (%1$d)</string>
+    <string name="sim_unreadable">Não é possível ler a capacidade do simulador</string>
+    <string name="preset_note">O carro aceita qualquer número de predefinição, mas apenas algumas mudam o som. Ouça e toque sem soltar para nomear as que identificar.</string>
+</resources>
