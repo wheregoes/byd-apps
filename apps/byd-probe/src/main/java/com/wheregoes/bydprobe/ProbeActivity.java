@@ -1,7 +1,10 @@
 package com.wheregoes.bydprobe;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
@@ -15,11 +18,27 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Read-only enumeration of the BYD SDK surface on whatever head unit this is
+ * running on, plus a handful of explicitly confirmed write tests.
+ *
+ * Everything here catches {@link Throwable}, not Exception, on purpose: absent
+ * BYD classes raise NoClassDefFoundError / LinkageError, which are Errors, and
+ * one of those would otherwise abort the entire probe run instead of logging a
+ * single missing feature.
+ */
 public class ProbeActivity extends Activity {
 
+    /** UI updates are batched: a full probe emits hundreds of lines. */
+    private static final long FLUSH_INTERVAL_MS = 100L;
+
     private TextView logView;
-    private StringBuilder logBuffer = new StringBuilder();
+    private final StringBuilder pending = new StringBuilder();
+    private final AtomicBoolean flushScheduled = new AtomicBoolean(false);
+    private final Handler uiHandler = new Handler(Looper.getMainLooper());
+    private final Runnable flushRunnable = this::flushPending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +70,12 @@ public class ProbeActivity extends Activity {
         btnRow.addView(btnAcSet);
 
         Button btnClear = makeButton("Clear");
-        btnClear.setOnClickListener(v -> { logBuffer.setLength(0); logView.setText(""); });
+        btnClear.setOnClickListener(v -> {
+            synchronized (pending) {
+                pending.setLength(0);
+            }
+            logView.setText("");
+        });
         btnRow.addView(btnClear);
 
         root.addView(btnRow);
@@ -60,24 +84,31 @@ public class ProbeActivity extends Activity {
         btnRow2.setOrientation(LinearLayout.HORIZONTAL);
         btnRow2.setGravity(Gravity.CENTER);
 
-        Button btnAcOn = makeButton("AC ON");
-        btnAcOn.setOnClickListener(v -> new Thread(() -> testAcStart()).start());
+        // These five write to the vehicle. Everything else only reads, so they
+        // are labelled and confirmed; a stray tap used to start the AC outright.
+        Button btnAcOn = makeButton("⚠ AC ON");
+        btnAcOn.setOnClickListener(v -> confirmMutate("Start the air conditioning",
+                this::testAcStart));
         btnRow2.addView(btnAcOn);
 
-        Button btnAcOff = makeButton("AC OFF");
-        btnAcOff.setOnClickListener(v -> new Thread(() -> testAcStop()).start());
+        Button btnAcOff = makeButton("⚠ AC OFF");
+        btnAcOff.setOnClickListener(v -> confirmMutate("Stop the air conditioning",
+                this::testAcStop));
         btnRow2.addView(btnAcOff);
 
-        Button btnTemp22 = makeButton("Temp 22°C");
-        btnTemp22.setOnClickListener(v -> new Thread(() -> testAcSetTemp(22)).start());
+        Button btnTemp22 = makeButton("⚠ Temp 22°C");
+        btnTemp22.setOnClickListener(v -> confirmMutate("Set the cabin target to 22°C",
+                () -> testAcSetTemp(22)));
         btnRow2.addView(btnTemp22);
 
-        Button btnTemp25 = makeButton("Temp 25°C");
-        btnTemp25.setOnClickListener(v -> new Thread(() -> testAcSetTemp(25)).start());
+        Button btnTemp25 = makeButton("⚠ Temp 25°C");
+        btnTemp25.setOnClickListener(v -> confirmMutate("Set the cabin target to 25°C",
+                () -> testAcSetTemp(25)));
         btnRow2.addView(btnTemp25);
 
-        Button btnFan3 = makeButton("Fan 3");
-        btnFan3.setOnClickListener(v -> new Thread(() -> testAcSetFan(3)).start());
+        Button btnFan3 = makeButton("⚠ Fan 3");
+        btnFan3.setOnClickListener(v -> confirmMutate("Set the fan to level 3",
+                () -> testAcSetFan(3)));
         btnRow2.addView(btnFan3);
 
         Button btnBodywork = makeButton("Probe Body");
@@ -90,7 +121,7 @@ public class ProbeActivity extends Activity {
         logView = new TextView(this);
         logView.setTextColor(Color.GREEN);
         logView.setTypeface(Typeface.MONOSPACE);
-        logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         logView.setPadding(10, 10, 10, 10);
         scroll.addView(logView);
 
@@ -115,7 +146,7 @@ public class ProbeActivity extends Activity {
     private Button makeButton(String text) {
         Button btn = new Button(this);
         btn.setText(text);
-        btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -126,9 +157,39 @@ public class ProbeActivity extends Activity {
 
     private void log(String msg) {
         Log.d("BYD_PROBE", msg);
-        logBuffer.append(msg).append("\n");
-        runOnUiThread(() -> logView.setText(logBuffer.toString()));
+        synchronized (pending) {
+            pending.append(msg).append('\n');
+        }
+        // setText(entire buffer) per line was O(n^2) on the UI thread across a
+        // long enumeration; append the delta, at most ten times a second.
+        if (flushScheduled.compareAndSet(false, true)) {
+            uiHandler.postDelayed(flushRunnable, FLUSH_INTERVAL_MS);
+        }
         writeToFile(msg);
+    }
+
+    private void flushPending() {
+        flushScheduled.set(false);
+        String chunk;
+        synchronized (pending) {
+            if (pending.length() == 0) {
+                return;
+            }
+            chunk = pending.toString();
+            pending.setLength(0);
+        }
+        logView.append(chunk);
+    }
+
+    /** Confirmation for the handful of actions that change vehicle state. */
+    private void confirmMutate(String action, Runnable body) {
+        new AlertDialog.Builder(this)
+                .setTitle("Change the vehicle?")
+                .setMessage(action + ".\n\nThis writes to the car; every other "
+                        + "button only reads.")
+                .setPositiveButton("Do it", (d, w) -> new Thread(body).start())
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void writeToFile(String msg) {
@@ -137,7 +198,7 @@ public class ProbeActivity extends Activity {
                 getExternalFilesDir(null) + "/probe-log.txt", true);
             fw.write(msg + "\n");
             fw.close();
-        } catch (Exception e) {}
+        } catch (Throwable e) {}
     }
 
     // ===== AC PROBE =====
@@ -199,7 +260,7 @@ public class ProbeActivity extends Activity {
             tryStaticField(acClass, "AC_CTRL_SOURCE_UI_KEY");
             tryStaticField(acClass, "AC_CTRL_SOURCE_VOICE");
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             log("  CAUSE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
@@ -249,7 +310,7 @@ public class ProbeActivity extends Activity {
                     Object result = getTemp.invoke(acDevice, zone);
                     log("  getTemprature(" + zone + ") = " + result);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log("  getTemprature error: " + e.getMessage());
             }
 
@@ -265,15 +326,15 @@ public class ProbeActivity extends Activity {
                         String featureStr = (String) f.get(null);
                         Object result = hasFeature.invoke(acDevice, featureStr);
                         log("  hasFeature(" + fname + "=" + featureStr + ") = " + result);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         log("  hasFeature(" + fname + ") error: " + e.getMessage());
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log("  hasFeature error: " + e.getMessage());
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("ERROR: " + e.getMessage());
         }
     }
@@ -299,7 +360,7 @@ public class ProbeActivity extends Activity {
                             Object val = f.get(null);
                             String valStr = (val instanceof int[]) ? Arrays.toString((int[])val) : String.valueOf(val);
                             log("  " + c.getSimpleName() + "." + f.getName() + " = " + valStr + " (" + f.getType().getSimpleName() + ")");
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             log("  " + c.getSimpleName() + "." + f.getName() + " = ERR:" + e.getMessage());
                         }
                     }
@@ -330,7 +391,7 @@ public class ProbeActivity extends Activity {
                 } catch (java.lang.reflect.InvocationTargetException e) {
                     Throwable cause = e.getCause() != null ? e.getCause() : e;
                     log("  getDoorLockStatus(" + area + ") ITE: " + cause.getMessage());
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     log("  getDoorLockStatus(" + area + ") ERR: " + e.getMessage());
                 }
             }
@@ -340,7 +401,7 @@ public class ProbeActivity extends Activity {
             try {
                 Method getDevType = dlClass.getMethod("getDevicetype");
                 log("  getDevicetype() = " + getDevType.invoke(dlDevice));
-            } catch (Exception e) {}
+            } catch (Throwable e) {}
 
             // Feature list
             log("\n[DoorLock Feature List]");
@@ -357,7 +418,7 @@ public class ProbeActivity extends Activity {
             } catch (java.lang.reflect.InvocationTargetException e) {
                 Throwable cause = e.getCause() != null ? e.getCause() : e;
                 log("  getFeatureList ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log("  getFeatureList ERR: " + e.getMessage());
             }
 
@@ -377,7 +438,7 @@ public class ProbeActivity extends Activity {
                             if (val != -10011) {
                                 log("  getInt(1041, 0x" + Integer.toHexString(fid) + ") = " + val);
                             }
-                        } catch (Exception e) {}
+                        } catch (Throwable e) {}
                     }
                     // Also scan 0x41200000 range
                     for (int fid = 0x41200000; fid <= 0x412000FF; fid += 1) {
@@ -386,14 +447,14 @@ public class ProbeActivity extends Activity {
                             if (val != -10011) {
                                 log("  getInt(1041, 0x" + Integer.toHexString(fid) + ") = " + val);
                             }
-                        } catch (Exception e) {}
+                        } catch (Throwable e) {}
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log("  Manager scan error: " + e.getMessage());
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             log("  CAUSE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
@@ -455,11 +516,11 @@ public class ProbeActivity extends Activity {
                         log("  " + f.getName() + " (" + featureStr + ") = " + result);
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log("  features error: " + e.getMessage());
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("ERROR: " + e.getMessage());
         }
     }
@@ -473,7 +534,7 @@ public class ProbeActivity extends Activity {
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  " + methodName + "() ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("  " + methodName + "() ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
@@ -498,7 +559,7 @@ public class ProbeActivity extends Activity {
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
@@ -522,7 +583,7 @@ public class ProbeActivity extends Activity {
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
@@ -550,7 +611,7 @@ public class ProbeActivity extends Activity {
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
@@ -577,7 +638,7 @@ public class ProbeActivity extends Activity {
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("  ITE: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("  ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
@@ -614,7 +675,7 @@ public class ProbeActivity extends Activity {
             String[] doorAreas = {"DOOR_AREA_LEFT_FRONT", "DOOR_AREA_RIGHT_FRONT", "DOOR_AREA_LEFT_REAR", "DOOR_AREA_RIGHT_REAR", "DOOR_AREA_BACK"};
             log("\n[Door States]");
             Method getDoorState = null;
-            try { getDoorState = bwClass.getMethod("getDoorState", int.class); } catch (Exception e) {}
+            try { getDoorState = bwClass.getMethod("getDoorState", int.class); } catch (Throwable e) {}
             if (getDoorState != null) {
                 for (String areaName : doorAreas) {
                     try {
@@ -622,7 +683,7 @@ public class ProbeActivity extends Activity {
                         int area = f.getInt(null);
                         Object result = getDoorState.invoke(bwDevice, area);
                         log("  getDoorState(" + areaName + "=" + area + ") = " + result);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         log("  " + areaName + " = NOT_FOUND");
                     }
                 }
@@ -630,14 +691,14 @@ public class ProbeActivity extends Activity {
                     try {
                         Object result = getDoorState.invoke(bwDevice, i);
                         log("  getDoorState(" + i + ") = " + result);
-                    } catch (Exception e) {}
+                    } catch (Throwable e) {}
                 }
             }
 
             String[] windowAreas = {"WINDOW_AREA_LEFT_FRONT", "WINDOW_AREA_RIGHT_FRONT", "WINDOW_AREA_LEFT_REAR", "WINDOW_AREA_RIGHT_REAR"};
             log("\n[Window States]");
             Method getWindowState = null;
-            try { getWindowState = bwClass.getMethod("getWindowState", int.class); } catch (Exception e) {}
+            try { getWindowState = bwClass.getMethod("getWindowState", int.class); } catch (Throwable e) {}
             if (getWindowState != null) {
                 for (String areaName : windowAreas) {
                     try {
@@ -645,7 +706,7 @@ public class ProbeActivity extends Activity {
                         int area = f.getInt(null);
                         Object result = getWindowState.invoke(bwDevice, area);
                         log("  getWindowState(" + areaName + "=" + area + ") = " + result);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         log("  " + areaName + " = NOT_FOUND");
                     }
                 }
@@ -672,7 +733,7 @@ public class ProbeActivity extends Activity {
         } catch (java.lang.reflect.InvocationTargetException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             log("ERROR: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("ERROR: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
@@ -683,7 +744,7 @@ public class ProbeActivity extends Activity {
             Field f = cls.getField(fieldName);
             Object val = f.get(null);
             log("  " + fieldName + " = " + val);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log("  " + fieldName + " = NOT_FOUND");
         }
     }
