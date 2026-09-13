@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wheregoes.petmode"
-    android:versionCode="10"
-    android:versionName="2.1.2">
+    android:versionCode="11"
+    android:versionName="2.2.0">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.BYDAUTO_AC_GET" />
     <uses-permission android:name="android.permission.BYDAUTO_AC_SET" />
@@ -17,12 +16,10 @@
     <uses-permission android:name="android.permission.BYDAUTO_BODYWORK_COMMON" />
     <uses-permission android:name="android.permission.BYDAUTO_POWER_GET" />
     <uses-permission android:name="android.permission.BYDAUTO_ENERGY_GET" />
-    <uses-permission android:name="android.permission.BYDAUTO_PM2P5_GET" />
 
     <application
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
-        android:debuggable="true"
         android:supportsRtl="true">
 
         <activity
@@ -59,7 +56,6 @@
             <intent-filter android:priority="9900">
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

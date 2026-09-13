@@ -106,6 +106,12 @@
     <color name="ghost_btn_bg">#66FFFFFF</color>  <!-- rgba(255,255,255,0.4) -->
     <color name="ghost_btn_dark">#14FFFFFF</color>
 
+    <!-- Beacon mode: read from outside the car through tinted glass.
+         Pure black/white is a 21:1 contrast ratio; the interior fg_secondary
+         grey on the mint gradient is roughly 1.4:1. -->
+    <color name="beacon_bg">#FF000000</color>
+    <color name="beacon_fg">#FFFFFFFF</color>
+
     <!-- Scrim overlay -->
     <color name="scrim">#5902141A</color>  <!-- rgba(2,20,26,0.35) -->
 </resources>

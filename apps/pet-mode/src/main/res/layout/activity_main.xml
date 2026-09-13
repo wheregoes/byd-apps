@@ -190,16 +190,23 @@
         android:gravity="center"
         android:paddingStart="@dimen/content_padding_h"
         android:paddingEnd="@dimen/content_padding_h"
-        android:paddingTop="@dimen/space_8"
-        android:paddingBottom="@dimen/space_9">
+        android:paddingTop="@dimen/space_7"
+        android:paddingBottom="@dimen/space_8">
 
         <!-- Left: Temperature display -->
         <LinearLayout
+            android:id="@+id/panel_temp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginEnd="@dimen/space_4"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/glass_panel_1"
+            android:elevation="@dimen/elevation_2"
+            android:outlineProvider="background"
+            android:paddingTop="@dimen/space_5"
+            android:paddingBottom="@dimen/space_5">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -224,7 +231,7 @@
                     android:text="°C"
                     android:textSize="@dimen/text_temp_unit"
                     android:textColor="@color/fg_secondary"
-                    android:fontFamily="sans-serif-thin"
+                    android:fontFamily="sans-serif-medium"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="18dp" />
             </LinearLayout>
@@ -244,17 +251,31 @@
 
         <!-- Right: Avatar + Reassurance -->
         <LinearLayout
+            android:id="@+id/panel_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_4"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/glass_panel_2"
+            android:elevation="@dimen/elevation_2"
+            android:outlineProvider="background"
+            android:paddingTop="@dimen/space_5"
+            android:paddingBottom="@dimen/space_5">
 
-            <!-- Avatar image (no disc) -->
+            <!-- Avatar, on a lit-glass specular highlight -->
             <FrameLayout
                 android:id="@+id/avatar_disc"
                 android:layout_width="@dimen/avatar_disc_size"
                 android:layout_height="@dimen/avatar_disc_size">
+
+                <View
+                    android:id="@+id/avatar_specular"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/avatar_specular"
+                    android:alpha="0.55" />
 
                 <ImageView
                     android:id="@+id/avatar"
@@ -265,17 +286,22 @@
             </FrameLayout>
 
             <!-- Reassurance message -->
+            <!-- Autosized: the old fixed size plus a hardcoded 400dp cap (31% of
+                 this 1280dp screen) is why this line rendered small. -->
             <TextView
                 android:id="@+id/message"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_reassure_msg"
                 android:textColor="@color/fg_primary"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:layout_marginTop="18dp"
-                android:maxWidth="400dp"
-                android:maxLines="2" />
+                android:maxLines="2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="28sp"
+                android:autoSizeMaxTextSize="@dimen/text_reassure_msg"
+                android:autoSizeStepGranularity="2sp" />
 
             <TextView
                 android:id="@+id/sub_message"
@@ -298,7 +324,8 @@
         android:layout_marginBottom="20dp"
         android:orientation="horizontal"
         android:background="@drawable/glass_status_capsule"
-        android:elevation="@dimen/elevation_2"
+        android:elevation="@dimen/elevation_3"
+        android:outlineProvider="background"
         android:padding="@dimen/status_bar_padding">
 
         <!-- AC status item -->
@@ -518,5 +545,140 @@
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
+
+    <!--
+      Beacon mode: the same data at maximum legibility, for reading from outside
+      the car through tinted glass. Topmost and opaque, so it simply covers the
+      interior view; MainActivity suspends the interior animations while it is up.
+
+      No gradient, no glass, no orbs: pure #000 behind pure #FFF is a 21:1
+      contrast ratio, and removing the decoration is most of the gain. Screen
+      brightness is already pinned at maximum, so the remaining levers are
+      contrast, stroke weight and glyph size, hence sans-serif-black and
+      autosize bounded only by the row heights.
+    -->
+    <LinearLayout
+        android:id="@+id/beacon_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/beacon_bg"
+        android:elevation="32dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <!-- Temperature. Weight 0.62 is what it takes for the glyphs to reach
+             ~44% of screen height; the spacer balances the unit so the numeral
+             stays optically centred while autosize still has a bounded width. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.66"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="0.12" />
+
+            <TextView
+                android:id="@+id/beacon_temp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.72"
+                android:text="@string/beacon_dash"
+                android:textColor="@color/beacon_fg"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:shadowColor="@color/beacon_bg"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="8"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="120sp"
+                android:autoSizeMaxTextSize="520sp"
+                android:autoSizeStepGranularity="4sp" />
+
+            <TextView
+                android:id="@+id/beacon_unit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.16"
+                android:layout_gravity="center_vertical"
+                android:text="@string/unit_celsius"
+                android:textSize="@dimen/text_beacon_unit"
+                android:textColor="@color/beacon_fg"
+                android:fontFamily="sans-serif-black"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:maxLines="1" />
+        </LinearLayout>
+
+        <!-- Reassurance line -->
+        <TextView
+            android:id="@+id/beacon_message"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.26"
+            android:paddingLeft="@dimen/space_5"
+            android:paddingRight="@dimen/space_5"
+            android:textColor="@color/beacon_fg"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:maxLines="2"
+            android:shadowColor="@color/beacon_bg"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="8"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="40sp"
+            android:autoSizeMaxTextSize="96sp"
+            android:autoSizeStepGranularity="2sp" />
+
+        <!-- Only what an observer outside the car needs: AC, doors, exterior
+             temperature. Battery and the active timer are deliberately dropped. -->
+        <LinearLayout
+            android:id="@+id/beacon_status"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.08"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="@dimen/space_2">
+
+            <TextView
+                android:id="@+id/beacon_ac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_6"
+                android:textSize="@dimen/text_beacon_status"
+                android:textColor="@color/beacon_fg"
+                android:fontFamily="sans-serif-black"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/beacon_doors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_6"
+                android:textSize="@dimen/text_beacon_status"
+                android:textColor="@color/beacon_fg"
+                android:fontFamily="sans-serif-black"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/beacon_outside"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_beacon_status"
+                android:textColor="@color/beacon_fg"
+                android:fontFamily="sans-serif-black"
+                android:maxLines="1" />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>

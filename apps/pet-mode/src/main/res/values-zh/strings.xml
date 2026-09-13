@@ -38,9 +38,27 @@
     <string name="settings_dark_mode">深色模式</string>
     <string name="settings_dark_mode_desc">低调屏幕 — 从车外不太显眼</string>
     <string name="settings_temp_unit_desc">在摄氏度和华氏度之间切换</string>
-    <string name="settings_version">Cabin v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Cabin v2.2.0  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">爪印</string>
     <string name="avatar_dog">狗</string>
     <string name="avatar_cat">猫</string>
+
+    <string name="beacon_dash">--</string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_fahrenheit">°F</string>
+    <string name="display_mode">显示模式</string>
+    <string name="display_mode_auto">自动</string>
+    <string name="display_mode_beacon">车外可读</string>
+    <string name="display_mode_interior">车内</string>
+    <string name="display_mode_desc">高对比度大字显示，从车外也能看清</string>
+    <string name="climate_signal_lost">空调信号已丢失</string>
+    <string name="battery_low_warning">12V 蓄电池电量低，空调可能停止</string>
+    <string name="beacon_ac_on">空调开</string>
+    <string name="beacon_ac_off">空调关</string>
+    <string name="beacon_car_off">车辆关闭</string>
+    <string name="beacon_doors_closed">车门已关</string>
+    <string name="beacon_doors_open">车门未关</string>
+    <string name="beacon_outside">车外 %1$d%2$s</string>
+    <string name="beacon_outside_unknown">车外 --</string>
 </resources>

@@ -6,7 +6,7 @@ Full-screen display shows cabin temperature and a reassuring message to passersb
 
 ## Features
 
-- Large temperature display visible through tinted windows (light mode default)
+- Large temperature display, plus an **Outside view** built to be read through dark tint film
 - Customizable pet name and avatar (dog, cat, or paw print)
 - Door state monitoring (locked/unlocked alerts)
 - AC status display
@@ -14,8 +14,36 @@ Full-screen display shows cabin temperature and a reassuring message to passersb
 - Persistent service — survives infotainment auto-close
 - Auto-start on vehicle boot
 - Dark mode option
+- Climate readings withdrawn when the feed goes stale, rather than showing a stale number
+- 12V battery low warning
 - 6 languages: English, Português (BR), Português (PT), Español, Français, 中文
 - °C and °F support with locale auto-detection
+
+## Outside view (beacon mode)
+
+The pretty interior view is a glass-and-gradient design: lovely from the driver's seat, and close to
+unreadable from the pavement through dark tint. Outside view is the same data at maximum legibility.
+
+| | Interior view | Outside view |
+|---|---|---|
+| Background | aurora gradient, drifting orbs, floating paws | flat `#000000`, nothing else |
+| Type | `sans-serif-light` / `-thin` | `sans-serif-black` |
+| Contrast | roughly 1.4:1 for the secondary text | 21:1 |
+| Temperature | ~320sp | autosized, about 44% of screen height |
+| Status | AC, doors, battery, active timer | AC, doors, exterior temperature only |
+
+Screen brightness is already pinned to maximum in both views, so the remaining levers are contrast,
+stroke weight, glyph size, and getting the decoration out from behind the text.
+
+Set it under Settings → Display:
+
+- **Auto** (default) — Outside view whenever the car is locked, interior view when it is unlocked
+- **Outside view** — always on
+- **Interior** — never
+
+Touching the screen returns to the interior view for 60 seconds. When the AC is off, or the 12V
+battery is low, the background turns red and the status line pulses; the temperature and the message
+never pulse, so they stay readable.
 
 ## Installation
 
@@ -69,14 +97,17 @@ AC signal discovery is automatic — the app probes known device types and featu
 | Platform | DiLink 3.0 (global version) |
 | Android | 10 (API 29) |
 | Architecture | ARM64 (Qualcomm QCM6125) |
-| Screen | 1920x720 widescreen |
+| Screen | 1920x1080 at 240dpi (= 1280x720dp), landscape |
 
 ## Building from Source
 
 Requirements:
 - JDK 11+
 - Android SDK build-tools (`aapt2`, `d8`, `apksigner`)
-- `android.jar` for API 29 at `/tmp/android-10/android.jar`
+- `android.jar` for API 29 at `$HOME/.local/share/android/platform-29/android.jar` (or set `ANDROID_JAR`)
+
+The shared pipeline lives in [`../common/build-common.sh`](../common/build-common.sh); see the repo
+[README](../../README.md#building-from-source) for the one-time download command.
 
 ```bash
 chmod +x build.sh

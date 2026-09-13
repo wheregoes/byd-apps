@@ -121,6 +121,10 @@
     <!-- Main split gap -->
     <dimen name="main_split_gap">80dp</dimen>
 
+    <!-- Beacon mode -->
+    <dimen name="text_beacon_unit">110sp</dimen>
+    <dimen name="text_beacon_status">36sp</dimen>
+
     <!-- Elevation -->
     <dimen name="elevation_1">4dp</dimen>
     <dimen name="elevation_2">8dp</dimen>

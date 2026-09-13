@@ -329,6 +329,95 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- Display mode row -->
+                <LinearLayout
+                    android:id="@+id/row_display_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/glass_setting_row"
+                    android:elevation="@dimen/elevation_1"
+                    android:paddingStart="@dimen/setting_row_padding_h"
+                    android:paddingEnd="@dimen/setting_row_padding_h"
+                    android:paddingTop="@dimen/setting_row_padding_v"
+                    android:paddingBottom="@dimen/setting_row_padding_v"
+                    android:layout_marginBottom="@dimen/space_3">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/label_display_mode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_mode"
+                            android:textSize="@dimen/text_h4"
+                            android:textColor="@color/fg_primary"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/label_display_mode_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_mode_desc"
+                            android:textSize="@dimen/text_body_s"
+                            android:textColor="@color/fg_secondary" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/display_mode_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/glass_segmented_bg"
+                        android:padding="@dimen/segmented_padding">
+
+                        <TextView
+                            android:id="@+id/mode_auto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_mode_auto"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="@color/fg_primary"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="@drawable/glass_segmented_active"
+                            android:paddingStart="@dimen/segmented_btn_padding_h"
+                            android:paddingEnd="@dimen/segmented_btn_padding_h"
+                            android:paddingTop="@dimen/segmented_btn_padding_v"
+                            android:paddingBottom="@dimen/segmented_btn_padding_v" />
+
+                        <TextView
+                            android:id="@+id/mode_beacon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_mode_beacon"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="@color/fg_secondary"
+                            android:fontFamily="sans-serif-medium"
+                            android:paddingStart="@dimen/segmented_btn_padding_h"
+                            android:paddingEnd="@dimen/segmented_btn_padding_h"
+                            android:paddingTop="@dimen/segmented_btn_padding_v"
+                            android:paddingBottom="@dimen/segmented_btn_padding_v" />
+
+                        <TextView
+                            android:id="@+id/mode_interior"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_mode_interior"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="@color/fg_secondary"
+                            android:fontFamily="sans-serif-medium"
+                            android:paddingStart="@dimen/segmented_btn_padding_h"
+                            android:paddingEnd="@dimen/segmented_btn_padding_h"
+                            android:paddingTop="@dimen/segmented_btn_padding_v"
+                            android:paddingBottom="@dimen/segmented_btn_padding_v" />
+                    </LinearLayout>
+                </LinearLayout>
+
                 <!-- Dark mode row -->
                 <LinearLayout
                     android:id="@+id/row_dark_mode"

@@ -1,6 +1,7 @@
 package com.wheregoes.petmode;
 
 import android.hardware.bydauto.bodywork.AbsBYDAutoBodyworkListener;
+import android.hardware.bydauto.bodywork.BYDAutoBodyworkDevice;
 import android.util.Log;
 
 public class BodyworkHandler extends AbsBYDAutoBodyworkListener {
@@ -14,20 +15,28 @@ public class BodyworkHandler extends AbsBYDAutoBodyworkListener {
     @Override
     public void onDoorStateChanged(int area, int state) {
         if (area >= 1 && area <= 6) {
-            monitor.doorOpen[area] = (state == 1);
-            Log.i(TAG, "Door " + area + " " + (state == 1 ? "OPEN" : "CLOSED"));
+            boolean open = state == BYDAutoBodyworkDevice.BODYWORK_STATE_OPEN;
+            monitor.doorOpen[area] = open;
+            Log.i(TAG, "Door " + area + " " + (open ? "OPEN" : "CLOSED"));
             VehicleStateMonitor.Listener cb = monitor.getCallback();
-            if (cb != null) cb.onDoorStateChanged(area, state == 1);
+            if (cb != null) {
+                cb.onDoorStateChanged(area, open);
+            }
         }
     }
 
     @Override
     public void onAutoSystemStateChanged(int state) {
-        boolean locked = (state >= 1);
+        if (state == BYDAutoBodyworkDevice.BODYWORK_AUTO_SYSTEM_STATE_UNDEFINED) {
+            return;
+        }
+        boolean locked = (state >= BYDAutoBodyworkDevice.BODYWORK_AUTO_SYSTEM_STATE_SET_SECURE);
         monitor.locked = locked;
         Log.i(TAG, "Car " + (locked ? "LOCKED" : "UNLOCKED"));
         VehicleStateMonitor.Listener cb = monitor.getCallback();
-        if (cb != null) cb.onLockStateChanged(locked);
+        if (cb != null) {
+            cb.onLockStateChanged(locked);
+        }
     }
 
     @Override
@@ -35,30 +44,24 @@ public class BodyworkHandler extends AbsBYDAutoBodyworkListener {
         monitor.powerLevel = level;
         Log.i(TAG, "Power level: " + level);
         VehicleStateMonitor.Listener cb = monitor.getCallback();
-        if (cb != null) cb.onPowerLevelChanged(level);
+        if (cb != null) {
+            cb.onPowerLevelChanged(level);
+        }
     }
 
-    @Override
-    public void onAcStarted() {
-        monitor.acRunning = true;
-        Log.i(TAG, "AC STARTED");
-        VehicleStateMonitor.Listener cb = monitor.getCallback();
-        if (cb != null) cb.onAcStateChanged(true);
-    }
-
-    @Override
-    public void onAcStoped() {
-        monitor.acRunning = false;
-        Log.i(TAG, "AC STOPPED");
-        VehicleStateMonitor.Listener cb = monitor.getCallback();
-        if (cb != null) cb.onAcStateChanged(false);
-    }
+    // onAcStarted/onAcStoped deliberately not overridden: ClimateMonitor is the
+    // single authority on AC state and already receives those events through
+    // AcListenerHandler. Handling them here too made two writers race over the
+    // same flag.
 
     @Override
     public void onBatteryVoltageLevelChanged(int level) {
-        monitor.batteryLevel = level;
-        Log.i(TAG, "Battery level: " + level);
+        monitor.voltageLevel = level;
+        // Raw so the scale can be identified on a real car; it is NOT a percentage.
+        Log.i(TAG, "12V battery voltage level (raw): " + level);
         VehicleStateMonitor.Listener cb = monitor.getCallback();
-        if (cb != null) cb.onBatteryChanged(level);
+        if (cb != null) {
+            cb.onVoltageLevelChanged(level);
+        }
     }
 }

@@ -17,6 +17,9 @@ public class SettingsActivity extends Activity {
     private SharedPreferences prefs;
     private TextView unitCelsius;
     private TextView unitFahrenheit;
+    private TextView modeAuto;
+    private TextView modeBeacon;
+    private TextView modeInterior;
     private View auroraBg;
 
     @Override
@@ -28,6 +31,7 @@ public class SettingsActivity extends Activity {
         setupPetName();
         setupAvatarSelection();
         setupTempUnit();
+        setupDisplayMode();
         setupThemeToggle();
         setupBackButton();
         applyTheme();
@@ -92,21 +96,58 @@ public class SettingsActivity extends Activity {
     }
 
     private void updateSegmentedState(boolean isFahrenheit) {
-        boolean isDark = prefs.getBoolean(PetModeService.KEY_DARK_MODE, false);
-        int activeBg = isDark ? R.drawable.glass_segmented_active_dark : R.drawable.glass_segmented_active;
-        int activeColor = isDark ? 0xFFFFFFFF : 0xFF1A1A2E;
-        int inactiveColor = isDark ? 0xB8FFFFFF : 0xFF636E7B;
+        selectSegment(isFahrenheit ? unitFahrenheit : unitCelsius,
+                isFahrenheit ? unitCelsius : unitFahrenheit);
+    }
 
-        if (isFahrenheit) {
-            unitFahrenheit.setBackgroundResource(activeBg);
-            unitFahrenheit.setTextColor(activeColor);
-            unitCelsius.setBackgroundResource(0);
-            unitCelsius.setTextColor(inactiveColor);
+    /**
+     * Beacon mode: the same readings at maximum contrast so they can be read
+     * from outside the car through tinted glass.
+     */
+    private void setupDisplayMode() {
+        modeAuto = findViewById(R.id.mode_auto);
+        modeBeacon = findViewById(R.id.mode_beacon);
+        modeInterior = findViewById(R.id.mode_interior);
+
+        updateDisplayModeState(currentDisplayMode());
+
+        modeAuto.setOnClickListener(v -> selectDisplayMode(PetModeService.DISPLAY_AUTO));
+        modeBeacon.setOnClickListener(v -> selectDisplayMode(PetModeService.DISPLAY_BEACON));
+        modeInterior.setOnClickListener(v -> selectDisplayMode(PetModeService.DISPLAY_INTERIOR));
+    }
+
+    private String currentDisplayMode() {
+        return prefs.getString(PetModeService.KEY_DISPLAY_MODE, PetModeService.DISPLAY_AUTO);
+    }
+
+    private void selectDisplayMode(String mode) {
+        prefs.edit().putString(PetModeService.KEY_DISPLAY_MODE, mode).apply();
+        updateDisplayModeState(mode);
+    }
+
+    private void updateDisplayModeState(String mode) {
+        if (PetModeService.DISPLAY_BEACON.equals(mode)) {
+            selectSegment(modeBeacon, modeAuto, modeInterior);
+        } else if (PetModeService.DISPLAY_INTERIOR.equals(mode)) {
+            selectSegment(modeInterior, modeAuto, modeBeacon);
         } else {
-            unitCelsius.setBackgroundResource(activeBg);
-            unitCelsius.setTextColor(activeColor);
-            unitFahrenheit.setBackgroundResource(0);
-            unitFahrenheit.setTextColor(inactiveColor);
+            selectSegment(modeAuto, modeBeacon, modeInterior);
+        }
+    }
+
+    /** One place segmented controls are styled, using named colours not hex. */
+    private void selectSegment(TextView active, TextView... inactive) {
+        boolean isDark = prefs.getBoolean(PetModeService.KEY_DARK_MODE, false);
+        int activeBg = isDark
+                ? R.drawable.glass_segmented_active_dark : R.drawable.glass_segmented_active;
+        int activeColor = getColor(isDark ? R.color.fg_dark_primary : R.color.fg_primary);
+        int inactiveColor = getColor(isDark ? R.color.fg_dark_secondary : R.color.fg_secondary);
+
+        active.setBackgroundResource(activeBg);
+        active.setTextColor(activeColor);
+        for (TextView tv : inactive) {
+            tv.setBackgroundResource(0);
+            tv.setTextColor(inactiveColor);
         }
     }
 
@@ -127,10 +168,10 @@ public class SettingsActivity extends Activity {
         boolean isDark = prefs.getBoolean(PetModeService.KEY_DARK_MODE, false);
         auroraBg.setBackgroundResource(isDark ? R.drawable.aurora_dark : R.drawable.aurora_light);
 
-        int fgPrimary = isDark ? 0xFFFFFFFF : 0xFF1A1A2E;
-        int fgSecondary = isDark ? 0xB8FFFFFF : 0xFF636E7B;
-        int fgTertiary = isDark ? 0x73FFFFFF : 0x731A1A2E;
-        int iconTint = isDark ? 0xFFFFFFFF : 0xFF232830;
+        int fgPrimary = getColor(isDark ? R.color.fg_dark_primary : R.color.fg_primary);
+        int fgSecondary = getColor(isDark ? R.color.fg_dark_secondary : R.color.fg_secondary);
+        int fgTertiary = getColor(isDark ? R.color.fg_dark_tertiary : R.color.fg_tertiary);
+        int iconTint = getColor(isDark ? R.color.fg_dark_primary : R.color.slate_700);
         int rowBg = isDark ? R.drawable.glass_setting_row_dark : R.drawable.glass_setting_row;
         int inputBg = isDark ? R.drawable.glass_input_dark : R.drawable.glass_input;
         int segBg = isDark ? R.drawable.glass_segmented_bg_dark : R.drawable.glass_segmented_bg;
@@ -144,6 +185,8 @@ public class SettingsActivity extends Activity {
         ((TextView) findViewById(R.id.label_cat)).setTextColor(fgSecondary);
         ((TextView) findViewById(R.id.label_temp_unit)).setTextColor(fgPrimary);
         ((TextView) findViewById(R.id.label_temp_unit_desc)).setTextColor(fgSecondary);
+        ((TextView) findViewById(R.id.label_display_mode)).setTextColor(fgPrimary);
+        ((TextView) findViewById(R.id.label_display_mode_desc)).setTextColor(fgSecondary);
         ((TextView) findViewById(R.id.label_dark_mode)).setTextColor(fgPrimary);
         ((TextView) findViewById(R.id.label_dark_mode_desc)).setTextColor(fgSecondary);
         ((TextView) findViewById(R.id.label_version)).setTextColor(fgTertiary);
@@ -156,9 +199,11 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.row_pet_name).setBackgroundResource(rowBg);
         findViewById(R.id.row_avatar).setBackgroundResource(rowBg);
         findViewById(R.id.row_temp_unit).setBackgroundResource(rowBg);
+        findViewById(R.id.row_display_mode).setBackgroundResource(rowBg);
         findViewById(R.id.row_dark_mode).setBackgroundResource(rowBg);
 
         findViewById(R.id.temp_unit_group).setBackgroundResource(segBg);
+        findViewById(R.id.display_mode_group).setBackgroundResource(segBg);
         View backBtn = findViewById(R.id.back_btn);
         backBtn.setBackgroundResource(chromeBg);
         View backIcon = ((android.view.ViewGroup) backBtn).getChildAt(0);
@@ -168,6 +213,7 @@ public class SettingsActivity extends Activity {
 
         String current = prefs.getString(PetModeService.KEY_TEMP_UNIT, getDefaultUnit());
         updateSegmentedState(PetModeService.UNIT_FAHRENHEIT.equals(current));
+        updateDisplayModeState(currentDisplayMode());
     }
 
     private String getDefaultUnit() {

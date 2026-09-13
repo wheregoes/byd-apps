@@ -38,9 +38,27 @@
     <string name="settings_dark_mode">Mode Sombre</string>
     <string name="settings_dark_mode_desc">Écran discret — moins visible de l\'extérieur</string>
     <string name="settings_temp_unit_desc">Basculer entre Celsius et Fahrenheit</string>
-    <string name="settings_version">Cabin v2.1.2  ·  BYD Dolphin · DiLink 3.0</string>
+    <string name="settings_version">Cabin v2.2.0  ·  BYD Dolphin · DiLink 3.0</string>
 
     <string name="avatar_paw">Patte</string>
     <string name="avatar_dog">Chien</string>
     <string name="avatar_cat">Chat</string>
+
+    <string name="beacon_dash">--</string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_fahrenheit">°F</string>
+    <string name="display_mode">Affichage</string>
+    <string name="display_mode_auto">Automatique</string>
+    <string name="display_mode_beacon">Vue extérieure</string>
+    <string name="display_mode_interior">Intérieur</string>
+    <string name="display_mode_desc">Grand affichage à fort contraste, lisible depuis l\'extérieur</string>
+    <string name="climate_signal_lost">Signal climatisation perdu</string>
+    <string name="battery_low_warning">Batterie 12V faible — la clim peut s\'arrêter</string>
+    <string name="beacon_ac_on">CLIM ON</string>
+    <string name="beacon_ac_off">CLIM OFF</string>
+    <string name="beacon_car_off">ARRÊTÉ</string>
+    <string name="beacon_doors_closed">PORTES OK</string>
+    <string name="beacon_doors_open">PORTE OUVERTE</string>
+    <string name="beacon_outside">EXT %1$d%2$s</string>
+    <string name="beacon_outside_unknown">EXT --</string>
 </resources>
