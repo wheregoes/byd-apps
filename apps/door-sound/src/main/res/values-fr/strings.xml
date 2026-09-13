@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Son de Porte</string>
+    <string name="app_tagline">Des sons personnalisés pour votre BYD</string>
+    <string name="service_channel">Service Son de Porte</string>
+    <string name="service_running">Écoute des événements du véhicule…</string>
+    <string name="enabled">Activé</string>
+    <string name="select_file">Choisir</string>
+    <string name="select_audio_file">Choisir un fichier audio</string>
+    <string name="clear">Effacer</string>
+    <string name="no_file_selected">Aucun fichier</string>
+    <string name="volume">Vol</string>
+    <string name="pattern">Motif</string>
+    <string name="preview">Écouter</string>
+    <string name="service_status">État</string>
+    <string name="status_running">En marche</string>
+    <string name="status_stopped">Arrêté</string>
+    <string name="last_event">Dernier événement</string>
+    <string name="no_events_yet">Aucun événement</string>
+    <string name="tab_inside">Haut-parleur intérieur</string>
+    <string name="tab_outside">Haut-parleur extérieur</string>
+    <string name="hint_inside">Vos propres fichiers audio, sur les haut-parleurs de l\'habitacle.</string>
+    <string name="hint_outside">Tonalités AVAS du véhicule sur le haut-parleur extérieur. Les fichiers audio personnalisés ne peuvent pas y être envoyés.</string>
+    <string name="event_door_open">Porte ouverte</string>
+    <string name="event_door_close">Porte fermée</string>
+    <string name="event_lock">Verrouillage</string>
+    <string name="event_unlock">Déverrouillage</string>
+    <string name="event_hood">Capot</string>
+    <string name="event_trunk">Coffre</string>
+    <string name="event_alarm">Alarme</string>
+    <string name="event_window">Vitre restée ouverte</string>
+    <string name="warn_master_off">Ne jouera pas : Activé est désactivé</string>
+    <string name="warn_event_off">Ne jouera pas : désactivé</string>
+    <string name="warn_no_file">Ne jouera pas : aucun fichier</string>
+    <string name="warn_no_pattern">Ne jouera pas : aucun motif</string>
+    <string name="door_left_front">Porte avant gauche</string>
+    <string name="door_right_front">Porte avant droite</string>
+    <string name="door_left_rear">Porte arrière gauche</string>
+    <string name="door_right_rear">Porte arrière droite</string>
+    <string name="door_unknown">Porte %1$d</string>
+    <string name="log_opened">%1$s ouverte</string>
+    <string name="log_closed">%1$s fermée</string>
+    <string name="log_locked">Véhicule verrouillé</string>
+    <string name="log_unlocked">Véhicule déverrouillé</string>
+    <string name="log_alarm">Alarme déclenchée</string>
+    <string name="log_window_open">Vitre restée ouverte</string>
+    <string-array name="pattern_names">
+        <item>Aucun</item>
+        <item>Ding-Dong</item>
+        <item>Dong-Ding</item>
+        <item>Triple bip</item>
+        <item>Alternance rapide</item>
+        <item>Carillon long</item>
+        <item>Carillon de boutique</item>
+        <item>Alarme</item>
+        <item>Fanfare</item>
+    </string-array>
+</resources>

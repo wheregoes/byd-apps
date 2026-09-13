@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sonido de Puerta</string>
+    <string name="app_tagline">Sonidos personalizados para tu BYD</string>
+    <string name="service_channel">Servicio Sonido de Puerta</string>
+    <string name="service_running">Escuchando eventos del vehículo…</string>
+    <string name="enabled">Activado</string>
+    <string name="select_file">Elegir</string>
+    <string name="select_audio_file">Selecciona un archivo de audio</string>
+    <string name="clear">Borrar</string>
+    <string name="no_file_selected">Ningún archivo</string>
+    <string name="volume">Vol</string>
+    <string name="pattern">Patrón</string>
+    <string name="preview">Probar</string>
+    <string name="service_status">Estado</string>
+    <string name="status_running">En marcha</string>
+    <string name="status_stopped">Detenido</string>
+    <string name="last_event">Último evento</string>
+    <string name="no_events_yet">Aún no hay eventos</string>
+    <string name="tab_inside">Altavoz interior</string>
+    <string name="tab_outside">Altavoz exterior</string>
+    <string name="hint_inside">Tus propios archivos de audio, en los altavoces de la cabina.</string>
+    <string name="hint_outside">Tonos AVAS del vehículo en el altavoz exterior. Los archivos de audio propios no se pueden enviar ahí.</string>
+    <string name="event_door_open">Puerta abierta</string>
+    <string name="event_door_close">Puerta cerrada</string>
+    <string name="event_lock">Cerrar</string>
+    <string name="event_unlock">Abrir</string>
+    <string name="event_hood">Capó</string>
+    <string name="event_trunk">Maletero</string>
+    <string name="event_alarm">Alarma</string>
+    <string name="event_window">Ventanilla abierta</string>
+    <string name="warn_master_off">No suena: Activado está apagado</string>
+    <string name="warn_event_off">No suena: desactivado</string>
+    <string name="warn_no_file">No suena: sin archivo</string>
+    <string name="warn_no_pattern">No suena: sin patrón</string>
+    <string name="door_left_front">Puerta delantera izquierda</string>
+    <string name="door_right_front">Puerta delantera derecha</string>
+    <string name="door_left_rear">Puerta trasera izquierda</string>
+    <string name="door_right_rear">Puerta trasera derecha</string>
+    <string name="door_unknown">Puerta %1$d</string>
+    <string name="log_opened">%1$s abierta</string>
+    <string name="log_closed">%1$s cerrada</string>
+    <string name="log_locked">Vehículo cerrado</string>
+    <string name="log_unlocked">Vehículo abierto</string>
+    <string name="log_alarm">Alarma activada</string>
+    <string name="log_window_open">Ventanilla abierta</string>
+    <string-array name="pattern_names">
+        <item>Ninguno</item>
+        <item>Ding-Dong</item>
+        <item>Dong-Ding</item>
+        <item>Triple pitido</item>
+        <item>Alternancia rápida</item>
+        <item>Campanada larga</item>
+        <item>Campanilla de tienda</item>
+        <item>Alarma</item>
+        <item>Fanfarria</item>
+    </string-array>
+</resources>

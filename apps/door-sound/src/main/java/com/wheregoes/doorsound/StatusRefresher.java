@@ -1,15 +1,27 @@
 package com.wheregoes.doorsound;
 
-class StatusRefresher implements Runnable {
-    private final MainActivity activity;
+import android.os.Handler;
 
-    StatusRefresher(MainActivity activity) {
+/**
+ * Re-posts itself to the handler it was given. The old version posted to
+ * getWindow().getDecorView() instead, a different Handler from the one
+ * MainActivity cancelled on, so every resume leaked another chain holding a
+ * strong Activity reference.
+ */
+class StatusRefresher implements Runnable {
+    static final long INTERVAL_MS = 2000L;
+
+    private final MainActivity activity;
+    private final Handler handler;
+
+    StatusRefresher(MainActivity activity, Handler handler) {
         this.activity = activity;
+        this.handler = handler;
     }
 
     @Override
     public void run() {
         activity.updateStatus();
-        activity.getWindow().getDecorView().postDelayed(this, 2000);
+        handler.postDelayed(this, INTERVAL_MS);
     }
 }

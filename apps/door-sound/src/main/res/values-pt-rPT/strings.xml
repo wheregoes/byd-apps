@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Som de Porta</string>
+    <string name="app_tagline">Sons personalizados para o seu BYD</string>
+    <string name="service_channel">Serviço Som de Porta</string>
+    <string name="service_running">A ouvir eventos do veículo…</string>
+    <string name="enabled">Ativado</string>
+    <string name="select_file">Escolher</string>
+    <string name="select_audio_file">Escolher ficheiro de áudio</string>
+    <string name="clear">Limpar</string>
+    <string name="no_file_selected">Nenhum ficheiro</string>
+    <string name="volume">Vol</string>
+    <string name="pattern">Padrão</string>
+    <string name="preview">Testar</string>
+    <string name="service_status">Estado</string>
+    <string name="status_running">Ativo</string>
+    <string name="status_stopped">Parado</string>
+    <string name="last_event">Último evento</string>
+    <string name="no_events_yet">Ainda sem eventos</string>
+    <string name="tab_inside">Altifalante interior</string>
+    <string name="tab_outside">Altifalante exterior</string>
+    <string name="hint_inside">Os seus próprios ficheiros de áudio, nos altifalantes do habitáculo.</string>
+    <string name="hint_outside">Tons AVAS do veículo no altifalante exterior. Ficheiros de áudio próprios não podem ser encaminhados para lá.</string>
+    <string name="event_door_open">Porta aberta</string>
+    <string name="event_door_close">Porta fechada</string>
+    <string name="event_lock">Trancar</string>
+    <string name="event_unlock">Destrancar</string>
+    <string name="event_hood">Capô</string>
+    <string name="event_trunk">Mala</string>
+    <string name="event_alarm">Alarme</string>
+    <string name="event_window">Vidro aberto</string>
+    <string name="warn_master_off">Não toca: Ativado está desligado</string>
+    <string name="warn_event_off">Não toca: desligado</string>
+    <string name="warn_no_file">Não toca: nenhum ficheiro</string>
+    <string name="warn_no_pattern">Não toca: nenhum padrão</string>
+    <string name="door_left_front">Porta dianteira esquerda</string>
+    <string name="door_right_front">Porta dianteira direita</string>
+    <string name="door_left_rear">Porta traseira esquerda</string>
+    <string name="door_right_rear">Porta traseira direita</string>
+    <string name="door_unknown">Porta %1$d</string>
+    <string name="log_opened">%1$s aberta</string>
+    <string name="log_closed">%1$s fechada</string>
+    <string name="log_locked">Veículo trancado</string>
+    <string name="log_unlocked">Veículo destrancado</string>
+    <string name="log_alarm">Alarme acionado</string>
+    <string name="log_window_open">Vidro deixado aberto</string>
+    <string-array name="pattern_names">
+        <item>Nenhum</item>
+        <item>Ding-Dong</item>
+        <item>Dong-Ding</item>
+        <item>Bip triplo</item>
+        <item>Alternância rápida</item>
+        <item>Sino longo</item>
+        <item>Sino de loja</item>
+        <item>Alarme</item>
+        <item>Fanfarra</item>
+    </string-array>
+</resources>

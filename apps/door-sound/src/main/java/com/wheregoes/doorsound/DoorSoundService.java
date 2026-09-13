@@ -21,46 +21,36 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class DoorSoundService extends Service {
-    private static final String TAG = "DoorSoundService";
+    static final String TAG = "DoorSoundService";
     private static final String CHANNEL_ID = "door_sound_service";
     private static final int NOTIFICATION_ID = 1;
-    private static final int RESTARTER_JOB_ID = 1001;
+
     static final String PREF_NAME = "door_sound_prefs";
     static final String KEY_ENABLED = "enabled";
-
-    static final String KEY_DOOR_OPEN_PATH = "door_open_path";
-    static final String KEY_DOOR_CLOSE_PATH = "door_close_path";
-    static final String KEY_LOCK_PATH = "lock_path";
-    static final String KEY_UNLOCK_PATH = "unlock_path";
-
-    static final String KEY_DOOR_OPEN_ENABLED = "door_open_enabled";
-    static final String KEY_DOOR_CLOSE_ENABLED = "door_close_enabled";
-    static final String KEY_LOCK_ENABLED = "lock_enabled";
-    static final String KEY_UNLOCK_ENABLED = "unlock_enabled";
-
-    static final String KEY_DOOR_OPEN_VOLUME = "door_open_volume";
-    static final String KEY_DOOR_CLOSE_VOLUME = "door_close_volume";
-    static final String KEY_LOCK_VOLUME = "lock_volume";
-    static final String KEY_UNLOCK_VOLUME = "unlock_volume";
-
-    static final String KEY_OUTSIDE_DOOR_OPEN_ENABLED = "outside_door_open_enabled";
-    static final String KEY_OUTSIDE_DOOR_OPEN_PATTERN = "outside_door_open_pattern";
-    static final String KEY_OUTSIDE_DOOR_CLOSE_ENABLED = "outside_door_close_enabled";
-    static final String KEY_OUTSIDE_DOOR_CLOSE_PATTERN = "outside_door_close_pattern";
-    static final String KEY_OUTSIDE_LOCK_ENABLED = "outside_lock_enabled";
-    static final String KEY_OUTSIDE_LOCK_PATTERN = "outside_lock_pattern";
-    static final String KEY_OUTSIDE_UNLOCK_ENABLED = "outside_unlock_enabled";
-    static final String KEY_OUTSIDE_UNLOCK_PATTERN = "outside_unlock_pattern";
-
-    static final int DEFAULT_VOLUME = 10;
     static final String KEY_LAST_EVENT = "last_event";
+    static final int DEFAULT_VOLUME = 10;
+
+    /**
+     * Held only long enough to outlive a sound. The old code acquired with no
+     * timeout and released only in onDestroy, which a kill skips -- so a killed
+     * service left the CPU pinned awake until the next reboot.
+     */
+    private static final long WAKE_LOCK_TIMEOUT_MS = 10 * 60 * 1000L;
+
+    /** API 29 clamps periodic jobs to 15 minutes; ask for exactly that. */
+    private static final long RESTART_PERIOD_MS = 15 * 60 * 1000L;
+
+    /** Backoff for a listener registration that races BYD's own `auto` service. */
+    private static final long[] RETRY_DELAYS_MS = {2_000L, 5_000L, 10_000L, 30_000L};
+    private static final long RETRY_DELAY_STEADY_MS = 60_000L;
+
+    /** Debug log is self-limiting; no setting to forget to turn off. */
+    private static final long LOG_MAX_BYTES = 512 * 1024L;
 
     private static volatile boolean sRunning = false;
 
@@ -69,8 +59,11 @@ public class DoorSoundService extends Service {
     private BodyworkHandler bodyworkListener;
     private MediaPlayer activePlayer;
     private Handler mainHandler;
-    private int savedVolume = -1;
     private AvasPlayer avasPlayer;
+    private int maxStreamVolume = 15;
+    private int retryAttempt = 0;
+
+    private final Runnable registerRetry = this::registerBodyworkListener;
 
     public static boolean isRunning() {
         return sRunning;
@@ -79,17 +72,19 @@ public class DoorSoundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        logToFile("=== Service onCreate START ===");
+        log("=== Service onCreate START ===");
         mainHandler = new Handler(Looper.getMainLooper());
+        maxStreamVolume = ((AudioManager) getSystemService(AUDIO_SERVICE))
+                .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         createNotificationChannel();
         startForeground(NOTIFICATION_ID, buildNotification());
         acquireWakeLock();
         avasPlayer = new AvasPlayer(new BydPermissionContext(this));
-        logToFile("AVAS player available: " + avasPlayer.isAvailable());
+        log("AVAS player available: " + avasPlayer.isAvailable());
         registerBodyworkListener();
         scheduleRestarter();
         sRunning = true;
-        logToFile("=== Service onCreate COMPLETE ===");
+        log("=== Service onCreate COMPLETE ===");
     }
 
     @Override
@@ -105,18 +100,22 @@ public class DoorSoundService extends Service {
     @Override
     public void onDestroy() {
         sRunning = false;
+        mainHandler.removeCallbacks(registerRetry);
         unregisterBodyworkListener();
         releasePlayer();
-        if (avasPlayer != null) avasPlayer.stop();
-        if (wakeLock != null && wakeLock.isHeld()) {
-            wakeLock.release();
+        if (avasPlayer != null) {
+            avasPlayer.stop();
         }
+        releaseWakeLock();
         super.onDestroy();
     }
 
+    // ------------------------------------------------------------ notification
+
     private void createNotificationChannel() {
         NotificationChannel channel = new NotificationChannel(
-                CHANNEL_ID, "Door Sound Service", NotificationManager.IMPORTANCE_LOW);
+                CHANNEL_ID, getString(R.string.service_channel),
+                NotificationManager.IMPORTANCE_LOW);
         channel.setShowBadge(false);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
     }
@@ -126,33 +125,69 @@ public class DoorSoundService extends Service {
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         return new Notification.Builder(this, CHANNEL_ID)
-                .setContentTitle("Door Sound")
-                .setContentText("Listening for door events...")
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.service_running))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentIntent(pi)
                 .setOngoing(true)
                 .build();
     }
 
+    // -------------------------------------------------------------- wake lock
+
     private void acquireWakeLock() {
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "doorsound:service");
-        wakeLock.acquire();
+        try {
+            if (wakeLock == null) {
+                PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+                wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "doorsound:service");
+                wakeLock.setReferenceCounted(false);
+            }
+            wakeLock.acquire(WAKE_LOCK_TIMEOUT_MS);
+        } catch (Exception e) {
+            Log.w(TAG, "wake lock unavailable", e);
+        }
     }
+
+    private void releaseWakeLock() {
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
+    }
+
+    /** Called from {@link BodyworkHandler#onPowerLevelChanged(int)}. */
+    void onPowerLevel(int level) {
+        log("Power level: " + level);
+        if (level == BYDAutoBodyworkDevice.BODYWORK_POWER_LEVEL_OFF) {
+            releaseWakeLock();
+        } else {
+            acquireWakeLock();
+        }
+    }
+
+    // --------------------------------------------------------------- listener
 
     private void registerBodyworkListener() {
         try {
-            logToFile("Getting BYDAutoBodyworkDevice instance...");
             bodyworkDevice = BYDAutoBodyworkDevice.getInstance(new BydPermissionContext(this));
-            logToFile("Got instance, power=" + bodyworkDevice.getPowerLevel());
+            log("Got bodywork device, power=" + bodyworkDevice.getPowerLevel());
             bodyworkListener = new BodyworkHandler(this);
             bodyworkDevice.registerListener(bodyworkListener);
-            logToFile("Listener registered OK");
+            bodyworkListener.primeLockState(bodyworkDevice.getAutoSystemState());
+            log("Listener registered OK (attempt " + (retryAttempt + 1) + ")");
+            retryAttempt = 0;
         } catch (Throwable e) {
-            logToFile("FAILED to register: " + e.getClass().getName() + ": " + e.getMessage());
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            logToFile(sw.toString());
+            // Giving up here left the app permanently deaf whenever a boot-start
+            // beat BYD's own service into existence. Retry instead.
+            long delay = retryAttempt < RETRY_DELAYS_MS.length
+                    ? RETRY_DELAYS_MS[retryAttempt]
+                    : RETRY_DELAY_STEADY_MS;
+            retryAttempt++;
+            Log.w(TAG, "registerListener failed, retry #" + retryAttempt + " in " + delay + "ms", e);
+            log("FAILED to register (attempt " + retryAttempt + "): "
+                    + e.getClass().getName() + ": " + e.getMessage()
+                    + " -- retrying in " + delay + "ms");
+            mainHandler.removeCallbacks(registerRetry);
+            mainHandler.postDelayed(registerRetry, delay);
         }
     }
 
@@ -160,68 +195,94 @@ public class DoorSoundService extends Service {
         if (bodyworkDevice != null && bodyworkListener != null) {
             try {
                 bodyworkDevice.unregisterListener(bodyworkListener);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
-    void handleDoorOpen(int area) {
-        logToFile("EVENT: Door OPEN area=" + area + " (" + getDoorName(area) + ")");
-        setLastEvent(getDoorName(area) + " opened");
-        playSoundIfEnabled(KEY_DOOR_OPEN_ENABLED, KEY_DOOR_OPEN_PATH, KEY_DOOR_OPEN_VOLUME);
-        playPatternIfEnabled(KEY_OUTSIDE_DOOR_OPEN_ENABLED, KEY_OUTSIDE_DOOR_OPEN_PATTERN);
+    // ------------------------------------------------------------------ events
+
+    /** Single entry point for every event; description is already localised. */
+    void fire(SoundEvent event, String description) {
+        log("EVENT: " + event.name + " - " + description);
+        setLastEvent(description);
+        playSoundIfEnabled(event);
+        playPatternIfEnabled(event);
     }
 
-    void handleDoorClose(int area) {
-        logToFile("EVENT: Door CLOSE area=" + area + " (" + getDoorName(area) + ")");
-        setLastEvent(getDoorName(area) + " closed");
-        playSoundIfEnabled(KEY_DOOR_CLOSE_ENABLED, KEY_DOOR_CLOSE_PATH, KEY_DOOR_CLOSE_VOLUME);
-        playPatternIfEnabled(KEY_OUTSIDE_DOOR_CLOSE_ENABLED, KEY_OUTSIDE_DOOR_CLOSE_PATTERN);
+    String doorName(int area) {
+        switch (area) {
+            case BYDAutoBodyworkDevice.BODYWORK_CMD_DOOR_LEFT_FRONT:
+                return getString(R.string.door_left_front);
+            case BYDAutoBodyworkDevice.BODYWORK_CMD_DOOR_RIGHT_FRONT:
+                return getString(R.string.door_right_front);
+            case BYDAutoBodyworkDevice.BODYWORK_CMD_DOOR_LEFT_REAR:
+                return getString(R.string.door_left_rear);
+            case BYDAutoBodyworkDevice.BODYWORK_CMD_DOOR_RIGHT_REAR:
+                return getString(R.string.door_right_rear);
+            case BYDAutoBodyworkDevice.BODYWORK_CMD_DOOR_HOOD:
+                return getString(R.string.event_hood);
+            case BYDAutoBodyworkDevice.BODYWORK_CMD_DOOR_LUGGAGE_DOOR:
+                return getString(R.string.event_trunk);
+            default:
+                return getString(R.string.door_unknown, area);
+        }
     }
 
-    void handleLock() {
-        logToFile("EVENT: Vehicle LOCKED");
-        setLastEvent("Vehicle locked");
-        playSoundIfEnabled(KEY_LOCK_ENABLED, KEY_LOCK_PATH, KEY_LOCK_VOLUME);
-        playPatternIfEnabled(KEY_OUTSIDE_LOCK_ENABLED, KEY_OUTSIDE_LOCK_PATTERN);
-    }
-
-    void handleUnlock() {
-        logToFile("EVENT: Vehicle UNLOCKED");
-        setLastEvent("Vehicle unlocked");
-        playSoundIfEnabled(KEY_UNLOCK_ENABLED, KEY_UNLOCK_PATH, KEY_UNLOCK_VOLUME);
-        playPatternIfEnabled(KEY_OUTSIDE_UNLOCK_ENABLED, KEY_OUTSIDE_UNLOCK_PATTERN);
-    }
-
-    private void playSoundIfEnabled(String enableKey, String pathKey, String volumeKey) {
+    private void playSoundIfEnabled(SoundEvent event) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        if (!prefs.getBoolean(KEY_ENABLED, false)) return;
-        if (!prefs.getBoolean(enableKey, true)) return;
-
-        String path = prefs.getString(pathKey, null);
-        if (path == null || path.isEmpty()) return;
-
-        int volume = prefs.getInt(volumeKey, DEFAULT_VOLUME);
-        logToFile("Playing sound: volume=" + volume + " path=" + new File(path).getName());
-        mainHandler.post(new SoundPlayer(this, path, volume));
+        if (!prefs.getBoolean(KEY_ENABLED, false)) {
+            log("  master switch off, no interior sound");
+            return;
+        }
+        if (!prefs.getBoolean(event.enabledKey, true)) {
+            log("  " + event.enabledKey + " off, no interior sound");
+            return;
+        }
+        String path = prefs.getString(event.pathKey, null);
+        if (path == null || path.isEmpty()) {
+            log("  no file selected for " + event.name);
+            return;
+        }
+        int volume = prefs.getInt(event.volumeKey, DEFAULT_VOLUME);
+        log("  playing " + new File(path).getName() + " at volume " + volume
+                + "/" + maxStreamVolume);
+        acquireWakeLock();
+        mainHandler.post(new SoundPlayer(this, path, volume, maxStreamVolume));
     }
 
-    private void playPatternIfEnabled(String enableKey, String patternKey) {
+    private void playPatternIfEnabled(SoundEvent event) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        if (!prefs.getBoolean(KEY_ENABLED, false)) return;
-        if (!prefs.getBoolean(enableKey, false)) return;
-
-        int pattern = prefs.getInt(patternKey, AvasPlayer.PATTERN_NONE);
+        if (!prefs.getBoolean(KEY_ENABLED, false)) {
+            return;
+        }
+        if (!prefs.getBoolean(event.outsideEnabledKey, false)) {
+            log("  " + event.outsideEnabledKey + " off, no AVAS pattern");
+            return;
+        }
+        int pattern = prefs.getInt(event.outsidePatternKey, AvasPlayer.PATTERN_NONE);
         if (pattern >= 0 && avasPlayer != null && avasPlayer.isAvailable()) {
-            logToFile("Playing AVAS pattern: " + pattern);
+            log("  playing AVAS pattern " + pattern);
+            acquireWakeLock();
             avasPlayer.play(pattern);
         }
     }
+
+    private void setLastEvent(String event) {
+        String msg = event + " @ " + android.text.format.DateFormat
+                .format("HH:mm:ss", System.currentTimeMillis());
+        getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .edit().putString(KEY_LAST_EVENT, msg).apply();
+    }
+
+    // ----------------------------------------------------------------- players
 
     void releasePlayer() {
         if (activePlayer != null) {
             try {
                 activePlayer.release();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             activePlayer = null;
         }
     }
@@ -234,64 +295,51 @@ public class DoorSoundService extends Service {
         return activePlayer;
     }
 
-    void saveAndSetVolume(int eventVolume) {
+    // ----------------------------------------------------------------- logging
+
+    /**
+     * Goes to logcat, which is what `adb logcat -d | grep DoorSound` needs, plus
+     * an app-private external file for users reporting issues. The old version
+     * wrote only to /sdcard/Download, where WRITE_EXTERNAL_STORAGE is denied on
+     * API 29 -- so the file never existed and none of the 21 call sites produced
+     * any diagnostics at all.
+     */
+    void log(String msg) {
+        Log.d(TAG, msg);
         try {
-            AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-            if (savedVolume == -1) {
-                savedVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+            File dir = getExternalFilesDir(null);
+            if (dir == null) {
+                return;
             }
-            am.setStreamVolume(AudioManager.STREAM_MUSIC, eventVolume, 0);
-        } catch (Exception ignored) {}
-    }
-
-    void restoreVolume() {
-        if (savedVolume != -1) {
-            try {
-                AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-                am.setStreamVolume(AudioManager.STREAM_MUSIC, savedVolume, 0);
-            } catch (Exception ignored) {}
-            savedVolume = -1;
-        }
-    }
-
-    private void setLastEvent(String event) {
-        String msg = event + " @ " + android.text.format.DateFormat.format("HH:mm:ss", System.currentTimeMillis());
-        getSharedPreferences(PREF_NAME, MODE_PRIVATE)
-                .edit().putString(KEY_LAST_EVENT, msg).apply();
-    }
-
-    private String getDoorName(int area) {
-        switch (area) {
-            case 1: return "Left front door";
-            case 2: return "Right front door";
-            case 3: return "Left rear door";
-            case 4: return "Right rear door";
-            case 5: return "Hood";
-            case 6: return "Trunk";
-            default: return "Door " + area;
-        }
-    }
-
-    void logToFile(String msg) {
-        try {
-            File logDir = new File("/sdcard/Download");
-            File logFile = new File(logDir, "doorsound_debug.log");
-            String ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).format(new Date());
+            File logFile = new File(dir, "doorsound-log.txt");
+            // ponytail: truncate rather than rotate; upgrade to a rolling file
+            // only if someone actually needs the older half.
+            if (logFile.length() > LOG_MAX_BYTES) {
+                logFile.delete();
+            }
+            String ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+                    .format(new Date());
             FileWriter fw = new FileWriter(logFile, true);
             fw.write(ts + " " + msg + "\n");
             fw.close();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
+
+    // ---------------------------------------------------------------- restarter
 
     private void scheduleRestarter() {
         try {
             JobScheduler js = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-            JobInfo job = new JobInfo.Builder(RESTARTER_JOB_ID,
+            JobInfo job = new JobInfo.Builder(RestarterJobService.JOB_ID,
                     new ComponentName(this, RestarterJobService.class))
-                    .setOverrideDeadline(60000)
+                    .setPeriodic(RESTART_PERIOD_MS)
                     .setPersisted(true)
                     .build();
             js.schedule(job);
-        } catch (Exception ignored) {}
+            log("Restarter scheduled every " + (RESTART_PERIOD_MS / 60000) + " min");
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to schedule restarter", e);
+        }
     }
 }

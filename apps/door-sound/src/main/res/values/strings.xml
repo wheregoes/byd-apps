@@ -1,25 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Door Sound</string>
+    <string name="app_tagline">Custom sounds for your BYD</string>
     <string name="service_channel">Door Sound Service</string>
-    <string name="service_running">Listening for door events...</string>
+    <string name="service_running">Listening for vehicle events…</string>
     <string name="enabled">Enabled</string>
-    <string name="select_file">Select File</string>
+
+    <string name="select_file">Select</string>
+    <string name="select_audio_file">Select audio file</string>
     <string name="clear">Clear</string>
     <string name="no_file_selected">No file selected</string>
-    <string name="door_open_sound">Door Open</string>
-    <string name="door_close_sound">Door Close</string>
-    <string name="lock_sound">Lock</string>
-    <string name="unlock_sound">Unlock</string>
-    <string name="volume">Vol:</string>
+    <string name="volume">Vol</string>
+    <string name="pattern">Pattern</string>
+    <string name="preview">Preview</string>
+
     <string name="service_status">Status</string>
     <string name="status_running">Running</string>
     <string name="status_stopped">Stopped</string>
-    <string name="last_event">Last Event</string>
-    <string name="tab_inside">Inside Speaker</string>
-    <string name="tab_outside">Outside Speaker</string>
-    <string name="preview">Preview</string>
-    <string name="pattern">Pattern:</string>
+    <string name="last_event">Last event</string>
+    <string name="no_events_yet">No events yet</string>
+
+    <string name="tab_inside">Inside speaker</string>
+    <string name="tab_outside">Outside speaker</string>
+    <string name="hint_inside">Your own audio files, played on the cabin speakers.</string>
+    <string name="hint_outside">Vehicle AVAS tones on the exterior speaker. Custom audio files cannot be routed there.</string>
+
+    <string name="event_door_open">Door open</string>
+    <string name="event_door_close">Door close</string>
+    <string name="event_lock">Lock</string>
+    <string name="event_unlock">Unlock</string>
+    <string name="event_hood">Hood</string>
+    <string name="event_trunk">Trunk</string>
+    <string name="event_alarm">Alarm</string>
+    <string name="event_window">Window left open</string>
+
+    <string name="warn_master_off">Will not play: Enabled is off</string>
+    <string name="warn_event_off">Will not play: switched off</string>
+    <string name="warn_no_file">Will not play: no file selected</string>
+    <string name="warn_no_pattern">Will not play: no pattern selected</string>
+
+    <string name="door_left_front">Left front door</string>
+    <string name="door_right_front">Right front door</string>
+    <string name="door_left_rear">Left rear door</string>
+    <string name="door_right_rear">Right rear door</string>
+    <string name="door_unknown">Door %1$d</string>
+
+    <string name="log_opened">%1$s opened</string>
+    <string name="log_closed">%1$s closed</string>
+    <string name="log_locked">Vehicle locked</string>
+    <string name="log_unlocked">Vehicle unlocked</string>
+    <string name="log_alarm">Alarm triggered</string>
+    <string name="log_window_open">Window left open</string>
+
     <string-array name="pattern_names">
         <item>None</item>
         <item>Ding-Dong</item>

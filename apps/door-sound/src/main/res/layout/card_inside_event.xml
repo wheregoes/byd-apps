@@ -1,86 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- One interior-speaker event. Sized by the parent row; do not set width here. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/card_background"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="18dp"
-    android:paddingBottom="18dp"
-    android:layout_marginBottom="16dp">
+    android:background="@drawable/glass_panel_1"
+    android:elevation="@dimen/elevation_2"
+    android:outlineProvider="background"
+    android:padding="@dimen/space_3">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="14dp">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/card_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#FF00D4AA"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-medium" />
+            android:textSize="@dimen/text_body"
+            android:textColor="@color/fg_primary"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
         <Switch
             android:id="@+id/card_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:track="@drawable/switch_track"
-            android:thumb="@drawable/switch_thumb" />
+            android:track="@drawable/glass_switch_track_off"
+            android:thumb="@drawable/glass_switch_thumb"
+            android:switchMinWidth="@dimen/switch_width"
+            android:textOff=""
+            android:textOn="" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/card_file_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_1"
         android:text="@string/no_file_selected"
-        android:textColor="#FF9E9E9E"
-        android:textSize="12sp"
-        android:fontFamily="sans-serif-light"
-        android:layout_marginBottom="14dp"
-        android:singleLine="true"
+        android:textSize="@dimen/text_caption"
+        android:textColor="@color/fg_secondary"
+        android:maxLines="1"
         android:ellipsize="middle" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/card_warning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:textSize="@dimen/text_caption"
+        android:textColor="@color/warning"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:visibility="gone" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/volume"
-            android:textColor="#FF9E9E9E"
-            android:textSize="12sp"
-            android:fontFamily="sans-serif-light"
-            android:layout_marginEnd="10dp" />
-
-        <SeekBar
-            android:id="@+id/card_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:progressTint="#FF4A9EFF"
-            android:progressBackgroundTint="#FF2A2A3E"
-            android:thumbTint="#FFFFFFFF"
-            android:layout_marginEnd="8dp" />
-
-        <TextView
-            android:id="@+id/card_volume_label"
-            android:layout_width="28dp"
-            android:layout_height="wrap_content"
-            android:textColor="#FFE0E0E0"
-            android:textSize="13sp"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center" />
-    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -90,25 +71,62 @@
         <Button
             android:id="@+id/card_btn_select"
             android:layout_width="0dp"
-            android:layout_height="42dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:minHeight="48dp"
             android:text="@string/select_file"
-            android:textColor="#FF4A9EFF"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_body_s"
+            android:textColor="@color/fg_on_brand"
             android:textAllCaps="false"
             android:fontFamily="sans-serif-medium"
-            android:background="@drawable/btn_primary"
-            android:layout_marginEnd="10dp" />
+            android:background="@drawable/glass_btn_primary"
+            android:stateListAnimator="@null" />
 
         <Button
             android:id="@+id/card_btn_clear"
-            android:layout_width="72dp"
-            android:layout_height="42dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/space_2"
+            android:minHeight="48dp"
             android:text="@string/clear"
-            android:textColor="#FFFF6B6B"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_body_s"
+            android:textColor="@color/fg_primary"
             android:textAllCaps="false"
             android:fontFamily="sans-serif-medium"
-            android:background="@drawable/btn_clear" />
+            android:background="@drawable/glass_btn_ghost"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_2"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/volume"
+            android:textSize="@dimen/text_caption"
+            android:textColor="@color/fg_secondary" />
+
+        <SeekBar
+            android:id="@+id/card_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/space_1"
+            android:layout_marginRight="@dimen/space_1" />
+
+        <TextView
+            android:id="@+id/card_volume_label"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_caption"
+            android:textColor="@color/fg_primary"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="end" />
     </LinearLayout>
 </LinearLayout>

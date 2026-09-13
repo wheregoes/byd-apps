@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">车门声音</string>
+    <string name="app_tagline">为您的比亚迪自定义提示音</string>
+    <string name="service_channel">车门声音服务</string>
+    <string name="service_running">正在监听车辆事件…</string>
+    <string name="enabled">启用</string>
+    <string name="select_file">选择</string>
+    <string name="select_audio_file">选择音频文件</string>
+    <string name="clear">清除</string>
+    <string name="no_file_selected">未选择文件</string>
+    <string name="volume">音量</string>
+    <string name="pattern">音效</string>
+    <string name="preview">试听</string>
+    <string name="service_status">状态</string>
+    <string name="status_running">运行中</string>
+    <string name="status_stopped">已停止</string>
+    <string name="last_event">最近事件</string>
+    <string name="no_events_yet">暂无事件</string>
+    <string name="tab_inside">车内扬声器</string>
+    <string name="tab_outside">车外扬声器</string>
+    <string name="hint_inside">您自己的音频文件，通过车内扬声器播放。</string>
+    <string name="hint_outside">车外扬声器仅能播放车辆自带的 AVAS 提示音，无法播放自定义音频文件。</string>
+    <string name="event_door_open">车门打开</string>
+    <string name="event_door_close">车门关闭</string>
+    <string name="event_lock">上锁</string>
+    <string name="event_unlock">解锁</string>
+    <string name="event_hood">引擎盖</string>
+    <string name="event_trunk">后备箱</string>
+    <string name="event_alarm">警报</string>
+    <string name="event_window">车窗未关</string>
+    <string name="warn_master_off">不会播放：总开关已关闭</string>
+    <string name="warn_event_off">不会播放：已关闭</string>
+    <string name="warn_no_file">不会播放：未选择文件</string>
+    <string name="warn_no_pattern">不会播放：未选择音效</string>
+    <string name="door_left_front">左前门</string>
+    <string name="door_right_front">右前门</string>
+    <string name="door_left_rear">左后门</string>
+    <string name="door_right_rear">右后门</string>
+    <string name="door_unknown">车门 %1$d</string>
+    <string name="log_opened">%1$s已打开</string>
+    <string name="log_closed">%1$s已关闭</string>
+    <string name="log_locked">车辆已上锁</string>
+    <string name="log_unlocked">车辆已解锁</string>
+    <string name="log_alarm">警报已触发</string>
+    <string name="log_window_open">车窗未关</string>
+    <string-array name="pattern_names">
+        <item>无</item>
+        <item>叮-咚</item>
+        <item>咚-叮</item>
+        <item>三声短鸣</item>
+        <item>快速交替</item>
+        <item>长音提示</item>
+        <item>商店提示音</item>
+        <item>警报</item>
+        <item>号角</item>
+    </string-array>
+</resources>

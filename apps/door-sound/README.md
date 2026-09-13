@@ -4,7 +4,7 @@ Plays custom audio files through cabin speakers and preset tone patterns through
 
 ## Features
 
-- 4 events: door open, door close, lock, unlock
+- 8 events: door open, door close, lock, unlock, hood, trunk, alarm, window left open
 - **Inside speaker**: custom audio files (OGG/MP3/WAV) with per-event volume control (0-15)
 - **Outside speaker (AVAS)**: 8 preset tone patterns:
   - Ding-Dong — pitch A then B (classic doorbell)
@@ -17,6 +17,30 @@ Plays custom audio files through cabin speakers and preset tone patterns through
   - Fanfare — A-A-A-B-B (cavalry charge)
 - Auto-start on boot
 - Foreground service for reliable background operation
+
+## When a sound will and will not play
+
+Three things must all be true, and each card tells you which one is missing:
+
+1. the **Enabled** master switch is on;
+2. that event's own switch is on (choosing a file or a pattern turns it on for you);
+3. a file is selected (Inside) or a pattern is chosen (Outside).
+
+The event log at the top updates on **every** vehicle event regardless of those settings, because it
+is a diagnostic. **Preview** also deliberately bypasses them, so you can audition a pattern without
+arming it. Between them those two behaviours used to make a completely unconfigured app look like a
+working one ([#5](https://github.com/wheregoes/byd-apps/issues/5)).
+
+Interior sounds play with `USAGE_ASSISTANCE_SONIFICATION` at a per-event gain, so they never change
+the radio's volume.
+
+### Event notes
+
+- **Lock / unlock** fire on a transition only. BYD reports `NORMAL=0`, `SET_SECURE=1`,
+  `START_SECURE=2`, so a single lock can produce two state changes; the app collapses them.
+- **Window left open** fires when a window is open and the car is locked — opening a window while
+  driving is deliberate, leaving one open is not.
+- **Hood** and **trunk** fire on opening only.
 
 ## AVAS Pattern Mechanism
 
@@ -44,7 +68,9 @@ The AVAS external speaker supports only **2 pitches** (confirmed by live testing
 ./build.sh
 ```
 
-Update the path to `android.jar` in the script if needed (default: `/tmp/android-10/android.jar`).
+`android.jar` is expected at `$HOME/.local/share/android/platform-29/android.jar`, or wherever
+`ANDROID_JAR` points. The shared pipeline lives in [`../common/build-common.sh`](../common/build-common.sh);
+see the repo [README](../../README.md#building-from-source) for the one-time download command.
 
 ## Install
 
