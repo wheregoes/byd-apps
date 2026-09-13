@@ -2,6 +2,7 @@ build/
 *.apk
 *.keystore
 *.jks
+keystore/
 *.class
 *.dex
 !**/libs/*.dex
