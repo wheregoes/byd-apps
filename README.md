@@ -13,14 +13,21 @@ Built on reverse-engineered BYD APIs — these apps interact directly with the v
 
 ## Apps
 
-| App | Description | Status |
-|-----|-------------|--------|
-| [Door Sound](apps/door-sound/) | Custom interior sounds on door, hood, trunk, lock/unlock, alarm and window events; AVAS tone patterns on the exterior speaker | Ready |
-| [Engine Sound](apps/engine-sound/) | Select AVAS engine sound presets on the exterior speaker (BYD's Boombox); the preset range is probed from your vehicle at runtime | Ready |
-| [Cabin](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen, plus a high-contrast Outside view readable through tinted glass | Ready |
-| [BYD Probe](apps/byd-probe/) | Diagnostic tool — enumerates all BYD Auto API methods via reflection | Dev tool |
+| App | Description | Download |
+|-----|-------------|----------|
+| [Door Sound](apps/door-sound/) | Custom interior sounds on door, hood, trunk, lock/unlock, alarm and window events; AVAS tone patterns on the exterior speaker | [door-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.1.0-doorsound/door-sound.apk) |
+| [Engine Sound](apps/engine-sound/) | Select AVAS engine sound presets on the exterior speaker (BYD's Boombox) | [engine-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.0.0-enginesound/engine-sound.apk) |
+| [Cabin](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen, plus a high-contrast Outside view readable through tinted glass | [pet-mode.apk](https://github.com/wheregoes/byd-apps/releases/download/v3.1.0-cabin/pet-mode.apk) |
+| [BYD Probe](apps/byd-probe/) | Diagnostic tool — enumerates all BYD Auto API methods via reflection | [byd-probe.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.0.0-bydprobe/byd-probe.apk) |
+
+All versions are on the [releases page](https://github.com/wheregoes/byd-apps/releases). You do not
+need to build anything — download the APK and install it.
 
 Quick start: copy APK to `Third Party Apps 55/` on USB → plug in → password `BYD6125F`.
+
+> Releases before September 2026 were each signed with a throwaway key, so Android treats them as
+> different apps. Upgrading from one of those needs an uninstall first; from this release on the
+> signing key is stable and upgrades install over the top.
 
 ## Compatibility
 
@@ -129,8 +136,10 @@ Every modification, finding, discovery, or change made to the BYD Dolphin must b
 - Door Sound logs the event but plays nothing? → playback needs the master switch **and** that
   event's own switch **and** a selected file. Each card states which one is missing. Note that
   Preview deliberately bypasses the switches.
-- Engine Sound offers fewer presets than expected? → the count is per model and probed from your
-  car. A Dolphin reports 10, a Song Pro 2. Use "Re-scan presets" after a firmware update.
+- Engine Sound shows 20 presets but only one or two make a sound? → expected. The MCU stores and
+  echoes back any preset number you write (verified up to 200 on a Dolphin), so the vehicle cannot
+  be asked how many sounds it actually has. The app offers a fixed range of 20 and lets you rename
+  the ones you can hear — long-press a preset chip to name it.
 - New firmware broke things? → Report in issues; no guarantees on updates.
 
 ## License
