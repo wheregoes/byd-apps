@@ -24,6 +24,8 @@
     <string name="sim_off">Preset %1$d · sound OFF</string>
     <string name="sim_turning_off">Sound OFF</string>
     <string name="sim_verify_failed">Vehicle did not confirm sound ON</string>
+    <string name="sim_dropped">Vehicle turned the engine sound off again — preset %1$d kept</string>
+    <string name="vehicle_panel_idle">reading vehicle…</string>
     <string name="sim_write_failed">Vehicle refused %1$s</string>
     <string name="cycling_now">Preset %1$d · cycling</string>
     <string name="cycle_needs_sim">Turn the engine sound on first</string>

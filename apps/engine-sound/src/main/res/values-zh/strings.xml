@@ -21,6 +21,8 @@
     <string name="sim_off">预设 %1$d · 声音已关闭</string>
     <string name="sim_turning_off">声音已关闭</string>
     <string name="sim_verify_failed">车辆未确认声音已开启</string>
+    <string name="sim_dropped">车辆再次关闭了发动机声音 — 已保留预设 %1$d</string>
+    <string name="vehicle_panel_idle">正在读取车辆…</string>
     <string name="sim_write_failed">车辆拒绝了 %1$s</string>
     <string name="cycling_now">预设 %1$d · 循环中</string>
     <string name="cycle_needs_sim">请先开启发动机声音</string>

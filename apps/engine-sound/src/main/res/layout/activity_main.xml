@@ -220,6 +220,22 @@
                         android:orientation="horizontal" />
                 </HorizontalScrollView>
 
+                <!-- Raw registers, tap to re-read. A photo of this is the whole
+                     diagnostic for owners with no PC and no adb. -->
+                <TextView
+                    android:id="@+id/vehicle_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:padding="@dimen/space_3"
+                    android:background="@drawable/glass_pill"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="monospace"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="@color/fg_tertiary"
+                    android:text="@string/vehicle_panel_idle" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

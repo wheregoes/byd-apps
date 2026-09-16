@@ -21,6 +21,8 @@
     <string name="sim_off">Preset %1$d · sonido DESACTIVADO</string>
     <string name="sim_turning_off">Sonido DESACTIVADO</string>
     <string name="sim_verify_failed">El vehículo no confirmó el sonido activado</string>
+    <string name="sim_dropped">El vehículo volvió a apagar el sonido del motor — preset %1$d conservado</string>
+    <string name="vehicle_panel_idle">leyendo el vehículo…</string>
     <string name="sim_write_failed">El vehículo rechazó %1$s</string>
     <string name="cycling_now">Preset %1$d · recorriendo</string>
     <string name="cycle_needs_sim">Activa primero el sonido de motor</string>

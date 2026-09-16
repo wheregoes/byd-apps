@@ -21,6 +21,8 @@
     <string name="sim_off">Preset %1$d · som DESLIGADO</string>
     <string name="sim_turning_off">Som DESLIGADO</string>
     <string name="sim_verify_failed">O veículo não confirmou o som ligado</string>
+    <string name="sim_dropped">O veículo desligou o som do motor novamente — preset %1$d mantido</string>
+    <string name="vehicle_panel_idle">lendo o veículo…</string>
     <string name="sim_write_failed">O veículo recusou %1$s</string>
     <string name="cycling_now">Preset %1$d · percorrendo</string>
     <string name="cycle_needs_sim">Ligue o som do motor primeiro</string>

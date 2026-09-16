@@ -89,6 +89,7 @@ public class MainActivity extends Activity {
     private Button nextBtn;
     private Button cycleBtn;
     private LinearLayout chipsRow;
+    private TextView vehiclePanel;
 
     private SharedPreferences prefs;
     private HandlerThread ioThread;
@@ -100,6 +101,8 @@ public class MainActivity extends Activity {
     private volatile boolean ready = false;
     private boolean simOn = false;
     private int cycleIndex = 1;
+    /** Last vehicle write and what the readback said; the panel's fifth line. */
+    private volatile String lastWriteLine = "no write yet";
 
     private final CompoundButton.OnCheckedChangeListener simListener =
             (btn, checked) -> {
@@ -127,6 +130,9 @@ public class MainActivity extends Activity {
         nextBtn = findViewById(R.id.next_btn);
         cycleBtn = findViewById(R.id.cycle_btn);
         chipsRow = findViewById(R.id.chips_row);
+        vehiclePanel = findViewById(R.id.vehicle_panel);
+        // Tapping the values re-reads them, so the panel needs no button of its own.
+        vehiclePanel.setOnClickListener(v -> io.post(this::refreshVehiclePanel));
 
         prevBtn.setOnClickListener(v -> setPending(pendingType - 1));
         nextBtn.setOnClickListener(v -> setPending(pendingType + 1));
@@ -176,6 +182,7 @@ public class MainActivity extends Activity {
             mgr = Vehicle.autoService(ctx);
             if (mgr == null) {
                 fail(getString(R.string.err_service_null));
+                refreshVehiclePanel();
                 return;
             }
             setIntMethod = mgr.getClass().getMethod("setInt", int.class, int.class, int.class);
@@ -183,6 +190,7 @@ public class MainActivity extends Activity {
         } catch (Throwable t) {
             Log.e(TAG, "auto service unavailable", t);
             fail(getString(R.string.err_service, String.valueOf(t.getMessage())));
+            refreshVehiclePanel();
             return;
         }
 
@@ -194,10 +202,12 @@ public class MainActivity extends Activity {
 
         if (hasSim == null) {
             fail(getString(R.string.sim_unreadable));
+            refreshVehiclePanel();
             return;
         }
         if (hasSim != 2) {
             fail(getString(R.string.sim_unsupported, hasSim));
+            refreshVehiclePanel();
             return;
         }
 
@@ -232,6 +242,7 @@ public class MainActivity extends Activity {
                         simOn ? R.color.success : R.color.fg_secondary);
             }
         });
+        refreshVehiclePanel();
     }
 
     private void fail(String message) {
@@ -271,16 +282,25 @@ public class MainActivity extends Activity {
         if (!setInt(FID_SRC_TYPE_SET, want)) {
             runOnUiThread(() ->
                     setStatus(getString(R.string.write_failed, want), R.color.danger));
+            refreshVehiclePanel();
             return;
         }
         settle();
         Integer back = getInt(FID_SRC_TYPE_GET);
+        lastWriteLine = "write 0x3E300038 = " + want + " -> read "
+                + (back == null ? "read failed" : back);
         if (back == null) {
             runOnUiThread(() ->
                     setStatus(getString(R.string.read_failed), R.color.warning));
+            refreshVehiclePanel();
             return;
         }
         final int got = back;
+        // A car that stores the preset and then drops STATE back to 0 is what
+        // "plays louder for a moment, then goes back to normal" looks like. The
+        // status used to be rendered from the cached simOn flag, so the UI kept
+        // showing a green sound ON that the vehicle had already abandoned.
+        final Integer state = getInt(FID_STATE_GET);
         runOnUiThread(() -> {
             if (got != want) {
                 // setInt returns success even for values the MCU ignores, so
@@ -288,11 +308,15 @@ public class MainActivity extends Activity {
                 pendingType = got;
                 renderPreset(got);
                 setStatus(getString(R.string.preset_rejected, want, got), R.color.warning);
+            } else if (simOn && state != null && state != 1) {
+                syncToggle(false);
+                setStatus(getString(R.string.sim_dropped, got), R.color.warning);
             } else {
                 setStatus(getString(simOn ? R.string.sim_on : R.string.sim_off, got),
                         simOn ? R.color.success : R.color.fg_secondary);
             }
         });
+        refreshVehiclePanel();
     }
 
     // -------------------------------------------------------------- simulator
@@ -306,12 +330,15 @@ public class MainActivity extends Activity {
                         setStatus(getString(R.string.sim_write_failed, hex), R.color.danger);
                         syncToggle(false);
                     });
+                    refreshVehiclePanel();
                     return;
                 }
             }
             setInt(FID_SRC_TYPE_SET, pendingType);
             settle();
             Integer state = getInt(FID_STATE_GET);
+            lastWriteLine = "write 0x3E300020 = 1 -> STATE "
+                    + (state == null ? "read failed" : state);
             final boolean on = state != null && state == 1;
             runOnUiThread(() -> {
                 syncToggle(on);
@@ -321,6 +348,7 @@ public class MainActivity extends Activity {
                     setStatus(getString(R.string.sim_verify_failed), R.color.danger);
                 }
             });
+            refreshVehiclePanel();
         });
     }
 
@@ -328,7 +356,12 @@ public class MainActivity extends Activity {
         stopCycle();
         io.post(() -> {
             setInt(FID_STATE_SET, 0);
+            // The MCU does not answer instantly; without this the read was stale
+            // and a successful switch-off could report "did not confirm".
+            settle();
             Integer state = getInt(FID_STATE_GET);
+            lastWriteLine = "write 0x3E300020 = 0 -> STATE "
+                    + (state == null ? "read failed" : state);
             final boolean on = state != null && state == 1;
             runOnUiThread(() -> {
                 syncToggle(on);
@@ -336,6 +369,7 @@ public class MainActivity extends Activity {
                              : getString(R.string.sim_turning_off),
                         on ? R.color.danger : R.color.fg_secondary);
             });
+            refreshVehiclePanel();
         });
     }
 
@@ -504,6 +538,23 @@ public class MainActivity extends Activity {
         prevBtn.setAlpha(alpha);
         nextBtn.setAlpha(alpha);
         cycleBtn.setAlpha(alpha);
+    }
+
+    /**
+     * io thread. Five monospace lines, so one photo of the screen answers "what
+     * does my car actually report" for a reporter with no PC and no adb.
+     */
+    private void refreshVehiclePanel() {
+        final String text = "SIM   0x48F00000 = " + fmt(getInt(FID_HAS_SIM))
+                + "\nSRC   0x48F00013 = " + fmt(getInt(FID_HAS_SRC))
+                + "\nSTATE 0x48F0000A = " + fmt(getInt(FID_STATE_GET))
+                + "\nTYPE  0x48F00010 = " + fmt(getInt(FID_SRC_TYPE_GET))
+                + "\n" + lastWriteLine;
+        runOnUiThread(() -> vehiclePanel.setText(text));
+    }
+
+    private static String fmt(Integer value) {
+        return value == null ? "read failed" : String.valueOf(value);
     }
 
     // ------------------------------------------------------------- vehicle I/O

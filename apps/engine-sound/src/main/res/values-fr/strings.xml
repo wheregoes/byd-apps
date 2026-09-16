@@ -21,6 +21,8 @@
     <string name="sim_off">Préréglage %1$d · son DÉSACTIVÉ</string>
     <string name="sim_turning_off">Son DÉSACTIVÉ</string>
     <string name="sim_verify_failed">Le véhicule n\'a pas confirmé l\'activation</string>
+    <string name="sim_dropped">Le véhicule a de nouveau coupé le son moteur — preset %1$d conservé</string>
+    <string name="vehicle_panel_idle">lecture du véhicule…</string>
     <string name="sim_write_failed">Le véhicule a refusé %1$s</string>
     <string name="cycling_now">Préréglage %1$d · en cours</string>
     <string name="cycle_needs_sim">Activez d\'abord le son moteur</string>
