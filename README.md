@@ -15,8 +15,8 @@ Built on reverse-engineered BYD APIs — these apps interact directly with the v
 
 | App | Description | Download |
 |-----|-------------|----------|
-| [Door Sound](apps/door-sound/) | Custom interior sounds on door, hood, trunk, lock/unlock, alarm and window events; AVAS tone patterns on the exterior speaker | [door-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.1.0-doorsound/door-sound.apk) |
-| [Engine Sound](apps/engine-sound/) | Select AVAS engine sound presets on the exterior speaker (BYD's Boombox) | [engine-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.0.0-enginesound/engine-sound.apk) |
+| [Door Sound](apps/door-sound/) | Custom interior sounds on door, hood, trunk, lock/unlock, alarm and window events; AVAS tone patterns on the exterior speaker | [door-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.2.0-doorsound/door-sound.apk) |
+| [Engine Sound](apps/engine-sound/) | Select AVAS engine sound presets on the exterior speaker (BYD's Boombox) | [engine-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.1.0-enginesound/engine-sound.apk) |
 | [Cabin](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen, plus a high-contrast Outside view readable through tinted glass | [pet-mode.apk](https://github.com/wheregoes/byd-apps/releases/download/v3.1.0-cabin/pet-mode.apk) |
 | [BYD Probe](apps/byd-probe/) | Diagnostic tool — enumerates all BYD Auto API methods via reflection | [byd-probe.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.0.0-bydprobe/byd-probe.apk) |
 
