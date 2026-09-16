@@ -22,6 +22,21 @@ AAPT2="${AAPT2:-/usr/bin/aapt2}"
 BUILD_DIR="build"
 STUBS_DIR="$COMMON_DIR/stubs"
 BYD_SDK_DEX="$COMMON_DIR/libs/byd_sdk.dex"
+# Emulator-only fake vehicle. With BYD_FAKE=1 these sources replace the stubs
+# (and byd_sdk.dex) so the apps run on an AVD; see tools/emu.sh.
+FAKE_DIR="$COMMON_DIR/fake"
+# Real shared code, available to every app.
+SRC_DIR="$COMMON_DIR/src"
+BYD_FAKE="${BYD_FAKE:-0}"
+
+# Java files under $1, minus any that a fake/ file of the same relative path
+# replaces when BYD_FAKE=1.
+sources() {
+    (cd "$1" && find . -name "*.java") | while read -r f; do
+        if [ "$BYD_FAKE" = 1 ] && [ -f "$FAKE_DIR/$f" ]; then continue; fi
+        echo "$1/$f"
+    done
+}
 MIN_SDK=28
 TARGET_SDK=29
 
@@ -46,6 +61,20 @@ EOF
     exit 1
 fi
 
+VERSION_ARGS=()
+FAKE_SOURCES=""
+if [ "$BYD_FAKE" = 1 ]; then
+    echo "=== FAKE VEHICLE BUILD -- emulator only, never install on a car ==="
+    OUT_APK="fake-$OUT_APK"
+    FAKE_SOURCES="$(find "$FAKE_DIR" -name "*.java")"
+    # Make a fake build identifiable in dumpsys package if it ever reaches a
+    # car. --replace-version is required: without it aapt2 only injects a
+    # version when the manifest has none.
+    MANIFEST_VERSION="$(grep -o 'android:versionName="[^"]*"' src/main/AndroidManifest.xml \
+        | cut -d'"' -f2)"
+    VERSION_ARGS=(--replace-version --version-name "$MANIFEST_VERSION+fake")
+fi
+
 echo "=== Cleaning ($PACKAGE) ==="
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"/{compiled-res,gen,classes,stubs-classes,dex}
@@ -61,18 +90,24 @@ echo "=== Linking resources ==="
     --java "$BUILD_DIR/gen" \
     --min-sdk-version "$MIN_SDK" \
     --target-sdk-version "$TARGET_SDK" \
+    "${VERSION_ARGS[@]}" \
     "$BUILD_DIR"/compiled-res/*.flat
 
 echo "=== Compiling BYD API stubs ==="
-find "$STUBS_DIR" -name "*.java" | xargs javac \
+javac \
     --release 11 \
     -cp "$ANDROID_JAR" \
-    -d "$BUILD_DIR/stubs-classes"
+    -d "$BUILD_DIR/stubs-classes" \
+    $(sources "$STUBS_DIR") $FAKE_SOURCES
 
+# $SRC_DIR sits on the classpath rather than in the source list so shared
+# classes compile implicitly, on demand: an app that references none of them
+# ships none of them. In fake mode the freshly built stubs-classes copy of a
+# shared class precedes (and outdates) its real source, so the fake wins.
 echo "=== Compiling app sources ==="
 find src/main/java -name "*.java" | xargs javac \
     --release 11 \
-    -cp "$ANDROID_JAR:$BUILD_DIR/stubs-classes:$BUILD_DIR/gen" \
+    -cp "$ANDROID_JAR:$BUILD_DIR/stubs-classes:$BUILD_DIR/gen:$SRC_DIR" \
     -d "$BUILD_DIR/classes"
 
 # The stubs exist only to satisfy javac; the real classes ship in byd_sdk.dex,
@@ -88,12 +123,22 @@ find src/main/java -name "*.java" | xargs javac \
 # `new Runnable() {...}`, and a final class of static constants instead of an
 # enum. Every app in this repo already follows that.
 echo "=== Dexing app + BYD SDK ==="
-d8 --min-api "$MIN_SDK" \
-    --lib "$ANDROID_JAR" \
-    --classpath "$BUILD_DIR/stubs-classes" \
-    --output "$BUILD_DIR/dex" \
-    "$BYD_SDK_DEX" \
-    $(find "$BUILD_DIR/classes" -name "*.class")
+if [ "$BYD_FAKE" = 1 ]; then
+    # No byd_sdk.dex and no --classpath: the fake vehicle, and the stub
+    # listener base classes the platform would normally provide, have to ship
+    # inside the APK.
+    d8 --min-api "$MIN_SDK" \
+        --lib "$ANDROID_JAR" \
+        --output "$BUILD_DIR/dex" \
+        $(find "$BUILD_DIR/stubs-classes" "$BUILD_DIR/classes" -name "*.class")
+else
+    d8 --min-api "$MIN_SDK" \
+        --lib "$ANDROID_JAR" \
+        --classpath "$BUILD_DIR/stubs-classes" \
+        --output "$BUILD_DIR/dex" \
+        "$BYD_SDK_DEX" \
+        $(find "$BUILD_DIR/classes" -name "*.class")
+fi
 
 echo "=== Packaging APK ==="
 cp "$BUILD_DIR/app-unsigned.apk" "$BUILD_DIR/$OUT_APK"
@@ -131,5 +176,10 @@ apksigner verify -v --min-sdk-version 21 --max-sdk-version "$TARGET_SDK" "$BUILD
 
 echo ""
 echo "=== Build complete: $BUILD_DIR/$OUT_APK ==="
-echo "Install: adb install -r $(basename "$APP_DIR")/$BUILD_DIR/$OUT_APK"
-echo "Then enable it in Settings > Apps > Auto-start management"
+if [ "$BYD_FAKE" = 1 ]; then
+    echo "Install: tools/emu.sh install $(basename "$APP_DIR")"
+    echo "EMULATOR ONLY -- the fake vehicle throws on real hardware"
+else
+    echo "Install: adb install -r $(basename "$APP_DIR")/$BUILD_DIR/$OUT_APK"
+    echo "Then enable it in Settings > Apps > Auto-start management"
+fi

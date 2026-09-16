@@ -117,6 +117,25 @@ reinstall was a signature mismatch and in-place upgrades were impossible.
 > `NullPointerException: Cannot invoke "String.length()"`. Use `this::method` references and final
 > classes of static constants instead. Details in `apps/common/build-common.sh`.
 
+### UI work without the car
+
+`tools/emu.sh` runs the apps on an AVD with the head unit's geometry (1920x1080 at 240dpi,
+landscape, the car's `[0,84][1920,990]` stable frame) and an emulator-only fake vehicle
+(`apps/common/fake/`) in place of the BYD SDK, so layout, states and copy can be iterated without
+powering the car on:
+
+```bash
+tools/emu.sh setup                  # one-time: SDK, API 29 image, "dilink3" AVD
+tools/emu.sh start
+tools/emu.sh install pet-mode       # BYD_FAKE=1 build, install, launch
+tools/emu.sh vehicle lock=1 ac=0    # drive the fake vehicle (run bare for all keys)
+tools/emu.sh shot /tmp/cabin.png
+```
+
+The fake answers instantly and never fails a write, so it proves nothing about CAN timing, readback
+or MCU behaviour — those stay car-only. Fake builds are written to `build/fake-*.apk`, their
+`versionName` ends in `+fake`, and the fake throws on real hardware; never install one on a car.
+
 ## Research
 
 Detailed API reference in [`research/byd-auto-api-reference.md`](research/byd-auto-api-reference.md) — covers AC, door lock, panorama, bodywork, and cloud communication APIs with live-verified values.

@@ -1,6 +1,9 @@
 package com.wheregoes.doorsound;
 
 import android.content.Context;
+
+import com.wheregoes.byd.Vehicle;
+
 import java.lang.reflect.Method;
 
 public class AvasPlayer {
@@ -29,7 +32,7 @@ public class AvasPlayer {
 
     public AvasPlayer(Context context) {
         try {
-            mgr = context.getSystemService("auto");
+            mgr = Vehicle.autoService(context);
             if (mgr != null) {
                 setIntMethod = mgr.getClass().getMethod("setInt", int.class, int.class, int.class);
             }

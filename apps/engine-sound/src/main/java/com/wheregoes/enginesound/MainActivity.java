@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.wheregoes.byd.Vehicle;
+
 import java.lang.reflect.Method;
 
 /**
@@ -171,7 +173,7 @@ public class MainActivity extends Activity {
     private void initVehicle() {
         BydPermissionContext ctx = new BydPermissionContext(this);
         try {
-            mgr = ctx.getSystemService("auto");
+            mgr = Vehicle.autoService(ctx);
             if (mgr == null) {
                 fail(getString(R.string.err_service_null));
                 return;
