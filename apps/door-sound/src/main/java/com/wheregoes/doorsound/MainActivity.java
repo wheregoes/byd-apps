@@ -88,6 +88,9 @@ public class MainActivity extends Activity {
             updateStatus();
         });
 
+        findViewById(R.id.btn_diagnostics).setOnClickListener(v ->
+                startActivity(new Intent(this, DiagnosticsActivity.class)));
+
         buildGrid((LinearLayout) contentInside, true, maxVolume);
         buildGrid((LinearLayout) contentOutside, false, maxVolume);
 

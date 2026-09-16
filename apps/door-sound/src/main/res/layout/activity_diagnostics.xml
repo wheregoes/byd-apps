@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A ScrollView is correct here: the "everything on one screen, no scrolling"
+  rule covers primary controls, and this screen is a log dump whose whole job is
+  to be photographed.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/aurora_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/content_padding_h"
+        android:paddingRight="@dimen/content_padding_h"
+        android:paddingTop="@dimen/space_5"
+        android:paddingBottom="@dimen/space_5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!--
+              Weighted title instead of a bare spacer View: an empty View with
+              wrap_content height fills a horizontal row (View.getDefaultSize
+              returns the AT_MOST size), which measured this header at the full
+              834 px and collapsed the log panel to zero height.
+            -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/diagnostics"
+                android:textSize="@dimen/text_h3"
+                android:textColor="@color/fg_primary"
+                android:fontFamily="sans-serif-medium" />
+
+            <Button
+                android:id="@+id/btn_diag_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="80dp"
+                android:paddingLeft="@dimen/space_6"
+                android:paddingRight="@dimen/space_6"
+                android:text="@string/diag_refresh"
+                android:textSize="@dimen/text_body_l"
+                android:textColor="@color/fg_primary"
+                android:textAllCaps="false"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/glass_btn_ghost"
+                android:stateListAnimator="@null" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/space_4"
+            android:background="@drawable/glass_panel_1"
+            android:padding="@dimen/space_4">
+
+            <TextView
+                android:id="@+id/diag_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textSize="@dimen/text_caption"
+                android:textColor="@color/fg_primary"
+                android:textIsSelectable="true" />
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

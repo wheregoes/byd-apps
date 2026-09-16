@@ -5,6 +5,8 @@
     <string name="service_channel">Service Son de Porte</string>
     <string name="service_running">Écoute des événements du véhicule…</string>
     <string name="enabled">Activé</string>
+    <string name="diagnostics">Diagnostic</string>
+    <string name="diag_refresh">Actualiser</string>
     <string name="select_file">Choisir</string>
     <string name="select_audio_file">Choisir un fichier audio</string>
     <string name="clear">Effacer</string>

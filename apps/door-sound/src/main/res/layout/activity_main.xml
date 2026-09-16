@@ -94,6 +94,22 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/btn_diagnostics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/space_4"
+                android:minHeight="@dimen/touch_min"
+                android:gravity="center"
+                android:paddingLeft="@dimen/pill_padding_h"
+                android:paddingRight="@dimen/pill_padding_h"
+                android:paddingTop="@dimen/pill_padding_v"
+                android:paddingBottom="@dimen/pill_padding_v"
+                android:background="@drawable/glass_pill"
+                android:text="@string/diagnostics"
+                android:textSize="@dimen/text_body_s"
+                android:textColor="@color/fg_secondary" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/space_3"

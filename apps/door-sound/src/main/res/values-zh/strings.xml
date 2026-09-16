@@ -5,6 +5,8 @@
     <string name="service_channel">车门声音服务</string>
     <string name="service_running">正在监听车辆事件…</string>
     <string name="enabled">启用</string>
+    <string name="diagnostics">诊断</string>
+    <string name="diag_refresh">刷新</string>
     <string name="select_file">选择</string>
     <string name="select_audio_file">选择音频文件</string>
     <string name="clear">清除</string>
