@@ -33,8 +33,13 @@ public class BodyworkHandler extends AbsBYDAutoBodyworkListener {
         return state >= BYDAutoBodyworkDevice.BODYWORK_AUTO_SYSTEM_STATE_SET_SECURE;
     }
 
+    /**
+     * Synchronized: pushed callbacks arrive on a binder thread and the service's
+     * poll calls this from its io thread, while the `locked` edge check is a
+     * read-modify-write. Without it both paths can pass the check and fire twice.
+     */
     @Override
-    public void onAutoSystemStateChanged(int state) {
+    public synchronized void onAutoSystemStateChanged(int state) {
         if (state == BYDAutoBodyworkDevice.BODYWORK_AUTO_SYSTEM_STATE_UNDEFINED) {
             return;
         }

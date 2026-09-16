@@ -14,6 +14,7 @@ import android.hardware.bydauto.bodywork.BYDAutoBodyworkDevice;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -45,6 +46,18 @@ public class DoorSoundService extends Service {
     /** API 29 clamps periodic jobs to 15 minutes; ask for exactly that. */
     private static final long RESTART_PERIOD_MS = 15 * 60 * 1000L;
 
+    /**
+     * Fallback for vehicles that never push onAutoSystemStateChanged. Reporters
+     * had door events working and lock/unlock silent, which is exactly what an
+     * event-only service does on a car that reports the lock state but never
+     * announces it. Cabin has always polled; this app did not. The pushed path
+     * still fires instantly, so polling only adds a floor.
+     */
+    private static final long POLL_INTERVAL_MS = 10_000L;
+
+    /** How long after the last event or power change the poll and the wake lock stay active. */
+    private static final long WATCH_WINDOW_MS = 10 * 60 * 1000L;
+
     /** Backoff for a listener registration that races BYD's own `auto` service. */
     private static final long[] RETRY_DELAYS_MS = {2_000L, 5_000L, 10_000L, 30_000L};
     private static final long RETRY_DELAY_STEADY_MS = 60_000L;
@@ -53,6 +66,18 @@ public class DoorSoundService extends Service {
     private static final long LOG_MAX_BYTES = 512 * 1024L;
 
     private static volatile boolean sRunning = false;
+
+    /**
+     * Diagnostic snapshot for {@link DiagnosticsActivity}. Process scoped on
+     * purpose: after a kill these read back as zero/false, which is itself the
+     * answer to "was the service alive when I locked the car".
+     */
+    static volatile long sStartedAtMs = 0L;
+    static volatile boolean sListenerOk = false;
+    static volatile boolean sAvasAvailable = false;
+    static volatile int sLastLockRaw = -1;
+    static volatile int sLastPower = -1;
+    static volatile long sLastPollMs = 0L;
 
     private PowerManager.WakeLock wakeLock;
     private BYDAutoBodyworkDevice bodyworkDevice;
@@ -63,7 +88,17 @@ public class DoorSoundService extends Service {
     private int maxStreamVolume = 15;
     private int retryAttempt = 0;
 
+    private HandlerThread ioThread;
+    private Handler io;
+    /** Deadline for the poll and the wake lock, ms since epoch; extended by armWatch(). */
+    private volatile long watchUntilMs;
+    private int lastPolledState = -1;
+    private int lastPolledPower = -1;
+    private int lastDispatchedPower = -1;
+
     private final Runnable registerRetry = this::registerBodyworkListener;
+    /** Method reference, not an anonymous class: d8 8.2.2 cannot dex those. */
+    private final Runnable pollTick = this::pollAndReschedule;
 
     public static boolean isRunning() {
         return sRunning;
@@ -80,9 +115,16 @@ public class DoorSoundService extends Service {
         startForeground(NOTIFICATION_ID, buildNotification());
         acquireWakeLock();
         avasPlayer = new AvasPlayer(new BydPermissionContext(this));
-        log("AVAS player available: " + avasPlayer.isAvailable());
-        registerBodyworkListener();
+        sAvasAvailable = avasPlayer.isAvailable();
+        log("AVAS player available: " + sAvasAvailable);
+        // One serialised thread for every vehicle read; getPowerLevel() used to
+        // run on the main looper.
+        ioThread = new HandlerThread("doorsound-io");
+        ioThread.start();
+        io = new Handler(ioThread.getLooper());
+        io.post(this::registerBodyworkListener);
         scheduleRestarter();
+        sStartedAtMs = System.currentTimeMillis();
         sRunning = true;
         log("=== Service onCreate COMPLETE ===");
     }
@@ -100,13 +142,18 @@ public class DoorSoundService extends Service {
     @Override
     public void onDestroy() {
         sRunning = false;
-        mainHandler.removeCallbacks(registerRetry);
+        if (io != null) {
+            io.removeCallbacksAndMessages(null);
+        }
         unregisterBodyworkListener();
         releasePlayer();
         if (avasPlayer != null) {
             avasPlayer.stop();
         }
         releaseWakeLock();
+        if (ioThread != null) {
+            ioThread.quitSafely();
+        }
         super.onDestroy();
     }
 
@@ -135,7 +182,7 @@ public class DoorSoundService extends Service {
 
     // -------------------------------------------------------------- wake lock
 
-    private void acquireWakeLock() {
+    private synchronized void acquireWakeLock() {
         try {
             if (wakeLock == null) {
                 PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
@@ -148,24 +195,77 @@ public class DoorSoundService extends Service {
         }
     }
 
-    private void releaseWakeLock() {
+    private synchronized void releaseWakeLock() {
         if (wakeLock != null && wakeLock.isHeld()) {
             wakeLock.release();
         }
     }
 
-    /** Called from {@link BodyworkHandler#onPowerLevelChanged(int)}. */
+    /**
+     * Called from {@link BodyworkHandler#onPowerLevelChanged(int)} and from the
+     * poll. Parking re-arms the window instead of ending it: the old code released
+     * the wake lock on BODYWORK_POWER_LEVEL_OFF, which is the exact moment before
+     * someone locks the car and walks away -- the one event they wanted a sound for.
+     */
     void onPowerLevel(int level) {
         log("Power level: " + level);
-        if (level == BYDAutoBodyworkDevice.BODYWORK_POWER_LEVEL_OFF) {
-            releaseWakeLock();
-        } else {
-            acquireWakeLock();
+        armWatch();
+    }
+
+    /**
+     * Extends the poll-and-wake-lock window. The lock stays bounded:
+     * acquire(WAKE_LOCK_TIMEOUT_MS) plus an explicit release when the window
+     * closes, so a killed service cannot pin the CPU.
+     */
+    private void armWatch() {
+        watchUntilMs = System.currentTimeMillis() + WATCH_WINDOW_MS;
+        acquireWakeLock();
+        if (io != null) {
+            io.removeCallbacks(pollTick);
+            io.postDelayed(pollTick, POLL_INTERVAL_MS);
         }
+    }
+
+    /** io thread. */
+    private void pollAndReschedule() {
+        if (bodyworkDevice == null || bodyworkListener == null) {
+            return;
+        }
+        if (System.currentTimeMillis() > watchUntilMs) {
+            log("poll: watch window closed, pushed events only");
+            releaseWakeLock();
+            return;
+        }
+        try {
+            int state = bodyworkDevice.getAutoSystemState();
+            int power = bodyworkDevice.getPowerLevel();
+            sLastLockRaw = state;
+            sLastPower = power;
+            sLastPollMs = System.currentTimeMillis();
+            if (state != lastPolledState || power != lastPolledPower) {
+                log("poll: lock raw=" + state + " power=" + power);
+                lastPolledState = state;
+                lastPolledPower = power;
+            }
+            // Unconditional: onAutoSystemStateChanged already drops equal values,
+            // so a car that does push the event cannot fire twice.
+            bodyworkListener.onAutoSystemStateChanged(state);
+            if (power != lastDispatchedPower) {
+                lastDispatchedPower = power;
+                onPowerLevel(power);
+            }
+        } catch (Throwable t) {
+            log("poll failed: " + t.getClass().getName() + ": " + t.getMessage());
+        }
+        // removeCallbacks first: fire() and onPowerLevel() also re-arm the tick,
+        // and two pending ticks would double the poll rate for good.
+        io.removeCallbacks(pollTick);
+        io.postDelayed(pollTick, POLL_INTERVAL_MS);
     }
 
     // --------------------------------------------------------------- listener
 
+    /** io thread. */
     private void registerBodyworkListener() {
         try {
             bodyworkDevice = BYDAutoBodyworkDevice.getInstance(new BydPermissionContext(this));
@@ -175,9 +275,12 @@ public class DoorSoundService extends Service {
             bodyworkListener.primeLockState(bodyworkDevice.getAutoSystemState());
             log("Listener registered OK (attempt " + (retryAttempt + 1) + ")");
             retryAttempt = 0;
+            sListenerOk = true;
+            armWatch();
         } catch (Throwable e) {
             // Giving up here left the app permanently deaf whenever a boot-start
             // beat BYD's own service into existence. Retry instead.
+            sListenerOk = false;
             long delay = retryAttempt < RETRY_DELAYS_MS.length
                     ? RETRY_DELAYS_MS[retryAttempt]
                     : RETRY_DELAY_STEADY_MS;
@@ -186,8 +289,8 @@ public class DoorSoundService extends Service {
             log("FAILED to register (attempt " + retryAttempt + "): "
                     + e.getClass().getName() + ": " + e.getMessage()
                     + " -- retrying in " + delay + "ms");
-            mainHandler.removeCallbacks(registerRetry);
-            mainHandler.postDelayed(registerRetry, delay);
+            io.removeCallbacks(registerRetry);
+            io.postDelayed(registerRetry, delay);
         }
     }
 
@@ -204,6 +307,7 @@ public class DoorSoundService extends Service {
 
     /** Single entry point for every event; description is already localised. */
     void fire(SoundEvent event, String description) {
+        armWatch();
         log("EVENT: " + event.name + " - " + description);
         setLastEvent(description);
         playSoundIfEnabled(event);
