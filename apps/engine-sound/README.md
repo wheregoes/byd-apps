@@ -1,10 +1,10 @@
 # Engine Sound Selector
 
-Select engine sound presets on the BYD Dolphin's external AVAS (pedestrian warning) speaker. BYD's equivalent of Tesla Boombox.
+Select the BYD Dolphin's built-in engine voice simulator presets. The simulator lives in the MCU firmware; which speaker the MCU routes it to is unverified — see [the research notes](https://github.com/wheregoes/byd-dolphin-hacking/blob/master/docs/avas-engine-sound-simulator.md).
 
 ## Features
 
-- **Presets discovered from your vehicle at runtime** — the count is per model, so it is never hardcoded
+- **A fixed browsing range of 20 presets** — the vehicle cannot be asked how many sounds it has, so the app offers a range and lets you name the ones you can hear
 - Scrollable preset chips: reach preset 10 in one tap instead of ten
 - Long-press a preset to give it a name you will recognise
 - Large, touch-friendly UI designed for in-car use
@@ -22,16 +22,17 @@ The BYD Dolphin has an Engine Voice Simulator built into the MCU firmware. This 
 
 ### How many presets?
 
-There is no count register to read: `0x48F00013` returns `1`, meaning "a voice source exists", not
-"one source exists". So the app probes `0x3E300038` upward, verifying the readback each time, and
-stops at the first value the vehicle does not confirm. The result is cached in
-`engine_sound_prefs/max_src_type`; "Re-scan presets" clears it.
+Unknowable from the API. There is no count register: `0x48F00013` returns `1`, meaning "a voice
+source exists", not "one source exists". And a set/read-back probe cannot find a bound either — the
+MCU stores and echoes back *any* source type written to `0x3E300038`, verified up to 200 on a
+Dolphin, with only `0` rejected. A probe therefore just walks to whatever ceiling the probe itself
+uses.
 
-Measured so far: **10 on a Dolphin**, **2 on a Song Pro** ([#5](https://github.com/wheregoes/byd-apps/issues/5)).
-Source type 0 is always rejected.
+So the app offers a fixed range of 20 (`PRESET_RANGE`) and leaves the real question — how many are
+audibly different — to your ears. Long-press a preset chip to name the ones you can hear.
 
-The earlier "30+ presets" claim in this README was never verified and was wrong; values above the
-vehicle's real maximum are silently clamped by the MCU while `setInt` still returns success.
+Earlier versions of this README claimed "30+ presets", then "10 on a Dolphin, 2 on a Song Pro". Both
+were artefacts of the probe, not of the vehicle, and both were wrong.
 
 ## Install
 
@@ -58,9 +59,9 @@ The app uses `BydPermissionContext` to bypass BYD permission checks, then calls 
 | `0x48F00000` | HAS_SIMULATOR | Read | 2 = supported |
 | `0x48F00013` | HAS_VOICE_SOURCE | Read | 1 = yes |
 | `0x48F0000A` | SIMULATOR_STATE | Read | 0=off, 1=on |
-| `0x48F00010` | SOURCE_TYPE | Read | 1..max (10 on Dolphin) |
+| `0x48F00010` | SOURCE_TYPE | Read | echoes whatever was written (verified to 200) |
 | `0x3E300020` | STATE_SET | Write | 0=off, 1=on |
-| `0x3E300038` | SOURCE_TYPE_SET | Write | 1..max; 0 rejected |
+| `0x3E300038` | SOURCE_TYPE_SET | Write | any value stored and echoed; only `0` rejected |
 
 ### AVAS Enable Sequence
 
@@ -76,5 +77,5 @@ When toggling ON, the app sends these commands to fully enable the AVAS path:
 
 - AVAS only plays at low speeds (typically <30 km/h) for pedestrian warning
 - The simulator may reset to OFF when the car is turned off
-- Presets above the vehicle's maximum are ignored by the MCU even though `setInt` reports success — the app detects this by reading the value back
+- A successful write proves storage, not sound: the MCU echoes back any preset number, so acceptance says nothing about whether a distinct sound exists. The app reports the readback so you can see what the vehicle stored
 - App must be re-enabled after each car restart (MCU resets state)

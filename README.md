@@ -16,14 +16,14 @@ Built on reverse-engineered BYD APIs — these apps interact directly with the v
 | App | Description | Download |
 |-----|-------------|----------|
 | [Door Sound](apps/door-sound/) | Custom interior sounds on door, hood, trunk, lock/unlock, alarm and window events; AVAS tone patterns on the exterior speaker | [door-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.2.0-doorsound/door-sound.apk) |
-| [Engine Sound](apps/engine-sound/) | Select AVAS engine sound presets on the exterior speaker (BYD's Boombox) | [engine-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.1.0-enginesound/engine-sound.apk) |
+| [Engine Sound](apps/engine-sound/) | Select the vehicle's built-in engine voice simulator presets (readback-verified; which speaker the MCU routes them to is unverified) | [engine-sound.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.1.0-enginesound/engine-sound.apk) |
 | [Cabin](apps/pet-mode/) | Keep pets safe — AC monitoring, temperature display, always-on screen, plus a high-contrast Outside view readable through tinted glass | [pet-mode.apk](https://github.com/wheregoes/byd-apps/releases/download/v3.1.0-cabin/pet-mode.apk) |
 | [BYD Probe](apps/byd-probe/) | Diagnostic tool — enumerates all BYD Auto API methods via reflection | [byd-probe.apk](https://github.com/wheregoes/byd-apps/releases/download/v1.0.0-bydprobe/byd-probe.apk) |
 
 All versions are on the [releases page](https://github.com/wheregoes/byd-apps/releases). You do not
 need to build anything — download the APK and install it.
 
-Quick start: copy APK to `Third Party Apps 55/` on USB → plug in → password `BYD6125F`.
+Quick start: copy the APK to `Third Party Apps <countryCode>/` on a USB stick (`55` Brazil, `52` Mexico, `91` India …; the suffix is your car's `sys.byd.countrycode`) → plug in → password `BYD6125F` (`130820` in India).
 
 > Releases before September 2026 were each signed with a throwaway key, so Android treats them as
 > different apps. Upgrading from one of those needs an uninstall first; from this release on the
@@ -48,10 +48,10 @@ No root required. Two methods:
 
 ### USB Drive (Easiest)
 
-1. Create a folder named `Third Party Apps 55` on a USB drive
+1. Create a folder named `Third Party Apps <countryCode>` on a USB drive, where `<countryCode>` is your car's `sys.byd.countrycode` (`55` Brazil, `52` Mexico, `62` Indonesia, `66` Thailand, `91` India, `966` Saudi Arabia, `971` UAE, `997` Kazakhstan, `998` Uzbekistan). Europe, Australia and Japan units use `Application Installation <countryCode>` with no password instead.
 2. Copy the APK into that folder
 3. Plug USB into the car
-4. Enter password: `BYD6125F`
+4. Enter password: `BYD6125F` (India uses `130820`)
 5. Tap the APK to install
 
 ### ADB over WiFi
