@@ -21,6 +21,9 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.wheregoes.byd.AutoStart;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +45,8 @@ public class MainActivity extends Activity {
     private TextView textLastEvent;
     private View statusDot;
     private Switch switchEnabled;
+    private TextView parkWatchButton;
+    private TextView autostartButton;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
     private AvasPlayer avasPlayer;
@@ -91,6 +96,18 @@ public class MainActivity extends Activity {
         findViewById(R.id.btn_diagnostics).setOnClickListener(v ->
                 startActivity(new Intent(this, DiagnosticsActivity.class)));
 
+        parkWatchButton = findViewById(R.id.btn_park_watch);
+        parkWatchButton.setOnClickListener(v -> cycleParkWatch());
+        updateParkWatchLabel();
+
+        autostartButton = findViewById(R.id.btn_autostart);
+        autostartButton.setOnClickListener(v -> openAutostart());
+        // A unit without BYD's manager (an emulator, a non-BYD Android box) would
+        // otherwise show a button that cannot do anything.
+        autostartButton.setVisibility(
+                AutoStart.isAvailable(this) ? View.VISIBLE : View.GONE);
+        updateAutostartLabel();
+
         buildGrid((LinearLayout) contentInside, true, maxVolume);
         buildGrid((LinearLayout) contentOutside, false, maxVolume);
 
@@ -115,6 +132,8 @@ public class MainActivity extends Activity {
                 && !DoorSoundService.isRunning()) {
             startForegroundService(new Intent(this, DoorSoundService.class));
         }
+        updateParkWatchLabel();
+        updateAutostartLabel();
         updateFileLabels();
         refreshAllWarnings();
         updateStatus();
@@ -133,6 +152,65 @@ public class MainActivity extends Activity {
         if (avasPlayer != null) {
             avasPlayer.stop();
         }
+    }
+
+    // ------------------------------------------------------- parked-watch + autostart
+
+    /**
+     * Tap-to-cycle instead of a Spinner: four values, and the pill shows the
+     * current one, which is the whole state this setting has.
+     */
+    private void cycleParkWatch() {
+        int[] choices = DoorSoundService.PARK_WATCH_CHOICES_MIN;
+        int current = prefs.getInt(DoorSoundService.KEY_PARK_WATCH_MIN,
+                DoorSoundService.PARK_WATCH_DEFAULT_MIN);
+        int next = choices[0];
+        for (int i = 0; i < choices.length; i++) {
+            if (choices[i] == current) {
+                next = choices[(i + 1) % choices.length];
+                break;
+            }
+        }
+        prefs.edit().putInt(DoorSoundService.KEY_PARK_WATCH_MIN, next).apply();
+        updateParkWatchLabel();
+        // The running service reads the value when it next arms a window; nudging
+        // it makes the new setting take effect on the spot rather than after the
+        // next vehicle event.
+        if (prefs.getBoolean(DoorSoundService.KEY_ENABLED, false)) {
+            startForegroundService(new Intent(this, DoorSoundService.class));
+        }
+    }
+
+    private void updateParkWatchLabel() {
+        int minutes = prefs.getInt(DoorSoundService.KEY_PARK_WATCH_MIN,
+                DoorSoundService.PARK_WATCH_DEFAULT_MIN);
+        parkWatchButton.setText(minutes <= 0
+                ? getString(R.string.park_watch_always)
+                : getString(R.string.park_watch_minutes, minutes));
+    }
+
+    private void openAutostart() {
+        if (AutoStart.open(this)) {
+            AutoStart.markReminded(this, prefs);
+            Toast.makeText(this, R.string.autostart_hint, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, R.string.autostart_missing, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * BYD's list is keyed by APK directory, so every upgrade silently re-blocks
+     * the app. The pill nags in {@code warning} until it has been opened once for
+     * this install, which is cheaper than a dialog nobody reads.
+     */
+    private void updateAutostartLabel() {
+        if (autostartButton == null || autostartButton.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        boolean remind = AutoStart.shouldRemind(this, prefs);
+        autostartButton.setText(remind
+                ? R.string.autostart_button_check : R.string.autostart_button);
+        autostartButton.setTextColor(getColor(remind ? R.color.warning : R.color.fg_secondary));
     }
 
     // -------------------------------------------------------------------- grid

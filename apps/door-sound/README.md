@@ -15,8 +15,11 @@ Plays custom audio files through cabin speakers and preset tone patterns through
   - Shop Chime — A-A-B-B with rests (entrance chime)
   - Alarm — wee-woo × 4 (siren)
   - Fanfare — A-A-A-B-B (cavalry charge)
-- Auto-start on boot
+- Auto-start on boot, plus a **BYD auto-start** button that opens BYD's own screen (see below)
 - Foreground service for reliable background operation
+- **Watch parked**: how long the 10-second poll and the wake lock stay alive after the car is
+  switched off — 10 min (default), 30, 60 or always
+- **Diagnostics** reports deep-sleep gaps, so "the car was off" stops being guesswork
 
 ## When a sound will and will not play
 
@@ -41,6 +44,53 @@ the radio's volume.
 - **Window left open** fires when a window is open and the car is locked — opening a window while
   driving is deliberate, leaving one open is not.
 - **Hood** and **trunk** fire on opening only.
+
+## With the car switched off
+
+Switching the car off does **not** reboot the head unit — measured on a DiLink 3 unit that reached
+72 days of uptime across many drives. What happens instead is that the SoC suspends: the service is
+still there, but nothing of it runs while the car sleeps.
+
+That is what the two controls in the tab row are for.
+
+**Watch parked** sets how long after a power change the service keeps a timed `PARTIAL_WAKE_LOCK`
+and keeps re-reading the lock state every 10 seconds. While that window is open, a lock from the
+key fob produces a sound even on a car that never pushes the event. When it closes, the log says
+`poll: watch window closed, pushed events only`, the lock is released and the unit is free to
+suspend. The default is 10 minutes because an always-open window keeps the SoC awake and draws from
+the 12 V battery; `always` is there for people who want a lock sound hours after parking and accept
+that cost.
+
+**Diagnostics** proves which of the two happened. `elapsedRealtime()` counts suspended time and
+`uptimeMillis()` does not, so a divergence across one poll interval is a suspend and nothing else:
+
+```
+park watch: 10 min after a power change
+watch: open, 7m12s left
+deep sleep: 3 gaps, longest 41m08s
+```
+
+`deep sleep: none observed` with a closed window and a stale `last poll` is a frozen service;
+`service: STOPPED` is a killed one. Those are different problems with different fixes, and this is
+how to tell them apart from a photo.
+
+## BYD's auto-start screen reads backwards
+
+`com.byd.appstartmanagement` (Settings → Apps → Auto-start Management) is a **block** list:
+
+- a row switched **ON** means auto-start is **disabled** for that app;
+- a row switched **OFF** means it is allowed.
+
+Measured on a DiLink 3 head unit: with the row ON, a background app never received
+`BOOT_COMPLETED` at all — the receiver was registered at priority 9900, the package was not in the
+stopped state, nothing crashed, the broadcast simply never arrived. Turning the row OFF is what
+makes the boot path work.
+
+The list is keyed by the **APK directory**, which changes on every install and every in-place
+upgrade, so an app that was allowed goes back to blocked after an update. The app therefore marks
+its **BYD auto-start** pill in amber with `— check` until you have opened that screen once for the
+version you are running, and Diagnostics prints
+`autostart screen: present, NOT yet checked for this install`.
 
 ## AVAS Pattern Mechanism
 
@@ -77,7 +127,8 @@ see the repo [README](../../README.md#building-from-source) for the one-time dow
 1. Connect via ADB: `adb connect <head-unit-ip>:5555`
 2. Install: `adb install build/door-sound.apk`
 3. Open app, select audio files, enable events
-4. Whitelist in BYD auto-start manager for persistent background operation
+4. Tap **BYD auto-start** in the app and switch the Door Sound row **OFF** in BYD's list, which is
+   what allows auto-start (see above) — redo this after every upgrade
 
 ## How It Works
 
@@ -91,7 +142,8 @@ see the repo [README](../../README.md#building-from-source) for the one-time dow
 - Cannot replace the BCM-generated lock/unlock chirp (hardware limitation — BCM generates the sound directly)
 - AVAS external speaker supports only 2 pitches (TEST_AVAS=1 and 2), no custom audio upload
 - AVAS volume is fixed by MCU firmware (PROMPT_VOLUME_LEVEL doesn't affect it — verified)
-- Requires rooted head unit for sideloading
+- Sounds for an event that happens while the car sleeps depend on **Watch parked** (above): outside
+  that window only a pushed CAN callback can still reach the app
 
 ## Architecture
 

@@ -148,7 +148,16 @@ Every modification, finding, discovery, or change made to the BYD Dolphin must b
 
 ## Troubleshooting
 
-- App killed after minutes? → Settings → Apps → Auto-start Management → enable auto-start for the app.
+- App killed after minutes, or dead after a reboot? → Settings → Apps → **Auto-start Management**.
+  That screen is a **block** list and its switches read backwards: a row switched **ON** means
+  auto-start is **disabled** for that app, **OFF** means it is allowed. Measured on a DiLink 3 unit:
+  with the row ON a background app never received `BOOT_COMPLETED` at all. The list is keyed by the
+  APK directory, so **re-check it after every install and every upgrade** — Door Sound marks its
+  **BYD auto-start** pill amber until you have.
+- Nothing happens when you lock the car minutes after switching it off? → switching the car off does
+  not reboot the head unit, it lets the SoC suspend. Door Sound keeps a wake lock and a 10-second
+  poll alive for the **Watch parked** duration (10 min by default; 30/60/always in the tab row), and
+  its Diagnostics screen prints the suspend gaps it saw.
 - Temperature shows "--"? → either the AC signals are unavailable on your firmware, or the climate
   feed went stale: Cabin withdraws readings older than 120 s rather than leaving a stale number on
   screen, and shows "Climate signal lost" when it does.

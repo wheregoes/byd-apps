@@ -18,6 +18,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.File;
@@ -55,8 +56,23 @@ public class DoorSoundService extends Service {
      */
     private static final long POLL_INTERVAL_MS = 10_000L;
 
-    /** How long after the last event or power change the poll and the wake lock stay active. */
-    private static final long WATCH_WINDOW_MS = 10 * 60 * 1000L;
+    /**
+     * How long the poll and the wake lock stay alive after the last event or
+     * power change, in minutes. `0` means "until the car powers up again": the
+     * setting someone needs when they want a lock sound hours after parking.
+     *
+     * The default stays 10 minutes because an open window keeps the SoC out of
+     * suspend, and a parked DiLink 3 unit does suspend -- it is not rebooted by
+     * switching the car off, so the only thing standing between this service and
+     * the next drive is deep sleep.
+     */
+    static final String KEY_PARK_WATCH_MIN = "park_watch_minutes";
+    static final int PARK_WATCH_DEFAULT_MIN = 10;
+    /** Offered by the header pill, in order; 0 = until power returns. */
+    static final int[] PARK_WATCH_CHOICES_MIN = {10, 30, 60, 0};
+
+    /** Clock slack below which a poll gap is scheduling jitter rather than deep sleep. */
+    private static final long SUSPEND_SLACK_MS = 2_000L;
 
     /** Backoff for a listener registration that races BYD's own `auto` service. */
     private static final long[] RETRY_DELAYS_MS = {2_000L, 5_000L, 10_000L, 30_000L};
@@ -78,6 +94,11 @@ public class DoorSoundService extends Service {
     static volatile int sLastLockRaw = -1;
     static volatile int sLastPower = -1;
     static volatile long sLastPollMs = 0L;
+    /** Deep-sleep evidence: how often the SoC suspended between polls, and the worst one. */
+    static volatile int sSuspendCount = 0;
+    static volatile long sSuspendLongestMs = 0L;
+    /** Monotonic deadline of the current watch window; Long.MAX_VALUE while unlimited. */
+    static volatile long sWatchUntilRealtimeMs = 0L;
 
     private PowerManager.WakeLock wakeLock;
     private BYDAutoBodyworkDevice bodyworkDevice;
@@ -90,8 +111,15 @@ public class DoorSoundService extends Service {
 
     private HandlerThread ioThread;
     private Handler io;
-    /** Deadline for the poll and the wake lock, ms since epoch; extended by armWatch(). */
-    private volatile long watchUntilMs;
+    /**
+     * Deadline for the poll and the wake lock on the monotonic clock, which counts
+     * suspended time; the old wall-clock version moved whenever the head unit's
+     * clock resynced. Long.MAX_VALUE when the window is unlimited.
+     */
+    private volatile long watchUntilRealtimeMs;
+    /** Previous poll on both clocks: their divergence is deep sleep. */
+    private long lastPollRealtimeMs = 0L;
+    private long lastPollUptimeMs = 0L;
     private int lastPolledState = -1;
     private int lastPolledPower = -1;
     private int lastDispatchedPower = -1;
@@ -131,6 +159,10 @@ public class DoorSoundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // Re-arm rather than ignore: the activity calls startForegroundService
+        // after changing KEY_PARK_WATCH_MIN, and a window armed under the old
+        // value would otherwise hold until the next vehicle event.
+        armWatch();
         return START_STICKY;
     }
 
@@ -213,12 +245,18 @@ public class DoorSoundService extends Service {
     }
 
     /**
-     * Extends the poll-and-wake-lock window. The lock stays bounded:
-     * acquire(WAKE_LOCK_TIMEOUT_MS) plus an explicit release when the window
-     * closes, so a killed service cannot pin the CPU.
+     * Extends the poll-and-wake-lock window to whatever {@link #KEY_PARK_WATCH_MIN}
+     * asks for. The lock stays bounded even when the window is unlimited: every
+     * poll re-acquires it with {@link #WAKE_LOCK_TIMEOUT_MS}, so a killed service
+     * cannot pin the CPU -- the lock simply expires.
      */
     private void armWatch() {
-        watchUntilMs = System.currentTimeMillis() + WATCH_WINDOW_MS;
+        int minutes = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .getInt(KEY_PARK_WATCH_MIN, PARK_WATCH_DEFAULT_MIN);
+        watchUntilRealtimeMs = minutes <= 0
+                ? Long.MAX_VALUE
+                : SystemClock.elapsedRealtime() + minutes * 60_000L;
+        sWatchUntilRealtimeMs = watchUntilRealtimeMs;
         acquireWakeLock();
         if (io != null) {
             io.removeCallbacks(pollTick);
@@ -231,11 +269,16 @@ public class DoorSoundService extends Service {
         if (bodyworkDevice == null || bodyworkListener == null) {
             return;
         }
-        if (System.currentTimeMillis() > watchUntilMs) {
+        long realNow = SystemClock.elapsedRealtime();
+        if (realNow > watchUntilRealtimeMs) {
             log("poll: watch window closed, pushed events only");
             releaseWakeLock();
             return;
         }
+        // The lock is always timed, so a window longer than the timeout has to
+        // renew it; a bare acquire() would outlive a kill and pin the CPU.
+        acquireWakeLock();
+        noteSuspend(realNow);
         try {
             int state = bodyworkDevice.getAutoSystemState();
             int power = bodyworkDevice.getPowerLevel();
@@ -261,6 +304,30 @@ public class DoorSoundService extends Service {
         // and two pending ticks would double the poll rate for good.
         io.removeCallbacks(pollTick);
         io.postDelayed(pollTick, POLL_INTERVAL_MS);
+    }
+
+    /**
+     * Deep sleep leaves a mark: {@code elapsedRealtime()} counts suspended time,
+     * {@code uptimeMillis()} does not. A divergence across one poll interval is
+     * the head unit's SoC having suspended, which is the whole difference between
+     * "the service was killed" and "the service was frozen" in every report about
+     * the car being switched off -- and it is reportable from a Diagnostics photo
+     * instead of an adb session.
+     */
+    private void noteSuspend(long realNow) {
+        long upNow = SystemClock.uptimeMillis();
+        if (lastPollRealtimeMs != 0L) {
+            long slept = (realNow - lastPollRealtimeMs) - (upNow - lastPollUptimeMs);
+            if (slept > SUSPEND_SLACK_MS) {
+                sSuspendCount++;
+                if (slept > sSuspendLongestMs) {
+                    sSuspendLongestMs = slept;
+                }
+                log("poll: suspended " + (slept / 1000) + "s since the previous poll");
+            }
+        }
+        lastPollRealtimeMs = realNow;
+        lastPollUptimeMs = upNow;
     }
 
     // --------------------------------------------------------------- listener

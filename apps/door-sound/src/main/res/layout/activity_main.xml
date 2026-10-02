@@ -182,6 +182,39 @@
             android:textSize="@dimen/text_caption"
             android:textColor="@color/fg_tertiary"
             android:maxLines="2" />
+
+        <!-- Parked-watch duration and BYD's auto-start screen: both decide whether
+             an event that happens with the car off ever reaches the service. -->
+        <TextView
+            android:id="@+id/btn_park_watch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_3"
+            android:minHeight="@dimen/touch_min"
+            android:gravity="center"
+            android:paddingLeft="@dimen/pill_padding_h"
+            android:paddingRight="@dimen/pill_padding_h"
+            android:paddingTop="@dimen/pill_padding_v"
+            android:paddingBottom="@dimen/pill_padding_v"
+            android:background="@drawable/glass_pill"
+            android:textSize="@dimen/text_body_s"
+            android:textColor="@color/fg_secondary" />
+
+        <TextView
+            android:id="@+id/btn_autostart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_3"
+            android:minHeight="@dimen/touch_min"
+            android:gravity="center"
+            android:paddingLeft="@dimen/pill_padding_h"
+            android:paddingRight="@dimen/pill_padding_h"
+            android:paddingTop="@dimen/pill_padding_v"
+            android:paddingBottom="@dimen/pill_padding_v"
+            android:background="@drawable/glass_pill"
+            android:text="@string/autostart_button"
+            android:textSize="@dimen/text_body_s"
+            android:textColor="@color/fg_secondary" />
         </LinearLayout>
 
         <!-- Card grids; rows are built in code from SoundEvent.values() -->

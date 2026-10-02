@@ -6,7 +6,10 @@ import android.content.pm.PackageInfo;
 import android.hardware.bydauto.bodywork.BYDAutoBodyworkDevice;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.widget.TextView;
+
+import com.wheregoes.byd.AutoStart;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -76,6 +79,16 @@ public class DiagnosticsActivity extends Activity {
         sb.append("power: ").append(powerLine()).append('\n');
         sb.append("last poll: ").append(DoorSoundService.sLastPollMs == 0L
                 ? "never" : clock(DoorSoundService.sLastPollMs)).append('\n');
+        sb.append("park watch: ").append(parkWatchLine(prefs)).append('\n');
+        sb.append("watch: ").append(watchLine()).append('\n');
+        sb.append("deep sleep: ").append(suspendLine()).append('\n');
+        sb.append("autostart screen: ")
+                .append(AutoStart.isAvailable(this)
+                        ? (AutoStart.shouldRemind(this, prefs)
+                                ? "present, NOT yet checked for this install"
+                                : "present, checked for this install")
+                        : "absent")
+                .append('\n');
         sb.append("master switch: ")
                 .append(prefs.getBoolean(DoorSoundService.KEY_ENABLED, false) ? "on" : "off")
                 .append('\n');
@@ -122,6 +135,47 @@ public class DiagnosticsActivity extends Activity {
             default:
                 return power < 0 ? "unknown" : power + " (unknown)";
         }
+    }
+
+    private static String parkWatchLine(SharedPreferences prefs) {
+        int minutes = prefs.getInt(DoorSoundService.KEY_PARK_WATCH_MIN,
+                DoorSoundService.PARK_WATCH_DEFAULT_MIN);
+        return minutes <= 0 ? "until power returns" : minutes + " min after a power change";
+    }
+
+    /** Whether the poll and the wake lock are still alive right now. */
+    private static String watchLine() {
+        long until = DoorSoundService.sWatchUntilRealtimeMs;
+        if (until == 0L) {
+            return "never armed";
+        }
+        if (until == Long.MAX_VALUE) {
+            return "open (no deadline)";
+        }
+        long leftMs = until - SystemClock.elapsedRealtime();
+        return leftMs > 0 ? "open, " + duration(leftMs) + " left" : "closed";
+    }
+
+    /**
+     * The answer to "does anything still run once the car is off": switching the
+     * car off does not reboot the head unit, it lets the SoC suspend, and a
+     * suspend that swallowed a poll interval shows up here.
+     */
+    private static String suspendLine() {
+        int count = DoorSoundService.sSuspendCount;
+        if (count == 0) {
+            return "none observed since this service started";
+        }
+        return count + (count == 1 ? " gap, longest " : " gaps, longest ")
+                + duration(DoorSoundService.sSuspendLongestMs);
+    }
+
+    private static String duration(long millis) {
+        long seconds = millis / 1000L;
+        if (seconds < 60L) {
+            return seconds + "s";
+        }
+        return (seconds / 60L) + "m" + String.format(Locale.US, "%02ds", seconds % 60L);
     }
 
     private static String clock(long millis) {

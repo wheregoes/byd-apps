@@ -7,6 +7,12 @@
     <string name="enabled">Activé</string>
     <string name="diagnostics">Diagnostic</string>
     <string name="diag_refresh">Actualiser</string>
+    <string name="park_watch_minutes">Surveiller garé : %1$d min</string>
+    <string name="park_watch_always">Surveiller garé : toujours</string>
+    <string name="autostart_button">Démarrage auto BYD</string>
+    <string name="autostart_button_check">Démarrage auto BYD — à vérifier</string>
+    <string name="autostart_hint">Dans la liste BYD, une ligne ACTIVÉE signifie que le démarrage automatique est BLOQUÉ. Désactivez-la pour Son de Porte, et revérifiez après chaque mise à jour.</string>
+    <string name="autostart_missing">Cette unité n\'a pas d\'écran de démarrage automatique BYD.</string>
     <string name="select_file">Choisir</string>
     <string name="select_audio_file">Choisir un fichier audio</string>
     <string name="clear">Effacer</string>

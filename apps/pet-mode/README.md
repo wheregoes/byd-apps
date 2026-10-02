@@ -64,13 +64,19 @@ adb install build/pet-mode.apk
 
 ## First-Time Setup (Important!)
 
-After installing, you **must** whitelist the app to prevent the infotainment system from killing it:
+After installing, you **must** fix the app's entry in BYD's auto-start screen, or the infotainment
+system kills it:
 
 1. Go to **Settings** on the head unit
 2. Open **Apps** > **Auto-start Management**
-3. Find **Cabin** and **enable** auto-start
+3. Find **Cabin** and switch its row **OFF**
 
-Without this step, the infotainment system will close the app after a few minutes.
+That screen is a **block** list and its switches read backwards: a row switched **ON** means
+auto-start is **disabled**, **OFF** means it is allowed. Measured on a DiLink 3 unit: with the row
+ON a background app never received `BOOT_COMPLETED` at all. The list is keyed by the APK directory,
+so redo this after every install and every upgrade.
+
+Without this step, the infotainment system closes the app after a few minutes.
 
 ## Usage
 
