@@ -41,6 +41,30 @@ Source package: `com.byd.auto.permission`
 
 Note: Panorama GET is enforced server-side (in the IPC service), not client-side. BydPermissionContext bypass does NOT work for panorama.
 
+### Cross-branch check — Song Pro GS, System-Version `13.1.33.2605050.1`
+
+A reporter ran BYD Probe on a Song Pro GS (branch **13.1.33** = DiLink 50P; the car this reference
+was written on is **13.1.32** = DiLink 50) and published the full run in
+[byd-apps#5](https://github.com/wheregoes/byd-apps/issues/5). The tiers above hold on that branch
+too, which is the useful part — the split is per **permission**, not per model:
+
+| Device | Unsigned app on 13.1.33 |
+|---|---|
+| AC | reads work (`getTemprature(1)=19`, `(2)=19`, `(4)=15`, `getAcKeyActionState()=3`, `getAutoCleanAirState()=1`); `hasFeature`: `ACRemoteControl=1`, `ACAutoMode=1`, `ACDefrost=-10011`, `ACRearPanel3f1=2`, `ACRearPanel408=0`, `WarmSetting=0`, `4490nline=1`; **write works** — `set(1000, 0x1DE0000C, 3)` moved `wind` 0 → 3 |
+| DoorLock | reads work — `mDeviceType=1041`, `getInt(1041, 0x41a0002f)=0`, `0x41a00030=2`, `0x41a00034=2` |
+| Panorama | **every** getter throws `SecurityException: Neither user 10067 nor current process has android.permission.BYDAUTO_PANORAMA_GET` (`getPanoramaOnlineState`, `getPanoWorkState`, `getPanoOutputState`, `getPanoOutputSignal`, `getDisplayMode`, `getPanoRotation`, `getCarInfo`, `getBackLineConfig`, `getPanoAPAState`, `getPanoRemoteImageCallSupport`, `getEmergencyButtonState`, `getRFCameraSwitchState`, `getRightCameraSwitchState`); `features error: null` |
+
+Two differences in the *class surface*, both reported by the probe's static-field lookup:
+
+- `BYDAutoAcDevice` on 13.1.33 has **no** `AC_GET_PERM` / `AC_SET_PERM` / `AC_COMMON_PERM` fields
+  (`NOT_FOUND`) — while AC access works anyway, so those constants are documentation, not the gate.
+- `BYDAutoBodyworkDevice` on 13.1.33 has **no** `WINDOW_AREA_{LEFT,RIGHT}_{FRONT,REAR}` constants,
+  even though `getWindowState(int)` is present in the method list. Window-area code written against
+  the Dolphin's constants cannot assume them on this branch.
+
+`getDoorState(8|9|10)` returns `-2147482645` there, i.e. those indices are unsupported rather than
+erroring — the same sentinel this reference documents for unsupported reads.
+
 ---
 
 ## BYDAutoAcDevice
@@ -191,7 +215,7 @@ void onDoorLockStatusChanged(int area, int status)
 **Actual class on DiLink 3.0:** `BYDAutoPanoramaDeviceDi2l` (DiLink 2.0 compatibility layer)
 
 ### Status
-All GET methods fail with server-side `SecurityException` for `BYDAUTO_PANORAMA_GET`. The `BydPermissionContext` bypass does NOT work for panorama because the permission check happens in the IPC service, not in the client-side `getInstance()`.
+All GET methods fail with server-side `SecurityException` for `BYDAUTO_PANORAMA_GET`. The `BydPermissionContext` bypass does NOT work for panorama because the permission check happens in the IPC service, not in the client-side `getInstance()`. Confirmed identically on branch 13.1.33 (Song Pro GS) — see the cross-branch check above — so this is a property of the permission, not of one firmware.
 
 ### SET Methods (available but untested)
 
@@ -227,6 +251,9 @@ All GET methods fail with server-side `SecurityException` for `BYDAUTO_PANORAMA_
 | `setAllWindowState(...)` | Control all windows |
 | `setBodyWindowCtrlState(area, state)` | Control individual window |
 | `setMoonRoofState(state)` | Control sunroof |
+
+On branch 13.1.33 the `WINDOW_AREA_*` constants are absent from this class (see the cross-branch
+check above), so pass the area value directly rather than reading it off the constant.
 
 ---
 
